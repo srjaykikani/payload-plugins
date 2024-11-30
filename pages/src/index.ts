@@ -1,0 +1,5 @@
+export { createPageCollectionConfig } from './collections/PageCollectionConfig'
+export { createRedirectsCollectionConfig } from './collections/RedirectsCollectionConfig'
+export { alternatePathsField } from './fields/alternatePathsField'
+export { slugField } from './fields/slugField'
+export { getPageUrl } from './utils/getPageUrl'
