@@ -7,8 +7,12 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
     fields: [
       {
         name: 'address',
-        type: 'text',
+        type: 'select',
+        options: [],
         admin: {
+          components: {
+            Field: 'payload-plugin-template/client#GeocodingFieldComponent',
+          },
           width: '100%',
         },
       },
