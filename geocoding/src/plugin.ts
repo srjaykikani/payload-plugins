@@ -13,15 +13,6 @@ export const myPlugin =
       ...(config.admin || {}),
 
       // Add additional admin config here
-
-      components: {
-        ...(config.admin?.components || {}),
-        // Add additional admin components here
-        afterDashboard: [
-          '/components/AfterDashboard/index.js#AfterDashboard',
-          '/components/AfterDashboardClient/index.js#AfterDashboardClient',
-        ],
-      },
     }
 
     /**
@@ -40,7 +31,7 @@ export const myPlugin =
       // Make changes to the collection here
 
       modifiedCollection.fields = (modifiedCollection.fields || []).map((field) => {
-        const newField = { ...field }
+        let newField = { ...field }
 
         // Make changes to the fields here
 
@@ -54,13 +45,6 @@ export const myPlugin =
 
     config.endpoints = [
       ...(config.endpoints || []),
-      {
-        handler: () => {
-          return Response.json({ message: 'Hello, world!' })
-        },
-        method: 'get',
-        path: '/custom-endpoint',
-      },
       // Add additional endpoints here
     ]
 

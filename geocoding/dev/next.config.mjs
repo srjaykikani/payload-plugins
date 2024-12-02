@@ -14,6 +14,14 @@ const nextConfig = {
 
     return webpackConfig
   },
+
+  redirects: () => [
+    {
+      source: '/',
+      destination: '/admin',
+      permanent: true,
+    },
+  ],
 }
 
 export default withPayload(nextConfig)

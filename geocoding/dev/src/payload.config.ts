@@ -2,9 +2,9 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
+import { myPlugin } from 'payload-plugin-template'
 import { fileURLToPath } from 'url'
 import { testEmailAdapter } from './emailAdapter'
-import { myPlugin } from 'payload-plugin-template'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -51,7 +51,7 @@ export default buildConfig({
     },
   ],
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || 'mongodb://127.0.0.1/plugin-development',
+    url: process.env.DATABASE_URI!,
   }),
   email: testEmailAdapter,
   editor: lexicalEditor(),
