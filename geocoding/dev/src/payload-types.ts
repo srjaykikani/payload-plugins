@@ -83,21 +83,21 @@ export interface User {
 export interface Page {
   id: string;
   title?: string | null;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
+  locations?:
+    | {
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        location?: [number, number] | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -202,7 +202,13 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  content?: T;
+  location?: T;
+  locations?:
+    | T
+    | {
+        location?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

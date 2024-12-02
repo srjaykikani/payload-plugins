@@ -33,9 +33,20 @@ export default buildConfig({
           name: 'title',
           type: 'text',
         },
+        // These fields are used for testing the plugin:
         {
-          name: 'content',
-          type: 'richText',
+          name: 'location',
+          type: 'point',
+        },
+        {
+          name: 'locations',
+          type: 'array',
+          fields: [
+            {
+              name: 'location',
+              type: 'point',
+            },
+          ],
         },
       ],
     },
