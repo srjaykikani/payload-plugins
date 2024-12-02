@@ -1,10 +1,11 @@
 {
-  "name": "payload-plugin-template",
-  "version": "3.0.0",
-  "homepage:": "https://payloadcms.com",
-  "description": "Payload plugin template",
-  "author": "dev@payloadcms.com",
+  "name": "@jhb.software/payload-geocoding-plugin",
+  "version": "0.1.0",
+  "description": "Geocoding field plugin for Payload CMS",
+  "author": "JHB Software",
   "license": "MIT",
+  "bugs": "https://github.com/jhb-software/payload-plugins/issues",
+  "repository": "https://github.com/jhb-software/payload-plugins",
   "files": [
     "dist",
     "LICENSE.md",

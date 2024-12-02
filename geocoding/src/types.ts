@@ -1,3 +1,3 @@
-export type MyPluginOptions = {
+export type PayloadGeocodingOptions = {
   enabled?: boolean
 }
