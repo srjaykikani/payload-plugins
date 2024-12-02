@@ -2,7 +2,7 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { myPlugin } from 'payload-plugin-template'
+import { geocodingField, myPlugin } from 'payload-plugin-template'
 import { fileURLToPath } from 'url'
 import { testEmailAdapter } from './emailAdapter'
 
@@ -34,18 +34,22 @@ export default buildConfig({
           type: 'text',
         },
         // These fields are used for testing the plugin:
-        {
-          name: 'location',
-          type: 'point',
-        },
+        geocodingField({
+          pointField: {
+            name: 'location',
+            type: 'point',
+          },
+        }),
         {
           name: 'locations',
           type: 'array',
           fields: [
-            {
-              name: 'location',
-              type: 'point',
-            },
+            geocodingField({
+              pointField: {
+                name: 'location',
+                type: 'point',
+              },
+            }),
           ],
         },
       ],
