@@ -1,8 +1,7 @@
+import { geocodingField, myPlugin } from '@jhb.software/payload-geocoding-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { geocodingField, myPlugin } from 'payload-plugin-template'
 import { fileURLToPath } from 'url'
 import { testEmailAdapter } from './emailAdapter'
 
@@ -34,12 +33,71 @@ export default buildConfig({
           type: 'text',
         },
         // These fields are used for testing the plugin:
+
+        // Minimal field config - not required
         geocodingField({
           pointField: {
-            name: 'location',
+            name: 'location0',
             type: 'point',
+            required: false,
           },
         }),
+
+        // Minimal field config - required
+        geocodingField({
+          pointField: {
+            name: 'location1',
+            type: 'point',
+            required: true,
+          },
+        }),
+
+        // Minimal field config - required
+        geocodingField({
+          pointField: {
+            name: 'location2',
+            type: 'point',
+            required: true,
+          },
+          geoDataFieldOverride: {
+            required: true,
+          },
+        }),
+
+        // With geoDataFieldOverride
+        geocodingField({
+          pointField: {
+            name: 'location3',
+            type: 'point',
+          },
+          geoDataFieldOverride: {
+            label: 'Geodata (Custom label)',
+            access: {
+              read: () => true,
+              update: () => true,
+              create: () => true,
+            },
+            admin: {
+              readOnly: false,
+            },
+          },
+        }),
+
+        // Usage inside a group
+        {
+          name: 'locationGroup',
+          type: 'group',
+          fields: [
+            geocodingField({
+              pointField: {
+                name: 'location',
+                type: 'point',
+              },
+            }),
+          ],
+        },
+
+        // Usage inside an array
         {
           name: 'locations',
           type: 'array',
@@ -69,16 +127,11 @@ export default buildConfig({
     url: process.env.DATABASE_URI!,
   }),
   email: testEmailAdapter,
-  editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || 'SOME_SECRET',
+  secret: process.env.PAYLOAD_SECRET!,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  plugins: [
-    myPlugin({
-      debug: true,
-    }),
-  ],
+  plugins: [myPlugin({})],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',

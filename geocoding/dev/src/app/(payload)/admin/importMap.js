@@ -1,5 +1,5 @@
-import { GeocodingFieldComponent as GeocodingFieldComponent_befd98f3723f04d8460874f5953e6687 } from 'payload-plugin-template/client'
+import { GeocodingFieldComponent as GeocodingFieldComponent_f511c7a8656c9889db9f167d5c72bd78 } from '@jhb.software/payload-geocoding-plugin/client'
 
 export const importMap = {
-  "payload-plugin-template/client#GeocodingFieldComponent": GeocodingFieldComponent_befd98f3723f04d8460874f5953e6687
+  "@jhb.software/payload-geocoding-plugin/client#GeocodingFieldComponent": GeocodingFieldComponent_f511c7a8656c9889db9f167d5c72bd78
 }

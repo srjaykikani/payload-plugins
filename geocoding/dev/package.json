@@ -19,11 +19,10 @@
     "@payloadcms/db-mongodb": "^3.2.2",
     "@payloadcms/db-postgres": "^3.2.2",
     "@payloadcms/next": "^3.2.2",
-    "@payloadcms/richtext-lexical": "^3.2.2",
     "@payloadcms/ui": "^3.2.2",
     "next": "15.0.0",
     "payload": "^3.2.2",
-    "payload-plugin-template": "workspace:*",
+    "@jhb.software/payload-geocoding-plugin": "workspace:*",
     "react": "19.0.0-rc-3edc000d-20240926",
     "react-dom": "19.0.0-rc-3edc000d-20240926"
   },

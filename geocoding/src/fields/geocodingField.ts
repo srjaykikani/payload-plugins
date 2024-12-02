@@ -23,7 +23,7 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
 
           // non-overridable props:
           components: {
-            Field: 'payload-plugin-template/client#GeocodingFieldComponent',
+            Field: '@jhb.software/payload-geocoding-plugin/client#GeocodingFieldComponent',
           },
         },
       },
