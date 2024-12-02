@@ -4,6 +4,7 @@ import { JSONField, PointField } from 'payload'
 export type GeoCodingFieldConfig = {
   pointField: PointField
   geoDataFieldOverride?: {
+    required?: boolean
     label?: string
     access?: JSONField['access']
     admin?: JSONField['admin']

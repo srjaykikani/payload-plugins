@@ -15,6 +15,7 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
         type: 'json',
         label: config.geoDataFieldOverride?.label ?? 'Location',
         access: config.geoDataFieldOverride?.access ?? {},
+        required: config.geoDataFieldOverride?.required,
         admin: {
           // overridable props:
           readOnly: true,

@@ -65,6 +65,7 @@ This plugin uses the [react-google-places-autocomplete](https://www.npmjs.com/pa
 
 > ⚠️ **Warning**: This plugin is actively evolving and may undergo significant changes. While it is functional, please thoroughly test before using in production environments.
 
+- Use the native Payload `SelectField` instead of the field provided by `react-google-places-autocomplete`
 - Extend the field config to accept `GooglePlacesAutocomplete` options like debounce time, API options, etc.
 - Add support for other geocoding services (Mapbox, HERE, etc.)
 

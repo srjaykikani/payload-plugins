@@ -111,7 +111,7 @@ export interface Page {
    * @maxItems 2
    */
   location1: [number, number];
-  location2_geodata?:
+  location2_geodata:
     | {
         [k: string]: unknown;
       }

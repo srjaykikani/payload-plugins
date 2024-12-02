@@ -1,6 +1,5 @@
 'use client'
-
-import { FieldLabel, useField } from '@payloadcms/ui'
+import { FieldError, FieldLabel, useField } from '@payloadcms/ui'
 import { SelectFieldClientComponent } from 'payload'
 import GooglePlacesAutocomplete, {
   geocodeByPlaceId,
@@ -22,22 +21,30 @@ export const GeocodingFieldComponent: SelectFieldClientComponent = ({ field, pat
 
   return (
     <div style={{ width: '100%' }}>
-      <FieldLabel path={path} label={field.label} />
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <FieldLabel path={path} label={field.label} />
+        <FieldError path={path} />
+      </div>
       <GooglePlacesAutocomplete
         apiKey={API_KEY}
         selectProps={{
           value: geoData as any,
+          isClearable: true,
           onChange: async (geoData) => {
-            if (!geoData) return
+            if (geoData) {
+              const placeId = geoData?.value.place_id
+              const geocode = (await geocodeByPlaceId(placeId)).at(0)
 
-            const placeId = geoData?.value.place_id
-            const geocode = (await geocodeByPlaceId(placeId)).at(0)
+              if (!geocode) return
+              const latLng = await getLatLng(geocode)
 
-            if (!geocode) return
-            const latLng = await getLatLng(geocode)
-
-            setPoint([latLng.lng, latLng.lat])
-            setGeoData(geoData)
+              setPoint([latLng.lng, latLng.lat])
+              setGeoData(geoData)
+            } else {
+              // reset the fields when it was cleared
+              setPoint([])
+              setGeoData(null)
+            }
           },
         }}
       />
