@@ -30,6 +30,7 @@
     "payload": "^3.2.2"
   },
   "dependencies": {
+    "react-google-places-autocomplete": "^4.1.0",
     "@payloadcms/ui": "3.2.2",
     "react": "19.0.0-rc-3edc000d-20240926",
     "react-dom": "19.0.0-rc-3edc000d-20240926"
