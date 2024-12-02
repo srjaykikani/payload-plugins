@@ -83,6 +83,20 @@ export interface User {
 export interface Page {
   id: string;
   title?: string | null;
+  location_geodata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  location?: [number, number] | null;
   location0_geodata?:
     | {
         [k: string]: unknown;
@@ -278,6 +292,8 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  location_geodata?: T;
+  location?: T;
   location0_geodata?: T;
   location0?: T;
   location1_geodata?: T;

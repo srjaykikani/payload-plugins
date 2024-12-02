@@ -37,9 +37,20 @@ export default buildConfig({
         // Minimal field config - not required
         geocodingField({
           pointField: {
+            name: 'location',
+            type: 'point',
+          },
+        }),
+
+        // readOnly field
+        geocodingField({
+          pointField: {
             name: 'location0',
             type: 'point',
             required: false,
+            admin: {
+              readOnly: true,
+            },
           },
         }),
 
