@@ -8,6 +8,9 @@ export type PageCollectionConfigAttributes = {
   /** Name of the field to store the parent document. */
   parentField: string
 
+  /** Whether this collection contains the root page and therefore the parent field is optional. Defaults to `false`. */
+  isRootCollection?: boolean
+
   /** Whether all documents share the same parent document. Defaults to `false`. */
   sharedParentDocument?: boolean
 

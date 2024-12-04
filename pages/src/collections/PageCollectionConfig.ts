@@ -23,6 +23,7 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
     ...config.page,
     breadcrumbLabelField: titleField,
     sharedParentDocument: config.page.sharedParentDocument ?? false,
+    isRootCollection: config.page.isRootCollection ?? false,
     slugFallbackField: config.page.slugFallbackField ?? 'title',
   } as PageCollectionConfigAttributes
 

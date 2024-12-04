@@ -6,7 +6,7 @@ export function parentField(pageConfig: PageCollectionConfigAttributes): Field {
     name: pageConfig.parentField!,
     type: 'relationship',
     relationTo: pageConfig.parentCollection,
-    required: true,
+    required: !pageConfig.isRootCollection,
     // Exclude the current page from the list of available parents:
     filterOptions: ({ data }) => {
       // TODO: find a way to get the current document's collection in the filterOptions function

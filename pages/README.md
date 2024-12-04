@@ -16,6 +16,7 @@ Use the `createPagesCollectionConfig` function to create a collection config for
 
 - `parentCollection`: The slug of the collection that will be used as the parent of the current collection.
 - `parentField`: The name of the field on the parent collection that will be used to relate to the current collection.
+- `isRootCollection`: Whether the collection is the root collection (collection which contains the root page). If true, the parent field is optional. Defaults to `false`.
 - `sharedParentDocument` (optional, defaults to `false`): If true, the parent document will be shared between all documents in the collection.
 - `breadcrumbLabelField` (optional, defaults to `admin.useAsTitle`): The name of the field that will be used to label the document in the breadcrumb.
 - `slugFallbackField` (optional, defaults to `title`): The name of the field that will be used as the fallback for the slug.
