@@ -1,20 +1,20 @@
 {
-  "name": "payload-plugins",
-  "version": "0.1.0",
-  "private": true,
-  "workspaces": [
-    "seo",
-    "pages",
-    "cloudinary"
-  ],
-  "scripts": {
-    "build:all": "pnpm build:cloudinary && pnpm build:pages && pnpm build:seo",
-    "build:cloudinary": "cd ./cloudinary && pnpm build",
-    "build:pages": "cd ./pages && pnpm build",
-    "build:seo": "cd ./seo && pnpm build",
-    "publish:all": "pnpm publish:cloudinary && pnpm publish:pages && pnpm publish:seo",
-    "publish:cloudinary": "cd ./cloudinary && pnpm publish",
-    "publish:pages": "cd ./pages && pnpm publish",
-    "publish:seo": "cd ./seo && pnpm publish"
+    "name": "payload-plugins",
+    "version": "0.1.0",
+    "private": true,
+    "workspaces": [
+      "seo",
+      "pages",
+      "cloudinary"
+    ],
+    "scripts": {
+      "build:all": "pnpm build:cloudinary && pnpm build:pages && pnpm build:seo",
+      "build:cloudinary": "cd ./cloudinary && pnpm build",
+      "build:pages": "cd ./pages && pnpm build",
+      "build:seo": "cd ./seo && pnpm build",
+      "publish:all": "pnpm publish:cloudinary && pnpm publish:pages && pnpm publish:seo",
+      "publish:cloudinary": "cd ./cloudinary && pnpm publish",
+      "publish:pages": "cd ./pages && pnpm publish",
+      "publish:seo": "cd ./seo && pnpm publish"
+    }
   }
-}
