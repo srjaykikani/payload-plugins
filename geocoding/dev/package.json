@@ -16,20 +16,19 @@
     "generate:importmap": "payload generate:importmap"
   },
   "dependencies": {
-    "@payloadcms/db-mongodb": "^3.2.2",
-    "@payloadcms/db-postgres": "^3.2.2",
-    "@payloadcms/next": "^3.2.2",
-    "@payloadcms/ui": "^3.2.2",
+    "@payloadcms/db-mongodb": "^3.4.0",
+    "@payloadcms/next": "^3.5.0",
+    "@payloadcms/ui": "^3.5.0",
     "next": "15.0.0",
-    "payload": "^3.2.2",
+    "payload": "^3.5.0",
     "@jhb.software/payload-geocoding-plugin": "workspace:*",
-    "react": "19.0.0-rc-3edc000d-20240926",
-    "react-dom": "19.0.0-rc-3edc000d-20240926"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "typescript": "5.7.2"
   }
 }

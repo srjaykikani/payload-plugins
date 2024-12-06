@@ -25,33 +25,19 @@
     "prepack": "pnpm prepublishOnly",
     "prepublishOnly": "pnpm build && pnpm copyfiles"
   },
+  "dependencies": {
+    "react-google-places-autocomplete": "^4.1.0"
+  },
   "peerDependencies": {
     "next": "15.0.0",
-    "payload": "^3.2.2"
-  },
-  "dependencies": {
-    "react-google-places-autocomplete": "^4.1.0",
-    "@payloadcms/ui": "3.2.2",
-    "react": "19.0.0-rc-3edc000d-20240926",
-    "react-dom": "19.0.0-rc-3edc000d-20240926"
+    "payload": "^3.5.0",
+    "@payloadcms/ui": "^3.5.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@payloadcms/eslint-config": "3.0.0",
-    "@types/node": "22.10.1",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-    "copyfiles": "^2.4.1",
-    "next": "15.0.0",
-    "payload": "3.2.2",
-    "react": "19.0.0-rc-3edc000d-20240926",
-    "react-dom": "19.0.0-rc-3edc000d-20240926",
-    "typescript": "5.7.2"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-    }
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.1"
   },
   "publishConfig": {
     "main": "./dist/index.js",
