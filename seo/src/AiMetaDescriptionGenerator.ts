@@ -12,7 +12,6 @@ export class AiMetaDescriptionGenerator {
     collectionContentTransformer,
     websiteContext,
   }: {
-    openAIKey: string
     collectionContentTransformer: Record<string, CollectionDocContentTransformer>
     websiteContext: WebsiteContext
   }) {

@@ -16,19 +16,21 @@
     "lint": "eslint .",
     "prepublish": "tsc"
   },
-  "peerDependencies": {
-    "@payloadcms/plugin-seo": "^3.2.2",
-    "@payloadcms/richtext-lexical": "^3.2.2",
-    "@payloadcms/ui": "^3.2.2",
-    "payload": "^3.2.2"
-  },
   "dependencies": {
-    "openai": "^4.73.1",
-    "react": "^18.3.1"
+    "openai": "^4.76.0"
+  },
+  "peerDependencies": {
+    "next": "15.0.0",
+    "@payloadcms/plugin-seo": "^3.5.0",
+    "@payloadcms/richtext-lexical": "^3.5.0",
+    "@payloadcms/ui": "^3.5.0",
+    "payload": "^3.5.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1"
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1"
   },
   "files": [
     "dist"

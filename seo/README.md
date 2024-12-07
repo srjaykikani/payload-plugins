@@ -45,8 +45,9 @@ export default buildConfig({
   // ...
   plugins: [
     seoPlugin({
+      collections: ['pages', 'projects'],
       generateDescription: aiMetaDescriptionGenerator.generateDescription,
-      fields: ({ defaultFields }) => [...defaultFields, keywordsField()],
+      fields: ({ defaultFields }) => [keywordsField(), ...defaultFields],
     }),
   ],
 })
