@@ -1,3 +1,4 @@
+import { payloadCloudinaryPlugin } from '@jhb.software/payload-cloudinary-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -32,6 +33,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  plugins: [payloadCloudinaryPlugin({})],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',

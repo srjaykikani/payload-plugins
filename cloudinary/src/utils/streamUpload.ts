@@ -2,15 +2,6 @@ import { v2 as cloudinary, UploadApiOptions, UploadApiResponse, UploadStream } f
 import type { PayloadRequest } from 'payload'
 import { Readable } from 'stream'
 
-if (
-  !process.env.CLOUDINARY_CLOUD_NAME ||
-  !process.env.CLOUDINARY_API_KEY ||
-  !process.env.CLOUDINARY_API_SECRET ||
-  !process.env.CLOUDINARY_FOLDER
-) {
-  throw new Error('Cloudinary environment variables are not set.')
-}
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
