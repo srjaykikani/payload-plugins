@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-pages-plugin",
-  "version": "0.1.0",
+  "version": "0.1.7",
   "description": "Payload CMS plugin that adds essential fields for hierarchical page structure to collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
@@ -25,6 +25,7 @@
     "react-dom": "19.0.0"
   },
   "devDependencies": {
+    "typescript": "5.7.2",
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.1"
   },
