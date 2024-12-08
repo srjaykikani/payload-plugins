@@ -16,7 +16,7 @@ export const createMediaCollectionConfig = ({
   slug: string
   labels?: CollectionConfig['labels']
   access?: CollectionConfig['access']
-  overrides: {
+  overrides?: {
     admin?: CollectionConfig['admin']
     fields?: CollectionConfig['fields']
     uploads?: {
@@ -29,7 +29,7 @@ export const createMediaCollectionConfig = ({
   admin: {
     defaultColumns: ['filename', 'alt', 'createdAt'],
     listSearchableFields: ['filename', 'alt'],
-    ...overrides.admin,
+    ...(overrides?.admin ?? {}),
   },
   disableDuplicate: true,
   access: access,
@@ -94,10 +94,10 @@ export const createMediaCollectionConfig = ({
         condition: (data) => Boolean(data?.cloudinaryURL),
       },
     },
-    ...(overrides.fields ?? []),
+    ...(overrides?.fields ?? []),
   ],
   upload: {
-    mimeTypes: overrides.uploads?.mimeTypes,
+    mimeTypes: overrides?.uploads?.mimeTypes,
     disableLocalStorage: true,
     crop: false,
     adminThumbnail: ({ doc }) =>
