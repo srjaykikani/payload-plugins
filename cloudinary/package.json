@@ -4,6 +4,11 @@
   "description": "Payload CMS plugin that adds Cloudinary image upload and management capabilities to media collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
+  "keywords": [
+    "payload",
+    "plugin",
+    "cloudinary"
+  ],
   "author": "JHB Software",
   "license": "MIT",
   "type": "module",

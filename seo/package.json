@@ -4,6 +4,11 @@
   "description": "SEO plugin for Payload CMS with AI-powered meta descriptions, keyword tracking and content analysis",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
+  "keywords": [
+    "payload",
+    "plugin",
+    "seo"
+  ],
   "author": "JHB Software",
   "license": "MIT",
   "type": "module",

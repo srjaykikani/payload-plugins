@@ -4,6 +4,11 @@
   "description": "Payload CMS plugin that adds essential fields for hierarchical page structure to collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
+  "keywords": [
+    "payload",
+    "plugin",
+    "pages"
+  ],
   "author": "JHB Software",
   "license": "MIT",
   "type": "module",
