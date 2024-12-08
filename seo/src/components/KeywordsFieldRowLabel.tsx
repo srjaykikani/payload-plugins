@@ -1,7 +1,6 @@
 'use client'
 import { useAllFormFields, useRowLabel } from '@payloadcms/ui'
 import { RowLabelComponent } from 'payload'
-import React from 'react'
 
 function countOccurrences(mainStr: string, subStr: string): number {
   const regex = new RegExp(subStr, 'g')
@@ -113,7 +112,7 @@ export const KeywordsFieldRowLabel = ({}: RowLabelComponent) => {
 
 export default KeywordsFieldRowLabel
 
-function WarningIcon(): JSX.Element {
+function WarningIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

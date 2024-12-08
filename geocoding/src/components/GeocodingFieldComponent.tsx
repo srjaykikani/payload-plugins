@@ -30,7 +30,7 @@ export const GeocodingFieldComponent: SelectFieldClientComponent = ({ field, pat
         selectProps={{
           value: geoData as any,
           isClearable: true,
-          onChange: async (geoData) => {
+          onChange: async (geoData: any) => {
             if (geoData) {
               const placeId = geoData?.value.place_id
               const geocode = (await geocodeByPlaceId(placeId)).at(0)
