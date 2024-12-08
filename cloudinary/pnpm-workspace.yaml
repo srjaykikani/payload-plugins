@@ -1,0 +1,3 @@
+packages:
+  - './' # Plugin at the root
+  - 'dev/' # Testing environment

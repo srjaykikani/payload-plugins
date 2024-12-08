@@ -16,11 +16,11 @@
     "lint": "eslint .",
     "prepublish": "tsc"
   },
-  "peerDependencies": {
-    "payload": "^3.2.2"
-  },
   "dependencies": {
     "cloudinary": "^2.5.1"
+  },
+  "peerDependencies": {
+    "payload": "^3.5.0"
   },
   "files": [
     "dist"
