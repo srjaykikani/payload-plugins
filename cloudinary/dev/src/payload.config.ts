@@ -2,8 +2,8 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import { Media } from './collections/media'
-import { Pages } from './collections/pages'
+import { Images } from './collections/images'
+import { Videos } from './collections/videos'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,8 +17,8 @@ export default buildConfig({
     user: 'users',
   },
   collections: [
-    Pages,
-    Media,
+    Videos,
+    Images,
     {
       slug: 'users',
       auth: true,

@@ -2,7 +2,18 @@ import type { CollectionConfig } from 'payload'
 import afterDeleteHook from '../hooks/afterDelete'
 import beforeChangeHook from '../hooks/beforeChange'
 
-// TODO: use https://github.com/payloadcms/payload/pull/8999 once it's released
+/** A collection config with additional attributes for media collections. */
+type MediaCollectionConfig = {
+  slug: string
+  labels?: CollectionConfig['labels']
+  access?: CollectionConfig['access']
+  fields?: CollectionConfig['fields']
+  hooks?: CollectionConfig['hooks']
+  admin?: CollectionConfig['admin']
+  uploads?: {
+    mimeTypes?: string[]
+  }
+}
 
 /**
  * Creates the `CollectionConfig` for a Media collection with all hooks and fields needed for Cloudinary integration.
@@ -10,40 +21,27 @@ import beforeChangeHook from '../hooks/beforeChange'
 export const createMediaCollectionConfig = ({
   slug,
   labels,
-  access = {},
-  overrides,
-}: {
-  slug: string
-  labels?: CollectionConfig['labels']
-  access?: CollectionConfig['access']
-  overrides?: {
-    admin?: CollectionConfig['admin']
-    fields?: CollectionConfig['fields']
-    uploads?: {
-      mimeTypes?: string[]
-    }
-  }
-}): CollectionConfig => ({
+  access,
+  fields,
+  hooks,
+  admin,
+  uploads,
+}: MediaCollectionConfig): CollectionConfig => ({
   slug,
   labels,
   admin: {
-    defaultColumns: ['filename', 'alt', 'createdAt'],
-    listSearchableFields: ['filename', 'alt'],
-    ...(overrides?.admin ?? {}),
+    defaultColumns: ['filename', 'createdAt'],
+    listSearchableFields: ['filename'],
+    ...admin,
   },
   disableDuplicate: true,
-  access: access,
+  access: access ?? {},
   hooks: {
-    beforeChange: [beforeChangeHook],
-    afterDelete: [afterDeleteHook],
+    ...hooks,
+    beforeChange: [...(hooks?.beforeChange ?? []), beforeChangeHook],
+    afterDelete: [...(hooks?.afterDelete ?? []), afterDeleteHook],
   },
   fields: [
-    {
-      name: 'alt',
-      type: 'text',
-      localized: true,
-      required: true,
-    },
     {
       // This field is needed to delete and update cloudinary files.
       name: 'cloudinaryPublicId',
@@ -94,10 +92,10 @@ export const createMediaCollectionConfig = ({
         condition: (data) => Boolean(data?.cloudinaryURL),
       },
     },
-    ...(overrides?.fields ?? []),
+    ...(fields ?? []),
   ],
   upload: {
-    mimeTypes: overrides?.uploads?.mimeTypes,
+    ...uploads,
     disableLocalStorage: true,
     crop: false,
     adminThumbnail: ({ doc }) =>
