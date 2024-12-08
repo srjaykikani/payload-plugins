@@ -2,6 +2,7 @@ import {
   AiMetaDescriptionGenerator,
   keywordsField,
   lexicalToPlainText,
+  payloadSeoPlugin,
 } from '@jhb.software/payload-seo-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -75,6 +76,7 @@ export default buildConfig({
     }
   },
   plugins: [
+    payloadSeoPlugin({}),
     seoPlugin({
       collections: ['pages'],
       generateDescription: aiMetaDescriptionGenerator.generateDescription,

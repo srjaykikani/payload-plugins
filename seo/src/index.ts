@@ -1,3 +1,5 @@
 export { AiMetaDescriptionGenerator } from './AiMetaDescriptionGenerator'
 export { keywordsField } from './fields/keywordsField'
+export { payloadSeoPlugin } from './plugin'
+export type { SeoPluginConfig } from './types/SeoPluginConfig'
 export { lexicalToPlainText } from './utils/lexicalToPlainText'

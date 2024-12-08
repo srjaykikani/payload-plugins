@@ -2,10 +2,6 @@ import OpenAI from 'openai'
 
 /** Calls OpenAI and returns the text response. */
 export async function generateOpenAIChatCompletion(body: OpenAI.Chat.ChatCompletionCreateParams) {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('No OPENAI_API_KEY provided')
-  }
-
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   })
