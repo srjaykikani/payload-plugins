@@ -1,4 +1,4 @@
-/** The context each prompt receives about the website. */
+/** Contextual information about the website which is added to the meta description generation prompt. */
 export type WebsiteContext = {
   topic: string
 }

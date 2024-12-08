@@ -64,7 +64,8 @@ export interface UserAuthOperations {
 export interface Page {
   id: string;
   title: string;
-  content: string;
+  contentPlaintext: string;
+  contentLexical: string;
   meta: {
     keywords: {
       keyword: string;
@@ -156,7 +157,8 @@ export interface PayloadMigration {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  content?: T;
+  contentPlaintext?: T;
+  contentLexical?: T;
   meta?:
     | T
     | {

@@ -1,39 +1,13 @@
-import {
-  AiMetaDescriptionGenerator,
-  keywordsField,
-  lexicalToPlainText,
-  payloadSeoPlugin,
-} from '@jhb.software/payload-seo-plugin'
+import { payloadSeoPlugin } from '@jhb.software/payload-seo-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
-import { seoPlugin } from '@payloadcms/plugin-seo'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
-import { buildConfig, SanitizedConfig } from 'payload'
+import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { Pages } from './collections/pages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-
-const aiMetaDescriptionGenerator = new AiMetaDescriptionGenerator({
-  websiteContext: {
-    topic: 'Software Developer for mobile, web-apps and websites',
-  },
-  collectionContentTransformer: {
-    pages: async (doc) => ({
-      title: doc.title,
-      // TODO: fix passing of config
-      content: (await lexicalToPlainText(doc.body, {} as SanitizedConfig)) ?? '',
-    }),
-    projects: async (doc) => ({
-      title: doc.title,
-      excerpt: doc.excerpt,
-      tags: doc.tags?.join(', '),
-      // TODO: fix passing of config
-      body: (await lexicalToPlainText(doc.body, {} as SanitizedConfig)) ?? '',
-    }),
-  },
-})
 
 export default buildConfig({
   admin: {
@@ -76,11 +50,21 @@ export default buildConfig({
     }
   },
   plugins: [
-    payloadSeoPlugin({}),
-    seoPlugin({
+    payloadSeoPlugin({
+      // ### Options of the official seo plugin ###
       collections: ['pages'],
-      generateDescription: aiMetaDescriptionGenerator.generateDescription,
-      fields: ({ defaultFields }) => [keywordsField(), ...defaultFields],
+
+      // ### Options of this seo plugin ###
+      websiteContext: {
+        topic: 'A website of a software developer for mobile, web-apps and websites.',
+      },
+      documentContentTransformers: {
+        pages: async (doc, lexicalToPlainText) => ({
+          title: doc.title,
+          contentLexical: (await lexicalToPlainText(doc.contentLexical)) ?? '',
+          contentPlaintext: doc.contentPlaintext,
+        }),
+      },
     }),
   ],
 })

@@ -10,7 +10,13 @@ export const Pages: CollectionConfig = {
       localized: true,
     },
     {
-      name: 'content',
+      name: 'contentPlaintext',
+      type: 'textarea',
+      required: true,
+      localized: true,
+    },
+    {
+      name: 'contentLexical',
       type: 'textarea',
       required: true,
       localized: true,
