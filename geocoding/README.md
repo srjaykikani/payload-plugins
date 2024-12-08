@@ -8,16 +8,22 @@ A geocoding plugin for Payload CMS that simplifies location management in your c
 
 ## Setup
 
-To use this plugin, you'll need to:
+### Installation
+
+Add the plugin to your payload config as follows:
+
+```ts
+plugins: [payloadGeocodingPlugin({})]
+```
+
+### Google Maps API Key
+
+To use this plugin, you'll need a Google Maps API key. To get one, follow these steps:
 
 1. Set up a Google Cloud account and create a project
 2. Enable the Maps JavaScript API in your Google Cloud project
 3. Create an API key with Maps JavaScript API access
-4. Add the API key to your environment variables:
-
-```
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<your-api-key>
-```
+4. Add the API key to your environment variables.
 
 ## Usage
 
@@ -69,7 +75,7 @@ This plugin uses the [react-google-places-autocomplete](https://www.npmjs.com/pa
 - Extend the field config to accept `GooglePlacesAutocomplete` options like debounce time, API options, etc.
 - Add support for other geocoding services (Mapbox, HERE, etc.)
 
-Have a suggestion for the plugin? I'd love to hear from you!
+Have a suggestion for the plugin? Any feedback is welcome!
 
 ## Contributing
 

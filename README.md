@@ -20,15 +20,7 @@ The geocoding plugin simplifies location management in your content by adding a 
 
 [![NPM Version](https://img.shields.io/npm/v/%40jhb.software%2Fpayload-pages-plugin)](https://www.npmjs.com/package/@jhb.software/payload-pages-plugin)
 
-The Pages plugin simplifies website building by adding essential fields to your collections. These fields enable hierarchical page structures and dynamic URL management:
-
-- `slug` - A URL-friendly identifier for the page (e.g., `/software-development`)
-- `parent` - Creates page hierarchies by linking to a parent page (e.g., `services` as parent of `software-development`)
-- `path` - Auto-generated complete URL path based on the page hierarchy (e.g., `/services/software-development`)
-- `breadcrumbs` - Auto-generated navigation trail showing the page's position in the hierarchy (e.g., `Services > Software Development`)
-- `alternatePaths` - Auto-generated paths for different language versions, enabling multilingual support
-
-Additionally, the plugin includes a `redirects` collection for managing URL redirects, ensuring smooth user navigation when URLs change.
+The Pages plugin simplifies website building by adding essential fields like `slug`, `parent`, `path`, `breadcrumbs`, and `alternatePaths` to your collections. These fields enable hierarchical page structures and dynamic URL management.
 
 [Learn more about the Pages plugin →](./pages)
 
