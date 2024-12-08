@@ -1,3 +1,4 @@
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -36,6 +37,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  plugins: [payloadPagesPlugin({})],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',
