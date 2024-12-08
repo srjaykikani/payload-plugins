@@ -6,7 +6,6 @@ A geocoding plugin for Payload CMS that simplifies location management in your c
 
 ![Screenshot showing the added autocomplete select field](https://github.com/user-attachments/assets/13e0b9f8-dc69-47de-9691-384ebf1d0868)
 
-
 ## Setup
 
 To use this plugin, you'll need to:
