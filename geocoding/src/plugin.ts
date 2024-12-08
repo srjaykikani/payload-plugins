@@ -1,9 +1,10 @@
 import type { Config } from 'payload'
 
-import type { PayloadGeocodingOptions } from './types.js'
+import type { GeocodingPluginConfig } from './types/GeoCodingPluginConfig'
 
+/** Payload plugin which extends the point field with geocoding functionality. */
 export const payloadGeocodingPlugin =
-  (pluginOptions: PayloadGeocodingOptions) =>
+  (pluginOptions: GeocodingPluginConfig) =>
   (incomingConfig: Config): Config => {
     const config = { ...incomingConfig }
 
@@ -17,9 +18,14 @@ export const payloadGeocodingPlugin =
         await incomingConfig.onInit(payload)
       }
 
-      if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      const neededEnvVars = ['NEXT_PUBLIC_GOOGLE_MAPS_API_KEY']
+
+      const missingEnvVars = neededEnvVars.filter((envVar) => !process.env[envVar])
+      if (missingEnvVars.length > 0) {
         throw new Error(
-          'NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is required for the geocoding plugin but not defined.',
+          `The following environment variables are required for the geocoding plugin but not defined: ${missingEnvVars.join(
+            ', ',
+          )}`,
         )
       }
     }
