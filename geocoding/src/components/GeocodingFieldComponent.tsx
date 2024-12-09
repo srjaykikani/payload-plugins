@@ -12,7 +12,7 @@ import GooglePlacesAutocomplete, {
  */
 export const GeocodingFieldComponent: SelectFieldClientComponent = ({ field, path }) => {
   const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-  const pointFieldPath = path.replace('_geodata', '')
+  const pointFieldPath = path.replace('_googlePlacesData', '')
 
   const { value: geoData, setValue: setGeoData } = useField<string>({
     path: path,

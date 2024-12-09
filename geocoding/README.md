@@ -38,9 +38,9 @@ geocodingField({
 })
 ```
 
-This will add a `location_geodata` JSON field to the collection. This field will store the raw geocoding data from the Google Places API.
+This will add a `location_googlePlacesData` JSON field to the collection. This field will store the raw geocoding data from the Google Places API.
 
-If needed you can adjust the `location_geodata` field name by passing a `name` property to the `geocodingField` function.
+If needed you can adjust the `location_googlePlacesData` field name by passing a `name` property to the `geocodingField` function.
 
 ```ts
 geocodingField({

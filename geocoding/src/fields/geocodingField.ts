@@ -11,7 +11,7 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
     type: 'row',
     fields: [
       {
-        name: config.pointField.name + '_geodata',
+        name: config.pointField.name + '_googlePlacesData',
         type: 'json',
         label: config.geoDataFieldOverride?.label ?? 'Location',
         access: config.geoDataFieldOverride?.access ?? {},

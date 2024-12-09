@@ -13,7 +13,6 @@ export interface Config {
   collections: {
     users: User;
     pages: Page;
-    media: Media;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -22,7 +21,6 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -83,7 +81,7 @@ export interface User {
 export interface Page {
   id: string;
   title?: string | null;
-  location_geodata?:
+  location_googlePlacesData?:
     | {
         [k: string]: unknown;
       }
@@ -97,7 +95,7 @@ export interface Page {
    * @maxItems 2
    */
   location?: [number, number] | null;
-  location0_geodata?:
+  location0_googlePlacesData?:
     | {
         [k: string]: unknown;
       }
@@ -111,7 +109,7 @@ export interface Page {
    * @maxItems 2
    */
   location0?: [number, number] | null;
-  location1_geodata?:
+  location1_googlePlacesData?:
     | {
         [k: string]: unknown;
       }
@@ -125,7 +123,7 @@ export interface Page {
    * @maxItems 2
    */
   location1: [number, number];
-  location2_geodata:
+  location2_googlePlacesData:
     | {
         [k: string]: unknown;
       }
@@ -139,7 +137,7 @@ export interface Page {
    * @maxItems 2
    */
   location2: [number, number];
-  location3_geodata?:
+  location3_googlePlacesData?:
     | {
         [k: string]: unknown;
       }
@@ -154,7 +152,7 @@ export interface Page {
    */
   location3?: [number, number] | null;
   locationGroup?: {
-    location_geodata?:
+    location_googlePlacesData?:
       | {
           [k: string]: unknown;
         }
@@ -171,7 +169,7 @@ export interface Page {
   };
   locations?:
     | {
-        location_geodata?:
+        location_googlePlacesData?:
           | {
               [k: string]: unknown;
             }
@@ -193,25 +191,6 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  text?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -224,10 +203,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
-      } | null)
-    | ({
-        relationTo: 'media';
-        value: string | Media;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -292,49 +267,31 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  location_geodata?: T;
+  location_googlePlacesData?: T;
   location?: T;
-  location0_geodata?: T;
+  location0_googlePlacesData?: T;
   location0?: T;
-  location1_geodata?: T;
+  location1_googlePlacesData?: T;
   location1?: T;
-  location2_geodata?: T;
+  location2_googlePlacesData?: T;
   location2?: T;
-  location3_geodata?: T;
+  location3_googlePlacesData?: T;
   location3?: T;
   locationGroup?:
     | T
     | {
-        location_geodata?: T;
+        location_googlePlacesData?: T;
         location?: T;
       };
   locations?:
     | T
     | {
-        location_geodata?: T;
+        location_googlePlacesData?: T;
         location?: T;
         id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  text?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
