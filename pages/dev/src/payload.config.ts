@@ -35,6 +35,10 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  localization: {
+    locales: ['de', 'en'],
+    defaultLocale: 'de',
+  },
   plugins: [payloadPagesPlugin({})],
   async onInit(payload) {
     const existingUsers = await payload.find({
