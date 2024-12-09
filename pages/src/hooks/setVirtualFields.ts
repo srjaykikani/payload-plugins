@@ -18,6 +18,26 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
 }) => {
   const locale = req.locale as Locale | 'all'
 
+  // TODO: migrate to using field hooks instead so that the select statement can be used to optimize performance.
+
+  // The following code is just a temporary warning until the field hooks are migrated.
+  //
+  // This method requires certain fields to generate the virtual fields.
+  // When a document is queried using select, these fields might not be included.
+  const neededFields = ['slug', asPageCollectionConfigOrThrow(collection).page.parentField]
+  const missingFields = neededFields.filter((field) => !(field in doc)) // field in doc makes sure that the parent being undefined is allowed
+
+  if (missingFields.length > 0) {
+    console.warn(
+      'The following fields are needed to generate the virtual paths but were not selected: ' +
+        missingFields.join(', ') +
+        '. Collection: ' +
+        collection.slug +
+        '. Document: ' +
+        doc.id,
+    )
+  }
+
   // When the slug is not (yet) set, it is not possible to generate the path and breadcrumbs
   if (locale !== 'all' && !doc.slug?.[locale]) {
     return doc
