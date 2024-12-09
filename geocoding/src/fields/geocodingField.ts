@@ -9,6 +9,9 @@ import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig'
 export const geocodingField = (config: GeoCodingFieldConfig): Field => {
   return {
     type: 'row',
+    admin: {
+      position: config.pointField.admin?.position ?? undefined,
+    },
     fields: [
       {
         name: config.pointField.name + '_googlePlacesData',
