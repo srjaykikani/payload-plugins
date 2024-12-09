@@ -3,5 +3,6 @@ export { createRedirectsCollectionConfig } from './collections/RedirectsCollecti
 export { alternatePathsField } from './fields/alternatePathsField'
 export { slugField } from './fields/slugField'
 export { payloadPagesPlugin } from './plugin'
+export type { PageCollectionConfig } from './types/PageCollectionConfig'
 export type { PagesPluginConfig } from './types/PagesPluginConfig'
 export { getPageUrl } from './utils/getPageUrl'
