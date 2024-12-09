@@ -12,6 +12,8 @@ export function breadcrumbsField(): Field {
     type: 'array',
     required: true,
     virtual: true,
+    // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
+    validate: (_: any): true => true,
     fields: [
       {
         type: 'row',

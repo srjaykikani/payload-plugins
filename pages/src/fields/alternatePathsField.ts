@@ -8,6 +8,8 @@ export function alternatePathsField(): Field {
     required: true,
     localized: false,
     virtual: true,
+    // Validate by default to allow the document to be updated, without having to set the alternatePaths field.
+    validate: (_: any): true => true,
     admin: {
       readOnly: true,
       hidden: true,

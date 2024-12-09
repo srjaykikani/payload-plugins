@@ -11,6 +11,8 @@ export function pathField(): Field {
     type: 'text',
     required: true,
     virtual: true,
+    // Validate by default to allow the document to be updated, without having to set the path field.
+    validate: (_: any): true => true,
     localized: true,
     admin: {
       readOnly: true,
