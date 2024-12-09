@@ -28,14 +28,14 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
   const missingFields = neededFields.filter((field) => !(field in doc)) // field in doc makes sure that the parent being undefined is allowed
 
   if (missingFields.length > 0) {
-    console.warn(
-      'The following fields are needed to generate the virtual paths but were not selected: ' +
-        missingFields.join(', ') +
-        '. Collection: ' +
-        collection.slug +
-        '. Document: ' +
-        doc.id,
-    )
+    // console.warn(
+    //   'The following fields are needed to generate the virtual paths but were not selected: ' +
+    //     missingFields.join(', ') +
+    //     '. Collection: ' +
+    //     collection.slug +
+    //     '. Document: ' +
+    //     doc.id,
+    // )
   }
 
   // When the slug is not (yet) set, it is not possible to generate the path and breadcrumbs
