@@ -39,7 +39,7 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
   }
 
   // When the slug is not (yet) set, it is not possible to generate the path and breadcrumbs
-  if (locale !== 'all' && !doc.slug?.[locale]) {
+  if ((locale !== 'all' && !doc.slug?.[locale]) || (locale === 'all' && !doc.slug)) {
     return doc
   }
 
