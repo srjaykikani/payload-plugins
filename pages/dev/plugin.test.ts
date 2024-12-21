@@ -83,7 +83,7 @@ async function seed() {
   })
 }
 
-describe('Page path and breadcrumb validation', () => {
+describe('Path and breadcrumb virtual fields are set correctly for normal find operation.', () => {
   test('pages without parent must have the correct breadcrumb and path matching /[lang]/[slug] format', async () => {
     const lang = 'de'
 
@@ -192,3 +192,54 @@ describe('Page path and breadcrumb validation', () => {
     expect(pathParts[3].length).toBeGreaterThan(0)
   })
 })
+
+describe('Path and breadcrumb virtual fields are set correctly for find operation with select.', () => {
+  test('Only path and breadcrumbs are selected (not slug etc.)', async () => {
+    const homePageWithSelect = (
+      await payload.find({
+        collection: 'pages',
+        where: {
+          slug: {
+            equals: 'home',
+          },
+        },
+        select: {
+          path: true,
+          breadcrumbs: true,
+        },
+      })
+    ).docs[0]
+
+    const homePage = (
+      await payload.find({
+        collection: 'pages',
+        where: {
+          slug: {
+            equals: 'home',
+          },
+        },
+      })
+    ).docs[0]
+
+    // Breadcrumbs must be an array
+    expect(Array.isArray(homePageWithSelect.breadcrumbs)).toBe(true)
+
+    // Breadcrumbs array should match homePage breadcrumbs
+    expect(removeIdsFromArray(homePageWithSelect.breadcrumbs)).toEqual(
+      removeIdsFromArray(homePage.breadcrumbs),
+    )
+
+    // Path must be defined and non-empty
+    expect(homePageWithSelect.path).toBeDefined()
+
+    // Path must be defined and non-empty
+    expect(homePageWithSelect.path).toEqual(homePage.path)
+  })
+})
+
+/**
+ * Helper function to remove id field from objects in an array
+ */
+const removeIdsFromArray = <T extends { id?: any }>(array: T[]): Omit<T, 'id'>[] => {
+  return array.map(({ id, ...rest }) => rest)
+}

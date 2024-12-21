@@ -5,6 +5,7 @@ import { pathField } from '../fields/pathField'
 import { previewButtonField } from '../fields/previewButtonField'
 import { slugField } from '../fields/slugField'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate'
+import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation'
 import { setVirtualFieldsAfterChange, setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
 import { PageCollectionConfig } from '../types/PageCollectionConfig'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
@@ -37,6 +38,10 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
     page: pageConfig,
     hooks: {
       ...config.hooks,
+      beforeOperation: [
+        ...(config.hooks?.beforeOperation || []),
+        ensureSelectedFieldsBeforeOperation,
+      ],
       beforeRead: [...(config.hooks?.beforeRead || []), setVirtualFieldsBeforeRead],
       afterChange: [...(config.hooks?.afterChange || []), setVirtualFieldsAfterChange],
     },
