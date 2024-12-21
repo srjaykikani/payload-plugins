@@ -25,6 +25,7 @@ export interface Config {
     pages: Page;
     authors: Author;
     blogposts: Blogpost;
+    redirects: Redirect;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -35,6 +36,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     blogposts: BlogpostsSelect<false> | BlogpostsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,7 +99,7 @@ export interface Author {
   parent: string | Page;
   path: string;
   breadcrumbs: Breadcrumbs;
-  title: string;
+  name: string;
   content: string;
   updatedAt: string;
   createdAt: string;
@@ -115,6 +117,19 @@ export interface Blogpost {
   title: string;
   shortTitle: string;
   content: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: string;
+  sourcePath: string;
+  destinationPath: string;
+  type: 'permanent' | 'temporary';
+  reason?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -153,6 +168,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blogposts';
         value: string | Blogpost;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: string | Redirect;
       } | null)
     | ({
         relationTo: 'users';
@@ -237,7 +256,7 @@ export interface AuthorsSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
-  title?: T;
+  name?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -261,6 +280,18 @@ export interface BlogpostsSelect<T extends boolean = true> {
   title?: T;
   shortTitle?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  sourcePath?: T;
+  destinationPath?: T;
+  type?: T;
+  reason?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -2,11 +2,21 @@ import payload from 'payload'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import config from './src/payload.config'
 
+// TODO: add the following tests:
+// - virtual fields generation works for nested docs across collections
+// - redirects are sucessfully created when the slug of a doc changed
+
 beforeAll(async () => {
   await payload.init({
     config: config,
   })
-  await seed()
+
+  for (const collection of (await config).collections) {
+    await payload.delete({
+      collection: collection.slug,
+      where: {},
+    })
+  }
 })
 
 afterAll(async () => {
@@ -15,87 +25,6 @@ afterAll(async () => {
     await payload.db.destroy()
   }
 })
-
-async function seed() {
-  console.log('seeding')
-
-  await payload.delete({
-    collection: 'pages',
-    where: {},
-  })
-
-  const homePage = await payload.create({
-    collection: 'pages',
-    data: {
-      title: 'Home',
-      slug: 'home',
-      content: 'Home Page',
-
-      // @ts-expect-error
-      path: undefined,
-      // @ts-expect-error
-      breadcrumbs: undefined,
-    },
-  })
-
-  await payload.create({
-    collection: 'pages',
-    data: {
-      title: 'Authors',
-      slug: 'authors',
-      content: 'Authors Page',
-
-      // @ts-expect-error
-      path: undefined,
-      // @ts-expect-error
-      breadcrumbs: undefined,
-    },
-  })
-
-  await payload.create({
-    collection: 'pages',
-    data: {
-      title: 'Blog',
-      slug: 'blog',
-      content: 'Blog Page',
-
-      // @ts-expect-error
-      path: undefined,
-      // @ts-expect-error
-      breadcrumbs: undefined,
-    },
-  })
-
-  const childPage = await payload.create({
-    collection: 'pages',
-    data: {
-      title: 'Child',
-      slug: 'child',
-      content: 'Child Page',
-      parent: homePage.id,
-
-      // @ts-expect-error
-      path: undefined,
-      // @ts-expect-error
-      breadcrumbs: undefined,
-    },
-  })
-
-  await payload.create({
-    collection: 'pages',
-    data: {
-      title: 'Nested Child',
-      slug: 'nested-child',
-      content: 'Nested Child Page',
-      parent: childPage.id,
-
-      // @ts-expect-error
-      path: undefined,
-      // @ts-expect-error
-      breadcrumbs: undefined,
-    },
-  })
-}
 
 describe('Path and breadcrumb virtual fields are returned correctly for find operation.', () => {
   describe('Nested document with all locales created.', () => {
@@ -512,52 +441,53 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
 
 describe('Path and breadcrumb virtual fields are set correctly for find operation with select.', () => {
   test('Only path and breadcrumbs are selected (not slug etc.)', async () => {
-    const homePageWithSelect = (
-      await payload.find({
+    const pageId = (
+      await payload.create({
         collection: 'pages',
-        where: {
-          slug: {
-            equals: 'home',
-          },
-        },
-        select: {
-          path: true,
-          breadcrumbs: true,
-          alternatePaths: true,
+        locale: 'de',
+        // @ts-ignore
+        data: {
+          title: 'Page DE',
+          slug: 'page',
+          content: 'Page DE',
         },
       })
-    ).docs[0]
+    ).id
 
-    const homePage = (
-      await payload.find({
-        collection: 'pages',
-        where: {
-          slug: {
-            equals: 'home',
-          },
-        },
-      })
-    ).docs[0]
+    const pageWithSelect = await payload.findByID({
+      collection: 'pages',
+      id: pageId,
+      select: {
+        path: true,
+        breadcrumbs: true,
+        alternatePaths: true,
+      },
+    })
+
+    const pageWithoutSelect = await payload.findByID({
+      collection: 'pages',
+      id: pageId,
+    })
 
     // Breadcrumbs must be an array
-    expect(Array.isArray(homePageWithSelect.breadcrumbs)).toBe(true)
+    expect(Array.isArray(pageWithSelect.breadcrumbs)).toBe(true)
 
     // Breadcrumbs array should match homePage breadcrumbs
-    expect(removeIdsFromArray(homePageWithSelect.breadcrumbs)).toEqual(
-      removeIdsFromArray(homePage.breadcrumbs),
+    expect(removeIdsFromArray(pageWithSelect.breadcrumbs)).toEqual(
+      removeIdsFromArray(pageWithoutSelect.breadcrumbs),
     )
 
     // Path must be defined and non-empty
-    expect(homePageWithSelect.path).toBeDefined()
+    expect(pageWithSelect.path).toBeDefined()
 
     // Path must be defined and non-empty
-    expect(homePageWithSelect.path).toEqual(homePage.path)
+    expect(pageWithSelect.path).toEqual(pageWithoutSelect.path)
 
     // AlternatePaths must be defined and non-empty
-    expect(homePageWithSelect.meta.alternatePaths).toBeDefined()
+    expect(pageWithSelect.meta.alternatePaths).toBeDefined()
 
     // AlternatePaths must match homePage alternatePaths
-    expect(homePageWithSelect.meta.alternatePaths).toEqual(homePage.meta.alternatePaths)
+    expect(pageWithSelect.meta.alternatePaths).toEqual(pageWithoutSelect.meta.alternatePaths)
   })
 })
 

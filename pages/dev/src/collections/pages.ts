@@ -3,6 +3,9 @@ import { CollectionConfig } from 'payload'
 
 export const Pages: CollectionConfig = createPageCollectionConfig({
   slug: 'pages',
+  admin: {
+    useAsTitle: 'title',
+  },
   page: {
     parentCollection: 'pages',
     parentField: 'parent',

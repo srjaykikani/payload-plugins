@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { Authors } from './collections/authors'
 import { Blogposts } from './collections/blogposts'
 import { Pages } from './collections/pages'
+import { Redirects } from './collections/redirects'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,6 +23,7 @@ export default buildConfig({
     Pages,
     Authors,
     Blogposts,
+    Redirects,
     {
       slug: 'users',
       auth: true,

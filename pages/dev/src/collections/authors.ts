@@ -3,14 +3,18 @@ import { CollectionConfig } from 'payload'
 
 export const Authors: CollectionConfig = createPageCollectionConfig({
   slug: 'authors',
+  admin: {
+    useAsTitle: 'name',
+  },
   page: {
     parentCollection: 'pages',
     parentField: 'parent',
     sharedParentDocument: true,
+    breadcrumbLabelField: 'name',
   },
   fields: [
     {
-      name: 'title',
+      name: 'name',
       type: 'text',
       required: true,
       localized: true,
