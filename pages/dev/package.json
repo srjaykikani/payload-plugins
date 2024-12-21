@@ -13,7 +13,8 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:schema": "payload-graphql generate:schema",
-    "generate:importmap": "payload generate:importmap"
+    "generate:importmap": "payload generate:importmap",
+    "test": "vitest"
   },
   "dependencies": {
     "@jhb.software/payload-pages-plugin": "workspace:*",
@@ -29,6 +30,7 @@
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "typescript": "5.7.2"
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
   }
 }
