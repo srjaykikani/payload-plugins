@@ -14,7 +14,7 @@ import { useEffect, useRef } from 'react'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
-import { getBreadcrumbsForLocale } from '../utils/getBreadcrumbs'
+import { getBreadcrumbs as getBreadcrumbsForDoc } from '../utils/getBreadcrumbs'
 import { pathFromBreadcrumbs } from '../utils/pathFromBreadcrumbs'
 
 // useFormFields is not used for the breadcrumbs because of the following payload issue:
@@ -132,14 +132,14 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
         doc[parentField] = parent
         doc[breadcrumbLabelField] = breadcrumbLabel
 
-        const fechtchedBreadcrumbs = await getBreadcrumbsForLocale({
+        const fechtchedBreadcrumbs = (await getBreadcrumbsForDoc({
           req: undefined, // payload req is not available here
           collection: collection,
           parentField: parentField,
           parentCollection: parentCollection,
           data: doc,
           locale: locale,
-        })
+        })) as Breadcrumb[]
 
         const updatedPath = pathFromBreadcrumbs({
           locale: locale,

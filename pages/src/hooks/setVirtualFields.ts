@@ -1,9 +1,10 @@
 import { CollectionAfterChangeHook, CollectionBeforeReadHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
+import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
 import { PageCollectionConfig } from '../types/PageCollectionConfig'
 import { SeoMetadata } from '../types/SeoMetadata'
-import { getBreadcrumbsForAllLocales, getBreadcrumbsForLocale } from '../utils/getBreadcrumbs'
+import { getBreadcrumbs } from '../utils/getBreadcrumbs'
 import { validateBreadcrumbs } from '../utils/validateBreadcrumbs'
 import { validatePath } from '../utils/validatePath'
 
@@ -68,15 +69,15 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
     )
   }
 
-  const { parentCollection, parentField } = asPageCollectionConfigOrThrow(collection).page
-
-  const breadcrumbs = await getBreadcrumbsForAllLocales({
+  const breadcrumbs = (await getBreadcrumbs({
     req,
     collection,
-    parentField,
-    parentCollection,
+    parentField: pageConfig.page.parentField,
+    parentCollection: pageConfig.page.parentCollection,
     data: doc,
-  })
+    // we need to fetch the breadcrumbs for all locales in order to correctly set the alternate paths
+    locale: 'all',
+  })) as Record<Locale, Breadcrumb[]>
 
   const locales = (req?.payload.config.localization! as any).localeCodes as Locale[]
 
@@ -143,17 +144,16 @@ export const setVirtualFieldsAfterChange: CollectionAfterChangeHook = async ({
 }) => {
   // This type of hook is only called for one locale.
   const locale = req.locale as Locale
-
   const { parentCollection, parentField } = asPageCollectionConfigOrThrow(collection).page
 
-  const breadcrumbs = await getBreadcrumbsForLocale({
+  const breadcrumbs = (await getBreadcrumbs({
     req,
     collection,
-    parentField,
-    parentCollection,
+    parentField: parentField,
+    parentCollection: parentCollection,
     data: doc,
     locale,
-  })
+  })) as Breadcrumb[]
 
   const path = breadcrumbs.at(-1)!.path
 

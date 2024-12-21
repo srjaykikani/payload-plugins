@@ -1,4 +1,4 @@
-// TODO: is it possible to get the Locale type from the config? something like 'en' | 'de'
+// TODO: get the locale from the generated types
 
 /** All locales that are configured in the payload config for this project. */
 export type Locale = string
