@@ -16,7 +16,7 @@ export const createRedirectsCollectionConfig = ({
 }: {
   labels?: CollectionConfig['labels']
   access?: CollectionConfig['access']
-  overrides: {
+  overrides?: {
     admin?: CollectionConfig['admin']
   }
 }): CollectionConfig => ({
@@ -26,7 +26,7 @@ export const createRedirectsCollectionConfig = ({
     listSearchableFields: ['sourcePath', 'destinationPath'],
     ...overrides.admin,
   },
-  labels: labels ?? {},
+  labels: labels ?? undefined, // set to undefined to use the default labels if not provided
   access: access ?? {},
   hooks: {
     beforeValidate: [validateRedirect],
