@@ -4,6 +4,7 @@ import { RelationshipField, useConfig, useDocumentInfo, useField } from '@payloa
 import { RelationshipFieldClientComponent, SanitizedCollectionConfig } from 'payload'
 import { useEffect, useState } from 'react'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
+import { fetchRestApi } from '../utils/fetchRestApi'
 
 // TODO: migrate this component to be a server component which useses the local api to fetch the shared parent document
 
@@ -37,7 +38,7 @@ export const ParentField: RelationshipFieldClientComponent = ({ field, path }) =
     // 1. is the first item in the collection, then getCollectionWideParent() will return null
     // 2. is a new item, then getCollectionWideParent() will return the shared parent value
     if (sharedParentDocument && !value) {
-      const parentValue = await getSharedParentDocument({ collection: collectionSlug! })
+      const parentValue = await getSharedParentDocument({ collection })
 
       if (parentValue) {
         setValue(parentValue)
@@ -56,42 +57,24 @@ export const ParentField: RelationshipFieldClientComponent = ({ field, path }) =
 async function getSharedParentDocument({
   collection,
 }: {
-  collection: string
+  collection: SanitizedCollectionConfig
 }): Promise<string | null> {
-  let collectionSlugCapitalized = collection.charAt(0).toUpperCase() + collection.slice(1)
-  if (collectionSlugCapitalized.includes('-')) {
-    // replace the hypen and capitalize the letter after it
-    collectionSlugCapitalized = collectionSlugCapitalized.replace(/-./g, (match) =>
-      match.charAt(1).toUpperCase(),
-    )
-  }
+  const { parentField } = asPageCollectionConfigOrThrow(collection).page
 
-  try {
-    const query = /* GraphQL */ `
-      query Data {
-        ${collectionSlugCapitalized}(limit: 1, draft: true, where: { parent: { not_equals: null } }) {
-          docs {
-            id
-            parent {
-              id
-            }
-          }
-        }
-      }
-    `
+  const response = await fetchRestApi(`/${collection.slug}`, {
+    limit: 1,
+    draft: true,
+    where: {
+      [parentField]: {
+        not_equals: null,
+      },
+    },
+    select: {
+      [parentField]: true,
+    },
+  })
 
-    const response = await fetch(`/api/graphql`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-    })
+  const doc = response.docs.at(0)
 
-    const json = await response.json()
-    const doc = json.data[collectionSlugCapitalized].docs.at(0)
-
-    return doc?.parent?.id
-  } catch (error) {
-    console.error('Error fetching the parent ID of other docs in this collection. ', error)
-    return null
-  }
+  return doc?.parent?.id ?? null
 }

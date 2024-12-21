@@ -1,8 +1,8 @@
 import { CollectionSlug, PayloadRequest, SanitizedCollectionConfig } from 'payload'
-import { stringify } from 'qs-esm'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
+import { fetchRestApi } from './fetchRestApi'
 import { pathFromBreadcrumbs } from './pathFromBreadcrumbs'
 
 /** Returns the breadcrumbs to the given document. */
@@ -64,7 +64,7 @@ export async function getBreadcrumbs({
         },
         // IMPORTANT: do not pass the req here, otherwise there will be issues with the locale flattening
       })
-    : await fetchPayloadRestApi(`/${parentCollection}/${parentId}`, {
+    : await fetchRestApi(`/${parentCollection}/${parentId}`, {
         depth: 0,
         locale: locale,
         select: {
@@ -116,22 +116,4 @@ function docToBreadcrumb(
         (doc[breadcrumbLabelField]?.[locale] ?? doc[breadcrumbLabelField])
       : (doc.breadcrumbs?.[locale]?.at(-1)?.label ?? doc.breadcrumbs?.at(-1)?.label),
   }
-}
-
-/** Fetches a document via the Payload REST API. This should only be used if the local API is not available. */
-async function fetchPayloadRestApi(path: string, options: Record<string, any>) {
-  const response = await fetch('/api' + path + '?' + stringify(options), {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch the requested document via the Payload REST API. ${response.statusText}`,
-    )
-  }
-
-  return await response.json()
 }
