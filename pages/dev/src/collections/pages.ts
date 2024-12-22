@@ -11,6 +11,11 @@ export const Pages: CollectionConfig = createPageCollectionConfig({
     parentField: 'parent',
     isRootCollection: true,
   },
+  versions: {
+    drafts: {
+      autosave: true,
+    },
+  },
   fields: [
     {
       name: 'title',
