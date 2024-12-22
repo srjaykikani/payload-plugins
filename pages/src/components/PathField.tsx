@@ -10,12 +10,12 @@ import {
   useLocale,
 } from '@payloadcms/ui'
 import { SanitizedCollectionConfig, TextFieldClientComponent } from 'payload'
-import { useEffect, useRef } from 'react'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
 import { getBreadcrumbs as getBreadcrumbsForDoc } from '../utils/getBreadcrumbs'
 import { pathFromBreadcrumbs } from '../utils/pathFromBreadcrumbs'
+import { useDidUpdateEffect } from '../utils/useDidUpdateEffect'
 
 // useFormFields is not used for the breadcrumbs because of the following payload issue:
 // see https://github.com/payloadcms/payload/issues/8146
@@ -82,7 +82,6 @@ const useBreadcrumbs = () => {
 }
 
 export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, schemaPath }) => {
-  const hasMounted = useRef(false)
   const { collectionSlug } = useDocumentInfo()
   const {
     config: { collections },
@@ -99,7 +98,7 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
   } = asPageCollectionConfigOrThrow(collection).page
   const breadcrumbLabelField = breadcrumbLabelFieldRaw!
   const { code: locale } = useLocale() as unknown as { code: Locale }
-  const { getBreadcrumbs, setBreadcrumbs } = useBreadcrumbs()
+  const { getBreadcrumbs, setBreadcrumbs: setBreadcrumbsRaw } = useBreadcrumbs()
   const { setValue: setPathRaw, value: path } = useField<string>({ path: fieldPath! })
   const slug = useFormFields(([fields, _]) => fields.slug)?.value as string | undefined
   const breadcrumbLabel = useFormFields(([fields, _]) => fields[breadcrumbLabelField])?.value as
@@ -107,22 +106,53 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
     | undefined
   const parent = useFormFields(([fields, _]) => fields[parentField])?.value as string | undefined
 
+  /**
+   * Sets the path, but only if the new path is different from the current path.
+   * This prevents the "leave without saving" warning from being shown every time a document is opened without it being actually modified.
+   * */
   const setPath = (newPath: string) => {
-    // the following check prevents the "leave without saving" warning from being shown every time a document is opened without editing
     if (newPath !== path) {
       setPathRaw(newPath)
     }
   }
 
-  // update the breadcrumbs and path when
-  //  - the parent changes
-  useEffect(() => {
-    // skip the execution on the initial mount
-    if (!hasMounted.current) {
-      hasMounted.current = true
-      return
+  /**
+   * Sets the breadcrumbs, but only if the new breadcrumbs are different from the current breadcrumbs.
+   * This prevents the "leave without saving" warning from being shown every time a document is opened without it being actually modified.
+   */
+  const setBreadcrumbs = (newBreadcrumbs: Breadcrumb[]) => {
+    let breadcrumbs = getBreadcrumbs() as Breadcrumb[]
+
+    // Compare breadcrumbs ignoring id field since it's not relevant for equality
+    const areBreadcrumbsEqual = (a: Breadcrumb[], b: Breadcrumb[]) => {
+      if (a.length !== b.length) return false
+      return a.every((breadcrumb, i) => {
+        // Sort keys to ensure consistent order when comparing
+        const sortObject = (obj: any) => {
+          return Object.keys(obj)
+            .sort()
+            .reduce((result: any, key) => {
+              result[key] = obj[key]
+              return result
+            }, {})
+        }
+
+        const aWithoutId = sortObject({ ...breadcrumb, id: undefined })
+        const bWithoutId = sortObject({ ...b[i], id: undefined })
+
+        return JSON.stringify(aWithoutId) === JSON.stringify(bWithoutId)
+      })
     }
 
+    // Only update if breadcrumbs have actually changed
+    if (!areBreadcrumbsEqual(breadcrumbs, newBreadcrumbs)) {
+      setBreadcrumbsRaw(newBreadcrumbs)
+    }
+  }
+
+  // update the breadcrumbs and path when
+  //  - the parent changes
+  useDidUpdateEffect(() => {
     const fetchAndSetData = async () => {
       // the parent was added:
       if (parent) {
@@ -169,13 +199,7 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
   // Update the breadcrumbs and path when
   //  - the slug changes
   //  - the field used for the breadcrumb label changes
-  useEffect(() => {
-    // skip the execution on the initial mount
-    if (!hasMounted.current) {
-      hasMounted.current = true
-      return
-    }
-
+  useDidUpdateEffect(() => {
     let breadcrumbs = getBreadcrumbs() as Breadcrumb[]
 
     if (!breadcrumbs || breadcrumbs.length === 0) {
