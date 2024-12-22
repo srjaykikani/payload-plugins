@@ -228,19 +228,22 @@ export interface PagesSelect<T extends boolean = true> {
   slug?: T;
   parent?: T;
   path?: T;
-  breadcrumbs?:
-    | T
-    | {
-        slug?: T;
-        path?: T;
-        label?: T;
-        id?: T;
-      };
+  breadcrumbs?: T | BreadcrumbsSelect<T>;
   title?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Breadcrumbs_select".
+ */
+export interface BreadcrumbsSelect<T extends boolean = true> {
+  slug?: T;
+  path?: T;
+  label?: T;
+  id?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -250,14 +253,7 @@ export interface AuthorsSelect<T extends boolean = true> {
   slug?: T;
   parent?: T;
   path?: T;
-  breadcrumbs?:
-    | T
-    | {
-        slug?: T;
-        path?: T;
-        label?: T;
-        id?: T;
-      };
+  breadcrumbs?: T | BreadcrumbsSelect<T>;
   name?: T;
   content?: T;
   updatedAt?: T;
@@ -271,14 +267,7 @@ export interface BlogpostsSelect<T extends boolean = true> {
   slug?: T;
   author?: T;
   path?: T;
-  breadcrumbs?:
-    | T
-    | {
-        slug?: T;
-        path?: T;
-        label?: T;
-        id?: T;
-      };
+  breadcrumbs?: T | BreadcrumbsSelect<T>;
   title?: T;
   shortTitle?: T;
   content?: T;
