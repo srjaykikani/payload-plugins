@@ -1,3 +1,4 @@
+export { usePageCollectionConfigAttributes } from '../components/hooks/usePageCollectionConfigAtrributes'
 export { ParentField } from '../components/ParentField'
 export { PathField } from '../components/PathField'
 export { PreviewButtonField } from '../components/PreviewButtonField'

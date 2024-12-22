@@ -2,7 +2,7 @@ import { CollectionAfterChangeHook, CollectionBeforeReadHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
-import { PageCollectionConfig } from '../types/PageCollectionConfig'
+import { IncomingPageCollectionConfig } from '../types/PageCollectionConfig'
 import { SeoMetadata } from '../types/SeoMetadata'
 import { getBreadcrumbs } from '../utils/getBreadcrumbs'
 import { validateBreadcrumbs } from '../utils/validateBreadcrumbs'
@@ -12,7 +12,7 @@ import { validatePath } from '../utils/validatePath'
  * Returns the fields that are necessary for the setVirtualFields hook to correctly generate the virtual
  * path and breadcrumbs fields.
  */
-export function requiredFields(collectionConfig: PageCollectionConfig): string[] {
+export function requiredFields(collectionConfig: IncomingPageCollectionConfig): string[] {
   return [
     'slug',
     collectionConfig.page.parentField,

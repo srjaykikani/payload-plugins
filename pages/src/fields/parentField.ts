@@ -1,7 +1,7 @@
 import { Field } from 'payload'
-import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
+import { IncomingPageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
 
-export function parentField(pageConfig: PageCollectionConfigAttributes): Field {
+export function parentField(pageConfig: IncomingPageCollectionConfigAttributes): Field {
   return {
     name: pageConfig.parentField!,
     type: 'relationship',

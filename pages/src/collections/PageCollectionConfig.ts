@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload'
+import { ClientCollectionConfig, CollectionConfig } from 'payload'
 import { breadcrumbsField } from '../fields/breadcrumbsField'
 import { parentField } from '../fields/parentField'
 import { pathField } from '../fields/pathField'
@@ -6,7 +6,7 @@ import { slugField } from '../fields/slugField'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate'
 import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation'
 import { setVirtualFieldsAfterChange, setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
-import { PageCollectionConfig } from '../types/PageCollectionConfig'
+import { IncomingPageCollectionConfig, PageCollectionConfig } from '../types/PageCollectionConfig'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
 import { getPageUrl } from '../utils/getPageUrl'
 
@@ -17,16 +17,20 @@ import { getPageUrl } from '../utils/getPageUrl'
  * - Hidden breadcrumbs array field
  * - Hooks for managing virtual fields and page duplication
  */
-export const createPageCollectionConfig = (config: PageCollectionConfig): PageCollectionConfig => {
-  const titleField = config.page.breadcrumbLabelField ?? config.admin?.useAsTitle ?? 'title'
+export const createPageCollectionConfig = (
+  config: IncomingPageCollectionConfig,
+): PageCollectionConfig => {
+  const pageConfig: PageCollectionConfigAttributes = {
+    // required fields are kept as they are
+    parentCollection: config.page.parentCollection,
+    parentField: config.page.parentField,
 
-  const pageConfig = {
-    ...config.page,
-    breadcrumbLabelField: titleField,
+    // optional fields are set to default values if not provided
+    breadcrumbLabelField: config.page.breadcrumbLabelField ?? config.admin?.useAsTitle ?? 'title',
+    slugFallbackField: config.page.slugFallbackField ?? config.admin?.useAsTitle ?? 'title',
     sharedParentDocument: config.page.sharedParentDocument ?? false,
     isRootCollection: config.page.isRootCollection ?? false,
-    slugFallbackField: config.page.slugFallbackField ?? 'title',
-  } as PageCollectionConfigAttributes
+  }
 
   return {
     ...config,
@@ -69,7 +73,7 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
 
       // add the beforeDuplicate hook to the title field
       ...config.fields.map((field) =>
-        'name' in field && field.name === titleField
+        'name' in field && field.name === config.admin?.useAsTitle
           ? {
               ...field,
               hooks: {
@@ -84,7 +88,7 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
 
 /** Checks if the config is a PageCollectionConfig. */
 export const isPageCollectionConfig = (
-  config: CollectionConfig,
+  config: CollectionConfig | ClientCollectionConfig,
 ): config is PageCollectionConfig => {
   if (!config) {
     console.error('config is not defined')
@@ -99,7 +103,9 @@ export const isPageCollectionConfig = (
  *
  * This provides type-safe access to the page attributes.
  */
-export const asPageCollectionConfig = (config: CollectionConfig): PageCollectionConfig | null => {
+export const asPageCollectionConfig = (
+  config: CollectionConfig | ClientCollectionConfig,
+): PageCollectionConfig | null => {
   if (isPageCollectionConfig(config)) {
     return config
   }
@@ -111,7 +117,9 @@ export const asPageCollectionConfig = (config: CollectionConfig): PageCollection
  *
  * This provides type-safe access to the page attributes.
  */
-export const asPageCollectionConfigOrThrow = (config: CollectionConfig): PageCollectionConfig => {
+export const asPageCollectionConfigOrThrow = (
+  config: CollectionConfig | ClientCollectionConfig,
+): PageCollectionConfig => {
   if (isPageCollectionConfig(config)) {
     return config
   }

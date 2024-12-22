@@ -1,11 +1,11 @@
 import { CollectionSlug } from 'payload'
 
-/** Custom attributes for a page collection config which are primarily used in collection and field hooks. */
-export type PageCollectionConfigAttributes = {
+/** The incoming attributes for the page collection config. */
+export type IncomingPageCollectionConfigAttributes = {
   /** Collection in which the parent document is stored. */
   parentCollection: CollectionSlug
 
-  /** Name of the field to store the parent document. */
+  /** Name of the relationship field which stores the parent document. */
   parentField: string
 
   /** Whether this collection contains the root page and therefore the parent field is optional. Defaults to `false`. */
@@ -28,4 +28,29 @@ export type PageCollectionConfigAttributes = {
    * Defaults to `title`.
    */
   slugFallbackField?: string
+}
+
+/** The attributes for the page collection config after they have been processed using the incoming config attributes. */
+export type PageCollectionConfigAttributes = {
+  /** Collection in which the parent document is stored. */
+  parentCollection: CollectionSlug
+
+  /** Name of the relationship field which stores the parent document. */
+  parentField: string
+
+  /** Whether this collection contains the root page and therefore the parent field is optional. */
+  isRootCollection: boolean
+
+  /** Whether all documents share the same parent document. */
+  sharedParentDocument: boolean
+
+  /**
+   * Name of the field to use to generate the breadcrumb label.
+   **/
+  breadcrumbLabelField: string
+
+  /**
+   * Name of the field to use as fallback for the slug field.
+   */
+  slugFallbackField: string
 }

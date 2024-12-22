@@ -2,20 +2,19 @@
 import {
   TextField,
   useAllFormFields,
-  useConfig,
-  useDocumentInfo,
   useField,
   useForm,
   useFormFields,
   useLocale,
 } from '@payloadcms/ui'
 import { SanitizedCollectionConfig, TextFieldClientComponent } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
 import { getBreadcrumbs as getBreadcrumbsForDoc } from '../utils/getBreadcrumbs'
 import { pathFromBreadcrumbs } from '../utils/pathFromBreadcrumbs'
 import { useDidUpdateEffect } from '../utils/useDidUpdateEffect'
+import { useCollectionConfig } from './hooks/useCollectionConfig'
+import { usePageCollectionConfigAttributes } from './hooks/usePageCollectionConfigAtrributes'
 
 // useFormFields is not used for the breadcrumbs because of the following payload issue:
 // see https://github.com/payloadcms/payload/issues/8146
@@ -82,28 +81,18 @@ const useBreadcrumbs = () => {
 }
 
 export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, schemaPath }) => {
-  const { collectionSlug } = useDocumentInfo()
-  const {
-    config: { collections },
-  } = useConfig()
-
-  // TODO: find a solution without using the unknown type, pass fallbackSlug directly to this component instead?
-  const collection = collections.find(
-    (c) => c.slug === collectionSlug,
-  ) as unknown as SanitizedCollectionConfig
+  const collection = useCollectionConfig()
   const {
     parentCollection,
     parentField,
-    breadcrumbLabelField: breadcrumbLabelFieldRaw,
-  } = asPageCollectionConfigOrThrow(collection).page
-  const breadcrumbLabelField = breadcrumbLabelFieldRaw!
+    breadcrumbLabelField: breadcrumbLabelFieldName,
+  } = usePageCollectionConfigAttributes()
   const { code: locale } = useLocale() as unknown as { code: Locale }
   const { getBreadcrumbs, setBreadcrumbs: setBreadcrumbsRaw } = useBreadcrumbs()
   const { setValue: setPathRaw, value: path } = useField<string>({ path: fieldPath! })
   const slug = useFormFields(([fields, _]) => fields.slug)?.value as string | undefined
-  const breadcrumbLabel = useFormFields(([fields, _]) => fields[breadcrumbLabelField])?.value as
-    | string
-    | undefined
+  const breadcrumbLabel = useFormFields(([fields, _]) => fields[breadcrumbLabelFieldName])
+    ?.value as string | undefined
   const parent = useFormFields(([fields, _]) => fields[parentField])?.value as string | undefined
 
   /**
@@ -160,11 +149,11 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
           slug: slug,
         }
         doc[parentField] = parent
-        doc[breadcrumbLabelField] = breadcrumbLabel
+        doc[breadcrumbLabelFieldName] = breadcrumbLabel
 
         const fechtchedBreadcrumbs = (await getBreadcrumbsForDoc({
           req: undefined, // payload req is not available here
-          collection: collection,
+          collection: collection as unknown as SanitizedCollectionConfig,
           parentField: parentField,
           parentCollection: parentCollection,
           data: doc,
