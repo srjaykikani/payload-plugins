@@ -2,13 +2,13 @@ import { CollectionConfig } from 'payload'
 import { breadcrumbsField } from '../fields/breadcrumbsField'
 import { parentField } from '../fields/parentField'
 import { pathField } from '../fields/pathField'
-import { previewButtonField } from '../fields/previewButtonField'
 import { slugField } from '../fields/slugField'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate'
 import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation'
 import { setVirtualFieldsAfterChange, setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
 import { PageCollectionConfig } from '../types/PageCollectionConfig'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
+import { getPageUrl } from '../utils/getPageUrl'
 
 /**
  * Creates a collection config for a page-like collection by adding:
@@ -30,6 +30,21 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
 
   return {
     ...config,
+    admin: {
+      ...config.admin,
+      preview: (data) =>
+        getPageUrl({
+          path: data.path as string,
+          preview: true,
+        }) as string,
+      components: {
+        edit: {
+          PreviewButton: {
+            path: '@jhb.software/payload-pages-plugin/client#PreviewButtonField',
+          },
+        },
+      },
+    },
     custom: {
       ...config.custom,
       // This makes the page attributes available in hooks etc.
@@ -46,7 +61,6 @@ export const createPageCollectionConfig = (config: PageCollectionConfig): PageCo
       afterChange: [...(config.hooks?.afterChange || []), setVirtualFieldsAfterChange],
     },
     fields: [
-      previewButtonField(),
       slugField({ redirectWarning: true, fallbackField: pageConfig.slugFallbackField }),
       parentField(pageConfig),
       pathField(),
