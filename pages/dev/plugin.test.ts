@@ -11,7 +11,7 @@ beforeAll(async () => {
     config: config,
   })
 
-  for (const collection of (await config).collections) {
+  for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
     await payload.delete({
       collection: collection.slug,
       where: {},
@@ -27,7 +27,7 @@ afterAll(async () => {
 })
 
 describe('Path and breadcrumb virtual fields are returned correctly for find operation.', () => {
-  describe('Nested document with all locales created.', () => {
+  describe('Nested document in same collection with all locales created.', () => {
     const rootPageDataDe = {
       title: 'Root Page DE',
       slug: 'root-page-de',
@@ -247,7 +247,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     })
   })
 
-  describe('Nested document with one locale created.', () => {
+  describe('Nested document in same collection with one locale created.', () => {
     const rootPageDataDe = {
       title: 'Root Page DE',
       slug: 'root-page-de-1',
@@ -436,6 +436,73 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
         ])
       })
     })
+  })
+
+  test('Nested document across collections with one locale created.', async () => {
+    const locale = 'de'
+    const authorOverviewPageData = {
+      title: 'Authors',
+      slug: 'authors',
+      content: 'Authors page',
+    }
+    const authorPageData = {
+      name: 'Test Author',
+      slug: 'test-author',
+      content: 'Test Author',
+    }
+
+    const authorOverviewPageId = (
+      await payload.create({
+        collection: 'pages',
+        locale,
+        data: authorOverviewPageData,
+      })
+    ).id
+
+    const authorPageId = (
+      await payload.create({
+        collection: 'authors',
+        locale,
+        data: { ...authorPageData, parent: authorOverviewPageId },
+      })
+    ).id
+
+    // Verify the author was created and linked correctly
+    const author = await payload.findByID({
+      collection: 'authors',
+      depth: 0,
+      id: authorPageId,
+    })
+
+    expect(author).toBeDefined()
+    expect(author.parent).toBe(authorOverviewPageId)
+
+    // Verify path is correctly set
+    expect(author.path).toBe(`/${locale}/${authorOverviewPageData.slug}/${authorPageData.slug}`)
+
+    // Verify breadcrumbs are correctly set
+    expect(author.breadcrumbs).toBeDefined()
+    expect(removeIdsFromArray(author.breadcrumbs)).toEqual([
+      {
+        label: authorOverviewPageData.title,
+        path: `/${locale}/${authorOverviewPageData.slug}`,
+        slug: authorOverviewPageData.slug,
+      },
+      {
+        label: authorPageData.name,
+        path: `/${locale}/${authorOverviewPageData.slug}/${authorPageData.slug}`,
+        slug: authorPageData.slug,
+      },
+    ])
+
+    // Verify alternatePaths are correctly set
+    expect(author.meta.alternatePaths).toBeDefined()
+    expect(author.meta.alternatePaths).toEqual([
+      {
+        hreflang: locale,
+        path: `/${locale}/${authorOverviewPageData.slug}/${authorPageData.slug}`,
+      },
+    ])
   })
 })
 
