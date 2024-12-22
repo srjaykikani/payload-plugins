@@ -31,7 +31,12 @@ export async function getBreadcrumbs({
         path: pathFromBreadcrumbs({
           locale,
           breadcrumbs: parentBreadcrumbs,
-          additionalSlug: typeof data.slug === 'string' ? data.slug : data.slug[locale],
+          additionalSlug:
+            typeof data.slug === 'string'
+              ? data.slug
+              : typeof data.slug === 'object'
+                ? data.slug[locale]
+                : undefined,
         }),
       },
       locale,
