@@ -14,7 +14,8 @@
     "generate:types": "payload generate:types",
     "generate:schema": "payload-graphql generate:schema",
     "generate:importmap": "payload generate:importmap",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@jhb.software/payload-pages-plugin": "workspace:*",

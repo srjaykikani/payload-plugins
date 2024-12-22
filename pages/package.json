@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-pages-plugin",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Payload CMS plugin that adds essential fields for hierarchical page structure to collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
@@ -17,9 +17,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "test": "jest",
+    "test": "cd dev && pnpm test",
+    "test:watch": "cd dev && pnpm test:watch",
     "lint": "eslint .",
-    "prepublish": "tsc"
+    "prepublish": "tsc && pnpm test"
   },
   "dependencies": {
     "qs-esm": "^7.0.2"
