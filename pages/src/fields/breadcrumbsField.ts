@@ -23,6 +23,8 @@ export function breadcrumbsField(): Field {
             required: true,
             type: 'text',
             localized: true,
+            // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
+            validate: (_: any): true => true,
             admin: {
               width: '33%',
             },
@@ -32,6 +34,8 @@ export function breadcrumbsField(): Field {
             required: true,
             type: 'text',
             localized: true,
+            // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
+            validate: (_: any): true => true,
             admin: {
               width: '33%',
             },
@@ -41,6 +45,8 @@ export function breadcrumbsField(): Field {
             required: true,
             type: 'text',
             localized: true,
+            // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
+            validate: (_: any): true => true,
             admin: {
               width: '33%',
             },

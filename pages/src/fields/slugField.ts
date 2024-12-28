@@ -1,6 +1,6 @@
 import { Field } from 'payload'
 import { beforeDuplicateSlug } from '../hooks/beforeDuplicate'
-import { validateSlug } from '../hooks/validateSlug'
+import { createSlugFromFallbackField } from '../hooks/validateSlug'
 
 // Note: make sure this field can be used separately from the PagesCollectionConfig (e.g. a non page collection needs a slug field as well)
 
@@ -25,10 +25,34 @@ export function slugField({
           },
         },
       },
+      // The condition option is not used to hide the field when the page is the root page because then the type of the slug field would be optional.
+    },
+    validate: (
+      value: string | null | undefined,
+      options: { data: any; siblingData: any; id?: string | number },
+    ) => {
+      // TODO: reactivate this code when refactoring the virtual field validation, note that this validation should only be applied in pages collections
+      // if (options.data.isRootPage) {
+      //   if (value !== ROOT_PAGE_SLUG) {
+      //     return 'The slug of the root page must be an empty string.'
+      //   } else {
+      //     return true
+      //   }
+      // } else {
+      //   if (!value) {
+      //     return 'The slug is required.'
+      //   }
+      //   const formattedValue = formatSlug(value)
+      //   if (value !== formattedValue) {
+      //     return 'The slug is not formatted correctly.'
+      //   }
+      //   return true
+      // }
+      return true
     },
     hooks: {
       beforeDuplicate: [beforeDuplicateSlug],
-      beforeValidate: [validateSlug(fallbackField)],
+      beforeValidate: [createSlugFromFallbackField(fallbackField)],
     },
     unique: true,
     index: true,

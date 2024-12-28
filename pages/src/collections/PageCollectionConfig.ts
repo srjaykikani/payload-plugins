@@ -1,11 +1,12 @@
-import { ClientCollectionConfig, CollectionConfig } from 'payload'
+import { ClientCollectionConfig, CollectionConfig, Field } from 'payload'
 import { breadcrumbsField } from '../fields/breadcrumbsField'
+import { isRootPageField } from '../fields/isRootPageField'
 import { parentField } from '../fields/parentField'
 import { pathField } from '../fields/pathField'
 import { slugField } from '../fields/slugField'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate'
 import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation'
-import { setVirtualFieldsAfterChange, setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
+import { setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
 import { IncomingPageCollectionConfig, PageCollectionConfig } from '../types/PageCollectionConfig'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
 import { getPageUrl } from '../utils/getPageUrl'
@@ -62,9 +63,9 @@ export const createPageCollectionConfig = (
         ensureSelectedFieldsBeforeOperation,
       ],
       beforeRead: [...(config.hooks?.beforeRead || []), setVirtualFieldsBeforeRead],
-      afterChange: [...(config.hooks?.afterChange || []), setVirtualFieldsAfterChange],
     },
     fields: [
+      ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
       slugField({ redirectWarning: true, fallbackField: pageConfig.slugFallbackField }),
       parentField(pageConfig),
       pathField(),

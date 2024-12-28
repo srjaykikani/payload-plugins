@@ -21,6 +21,24 @@ Use the `createPagesCollectionConfig` function to create a collection config for
 - `breadcrumbLabelField` (optional, defaults to `admin.useAsTitle`): The name of the field that will be used to label the document in the breadcrumb.
 - `slugFallbackField` (optional, defaults to `title`): The name of the field that will be used as the fallback for the slug.
 
+First, the root collection must be created. This is the collection that will contain the root page.
+
+```ts
+import { createPagesCollectionConfig } from '@jhb.software/payload-pages-plugin'
+
+const Pages: CollectionConfig = createPageCollectionConfig({
+  slug: 'pages',
+  page: {
+    parentCollection: 'pages',
+    parentField: 'parent',
+    isRootCollection: true,
+  },
+  // configure the rest as normal
+})
+```
+
+Then additional collections can be created. Documents in these collections will be nested under documents in the root collection.
+
 ```ts
 import { createPagesCollectionConfig } from '@jhb.software/payload-pages-plugin'
 
@@ -29,6 +47,7 @@ const Projects: CollectionConfig = createPageCollectionConfig({
   page: {
     parentCollection: 'pages',
     parentField: 'parent',
+    sharedParentDocument: true,
   },
   // configure the rest as normal
 })

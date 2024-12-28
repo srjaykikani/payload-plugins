@@ -1,29 +1,28 @@
-import { CollectionSlug, PayloadRequest, SanitizedCollectionConfig } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
+import { CollectionSlug, PayloadRequest } from 'payload'
 import { Breadcrumb } from '../types/Breadcrumb'
 import { Locale } from '../types/Locale'
 import { fetchRestApi } from './fetchRestApi'
 import { pathFromBreadcrumbs } from './pathFromBreadcrumbs'
+import { ROOT_PAGE_SLUG } from './setRootPageVirtualFields'
 
 /** Returns the breadcrumbs to the given document. */
 export async function getBreadcrumbs({
   req,
-  collection,
+  locales,
+  breadcrumbLabelField,
   parentField,
   parentCollection,
   data,
   locale,
 }: {
   req: PayloadRequest | undefined // undefined when called from the client (e.g. when using the PathField)
-  collection: SanitizedCollectionConfig
+  locales: Locale[]
+  breadcrumbLabelField: string
   parentField: string
   parentCollection: CollectionSlug
   data: any
   locale: Locale | 'all'
 }): Promise<Breadcrumb[] | Record<Locale, Breadcrumb[]>> {
-  const { breadcrumbLabelField } = asPageCollectionConfigOrThrow(collection).page
-  const locales = ((req?.payload.config.localization! as any)?.localeCodes as Locale[]) ?? []
-
   const getCurrentDocBreadcrumb = (locale: Locale, parentBreadcrumbs: Breadcrumb[]) =>
     docToBreadcrumb(
       {
@@ -31,8 +30,9 @@ export async function getBreadcrumbs({
         path: pathFromBreadcrumbs({
           locale,
           breadcrumbs: parentBreadcrumbs,
-          additionalSlug:
-            typeof data.slug === 'string'
+          additionalSlug: data.isRootPage
+            ? ROOT_PAGE_SLUG
+            : typeof data.slug === 'string'
               ? data.slug
               : typeof data.slug === 'object'
                 ? data.slug[locale]
@@ -79,13 +79,7 @@ export async function getBreadcrumbs({
 
   if (!parent) {
     // This can be the case, when the parent document got deleted.
-    throw new Error(
-      'Parent document of document ' +
-        data.id +
-        ' in collection ' +
-        collection.slug +
-        ' not found.',
-    )
+    throw new Error('Parent document of document ' + data.id + ' not found.')
   }
 
   if (locale === 'all') {
@@ -114,7 +108,13 @@ function docToBreadcrumb(
   breadcrumbLabelField?: string | undefined,
 ): Breadcrumb {
   return {
-    slug: typeof doc.slug === 'string' ? doc.slug : doc.slug?.[locale],
+    slug: doc.isRootPage
+      ? ROOT_PAGE_SLUG
+      : typeof doc.slug === 'string'
+        ? doc.slug
+        : typeof doc.slug === 'object'
+          ? doc.slug[locale]
+          : undefined,
     path: typeof doc.path === 'string' ? doc.path : doc.path?.[locale],
     label: breadcrumbLabelField
       ? // the label field might not be localized (e.g. it's a persons name), therefore we need to check both localized and unlocalized

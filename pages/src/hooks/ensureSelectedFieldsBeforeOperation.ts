@@ -14,7 +14,11 @@ export const ensureSelectedFieldsBeforeOperation: CollectionBeforeOperationHook 
   if (operation == 'read' && args.select) {
     const selectedFields = Object.keys(args.select)
 
-    if (selectedFields.includes('path') || selectedFields.includes('breadcrumbs')) {
+    if (
+      selectedFields.includes('path') ||
+      selectedFields.includes('breadcrumbs') ||
+      selectedFields.includes('meta.alternatePaths')
+    ) {
       const pageConfig = asPageCollectionConfigOrThrow(args.collection.config)
 
       // Select the parent, slug and breadcrumbLabelField fields, as they are required for the setVirtualFields hook to work.

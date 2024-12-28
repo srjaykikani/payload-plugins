@@ -1,8 +1,8 @@
 'use client'
 import { Banner, FieldLabel, TextInput, Tooltip, useDocumentInfo, useField } from '@payloadcms/ui'
+import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
 import { formatSlug, liveFormatSlug } from '../hooks/validateSlug'
-import type { TextFieldClientComponent } from 'payload'
 
 export const SlugField: TextFieldClientComponent =
   // @ts-ignore
@@ -12,10 +12,17 @@ export const SlugField: TextFieldClientComponent =
     const initialSlug = initialData?.[path!]
     const { value: slug, setValue: setSlug } = useField<string>({ path: path })
     const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
+    const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
 
     // TODO: use the redirectNecessary function to determine if a redirect is necessary
 
+
     useEffect(() => {
+      if (isRootPage) {
+        // do not change the slug when the document is the root page
+        return
+      }
+
       // Only update the slug when editing the title when the document is not published to avoid
       // the creation of a redirection due to the slug change
       if (!hasPublishedDoc) {
@@ -32,6 +39,9 @@ export const SlugField: TextFieldClientComponent =
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [title])
 
+    if (isRootPage === true) {
+      return <></>
+    }
     // TextField component could not be used here, because it does not support the onChange event
     return (
       <>

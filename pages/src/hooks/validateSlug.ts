@@ -1,4 +1,5 @@
 import type { FieldHook } from 'payload'
+import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields'
 
 const germanCharacterReplacements: Record<string, string> = {
   ä: 'ae',
@@ -37,23 +38,19 @@ export const liveFormatSlug = (val: string): string =>
     // place trim at the end to replace inner whitespaces with hyphens:
     .trim() // Remove whitespace from both sides of a string
 
-/** Function which returns a hook which sets the slug based on a fallback field if it is empty or the provided slug has an invalid format. */
-export const validateSlug = (fallbackField: string): FieldHook => {
+/** Function which returns a hook which ensures that the slug is correctly set in cases where it would not be set otherwise. */
+export const createSlugFromFallbackField = (fallbackField: string): FieldHook => {
   return ({ operation, value, originalDoc, data }) => {
-    if (operation === 'update' && !value) {
-      // The value could be undefined even though the document has a slug set, when
-      // other fields of the document are updated via the local API.
-      // To prevent unintended slug changes in this case, get the slug from the original document.
-      value = originalDoc.slug
-    }
+    const isRootPage = Boolean(data?.isRootPage ?? originalDoc?.isRootPage)
 
-    // field has value, use formatted value
-    if (typeof value === 'string' && value !== '') {
-      return formatSlug(value)
-    }
-
-    // field has no value, use formatted fallback
-    if (operation === 'create' || operation === 'update') {
+    if (isRootPage) {
+      // This ensures that the slug of the root page is always an empty string.
+      // (Especially necessary to ensure that the secondly added localized version of a document has a slug set.)
+      if (value !== ROOT_PAGE_SLUG) {
+        return ROOT_PAGE_SLUG
+      }
+    } else if (operation === 'create' || operation === 'update') {
+      // When the doc is not the root page and the slug is not set, use the fallback field to set the slug.
       const fallbackFieldValue = data?.[fallbackField] || originalDoc?.[fallbackField]
 
       if (fallbackFieldValue && typeof fallbackFieldValue === 'string') {

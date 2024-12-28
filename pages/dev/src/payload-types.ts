@@ -80,6 +80,7 @@ export interface UserAuthOperations {
  */
 export interface Page {
   id: string;
+  isRootPage?: boolean | null;
   slug: string;
   parent?: (string | null) | Page;
   path: string;
@@ -225,6 +226,7 @@ export interface PayloadMigration {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  isRootPage?: T;
   slug?: T;
   parent?: T;
   path?: T;

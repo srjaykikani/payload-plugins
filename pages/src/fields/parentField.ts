@@ -32,6 +32,8 @@ export function parentField(pageConfig: IncomingPageCollectionConfigAttributes):
       components: {
         Field: '@jhb.software/payload-pages-plugin/client#ParentField',
       },
+      // hide this field on the root page
+      condition: pageConfig.isRootCollection ? (data) => !data?.isRootPage : undefined,
     },
   }
 }

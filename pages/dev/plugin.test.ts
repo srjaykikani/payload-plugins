@@ -1,9 +1,8 @@
 import payload from 'payload'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import config from './src/payload.config'
 
 // TODO: add the following tests:
-// - virtual fields generation works for nested docs across collections
 // - redirects are sucessfully created when the slug of a doc changed
 
 beforeAll(async () => {
@@ -27,6 +26,141 @@ afterAll(async () => {
 })
 
 describe('Path and breadcrumb virtual fields are returned correctly for find operation.', () => {
+  describe('The root page document', () => {
+    beforeEach(async () => {
+      await payload.delete({
+        collection: 'pages',
+        where: {},
+      })
+    })
+
+    test('has the correct virtual fields when only one locale is present', async () => {
+      const locale = 'de'
+      const rootPageData = {
+        title: 'Root Page DE',
+        slug: '',
+        content: 'Root Page DE',
+        isRootPage: true,
+      }
+
+      const rootPageId = (
+        await payload.create({
+          collection: 'pages',
+          locale,
+          // @ts-ignore
+          data: rootPageData,
+        })
+      ).id
+
+      const rootPage = await payload.findByID({
+        collection: 'pages',
+        id: rootPageId,
+        locale: locale,
+      })
+
+      const path = `/${locale}`
+
+      expect(rootPage.slug).toBe('') // Plugin convention: The slug of the root page is an empty string.
+      expect(rootPage.path).toBe(path)
+      expect(removeIdsFromArray(rootPage.breadcrumbs)).toEqual(
+        removeIdsFromArray([
+          {
+            path,
+            label: rootPageData.title,
+            slug: rootPageData.slug,
+          },
+        ]),
+      )
+      expect(removeIdsFromArray(rootPage.meta.alternatePaths)).toEqual(
+        removeIdsFromArray([
+          {
+            hreflang: locale,
+            path,
+          },
+        ]),
+      )
+    })
+
+    test('has the correct virtual fields when all locales are present', async () => {
+      const rootPageData = {
+        de: {
+          title: 'Root Page DE',
+          slug: '',
+          content: 'Root Page DE',
+          isRootPage: true,
+        },
+        en: {
+          title: 'Root Page EN',
+          slug: '',
+          content: 'Root Page EN',
+          isRootPage: true,
+        },
+      }
+
+      const rootPageId = (
+        await payload.create({
+          collection: 'pages',
+          locale: 'de',
+          // @ts-ignore
+          data: rootPageData.de,
+        })
+      ).id
+
+      await payload.update({
+        collection: 'pages',
+        id: rootPageId,
+        locale: 'en',
+        // @ts-ignore
+        data: rootPageData.en,
+      })
+
+      const rootPage = await payload.findByID({
+        collection: 'pages',
+        id: rootPageId,
+        locale: 'all',
+      })
+
+      expect(rootPage.slug).toEqual({
+        de: '',
+        en: '',
+      })
+      expect(rootPage.path).toEqual({
+        de: '/de',
+        en: '/en',
+      })
+      expect(removeIdsFromArray(rootPage.breadcrumbs.de)).toEqual(
+        removeIdsFromArray([
+          {
+            path: '/de',
+            label: rootPageData.de.title,
+            slug: rootPageData.de.slug,
+          },
+        ]),
+      )
+      expect(removeIdsFromArray(rootPage.breadcrumbs.en)).toEqual(
+        removeIdsFromArray([
+          {
+            path: '/en',
+            label: rootPageData.en.title,
+            slug: rootPageData.en.slug,
+          },
+        ]),
+      )
+      expect(removeIdsFromArray(rootPage.meta.alternatePaths)).toEqual(
+        removeIdsFromArray([
+          {
+            hreflang: 'de',
+            path: '/de',
+          },
+          {
+            hreflang: 'en',
+            path: '/en',
+          },
+        ]),
+      )
+    })
+  })
+
   describe('Nested document in same collection with all locales created.', () => {
     const rootPageDataDe = {
       title: 'Root Page DE',
@@ -52,6 +186,11 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     let nestedPageId: string | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
+      await payload.delete({
+        collection: 'pages',
+        where: {},
+      })
+
       // ################# Seed the database for the tests of this group #################
 
       rootPageId = (
@@ -250,18 +389,23 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
   describe('Nested document in same collection with one locale created.', () => {
     const rootPageDataDe = {
       title: 'Root Page DE',
-      slug: 'root-page-de-1',
+      slug: 'root-page-de',
       content: 'Root Page DE',
     }
     const nestedPageDataDe = {
       title: 'Nested Page DE',
-      slug: 'nested-page-de-1',
+      slug: 'nested-page-de',
       content: 'Nested Page DE',
     }
     let rootPageId: string | undefined // will be set in the beforeEach hook
     let nestedPageId: string | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
+      await payload.delete({
+        collection: 'pages',
+        where: {},
+      })
+
       // ################# Seed the database for the tests of this group #################
 
       rootPageId = (
@@ -318,7 +462,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
             {
               id: nestedPage.breadcrumbs['en'][0]?.id,
               label: {
-                de: 'Root Page DE',
+                de: rootPageDataDe.title,
               },
               path: '/en',
               slug: undefined,
@@ -326,7 +470,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
             {
               id: nestedPage.breadcrumbs['en'][1]?.id,
               label: {
-                de: 'Nested Page DE',
+                de: nestedPageDataDe.title,
               },
               path: '/en',
               slug: undefined,
