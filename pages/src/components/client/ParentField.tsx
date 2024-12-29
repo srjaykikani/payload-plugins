@@ -2,7 +2,7 @@
 import { RelationshipField, useDocumentInfo, useField } from '@payloadcms/ui'
 import { RelationshipFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
-import { fetchRestApi } from '../utils/fetchRestApi'
+import { fetchRestApi } from '../../utils/fetchRestApi'
 import { usePageCollectionConfigAttributes } from './hooks/usePageCollectionConfigAtrributes'
 
 // TODO: migrate this component to be a server component which useses the local api to fetch the shared parent document

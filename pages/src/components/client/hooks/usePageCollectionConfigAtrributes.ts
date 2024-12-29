@@ -1,5 +1,5 @@
-import { asPageCollectionConfigOrThrow } from '../../collections/PageCollectionConfig'
-import { PageCollectionConfigAttributes } from '../../types/PageCollectionConfigAttributes'
+import { asPageCollectionConfigOrThrow } from '../../../collections/PageCollectionConfig'
+import { PageCollectionConfigAttributes } from '../../../types/PageCollectionConfigAttributes'
 import { useCollectionConfig } from './useCollectionConfig'
 
 /**
