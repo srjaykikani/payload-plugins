@@ -67,7 +67,7 @@ export const createPageCollectionConfig = (
     fields: [
       ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
       slugField({ redirectWarning: true, fallbackField: pageConfig.slugFallbackField }),
-      parentField(pageConfig),
+      parentField(pageConfig, config.slug),
       pathField(),
       breadcrumbsField(),
       // add the user defined fields below the fields defined by the plugin to ensure a correct order in the sidebar
