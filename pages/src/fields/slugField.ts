@@ -30,7 +30,7 @@ export function slugField({
     validate: (
       value: string | null | undefined,
       options: { data: any; siblingData: any; id?: string | number },
-    ) => {
+    ): string | true => {
       // TODO: reactivate this code when refactoring the virtual field validation, note that this validation should only be applied in pages collections
       // if (options.data.isRootPage) {
       //   if (value !== ROOT_PAGE_SLUG) {
