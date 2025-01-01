@@ -1,21 +1,17 @@
 'use client'
 import { CheckboxField, useField } from '@payloadcms/ui'
-import { CheckboxFieldClient } from 'payload'
-
-type IsRootPageStatusProps = ({
-  field,
-  path,
-  hasRootPage,
-}: {
-  field: Omit<CheckboxFieldClient, 'type'> & Partial<Pick<CheckboxFieldClient, 'type'>>
-  path: string
-  hasRootPage: boolean
-}) => React.JSX.Element | null
+import { CheckboxFieldClientProps } from '@payloadcms/ui/fields/Checkbox'
 
 /**
  * Field which displays either a checkbox to set the page to be root page or a message if the page is the root page.
  */
-export const IsRootPageStatus: IsRootPageStatusProps = ({ field, path, hasRootPage }) => {
+export const IsRootPageStatus = ({
+  field,
+  path,
+  hasRootPage,
+}: CheckboxFieldClientProps & {
+  hasRootPage: boolean
+}) => {
   const { value } = useField<boolean>({ path: path! })
   const isRootPage = value ?? false
 
