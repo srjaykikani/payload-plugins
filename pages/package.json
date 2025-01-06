@@ -12,15 +12,20 @@
   "author": "JHB Software",
   "license": "MIT",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm copyfiles && pnpm build:types && pnpm build:swc",
+    "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
+    "build:types": "tsc --outDir dist --rootDir ./src",
+    "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
+    "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
     "test": "cd dev && pnpm test",
     "test:watch": "cd dev && pnpm test:watch",
-    "lint": "eslint .",
-    "prepublish": "tsc && pnpm test"
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "prepublishOnly": "pnpm clean && pnpm build && pnpm test"
   },
   "dependencies": {
     "qs-esm": "^7.0.2"
@@ -35,15 +40,17 @@
   "devDependencies": {
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "copyfiles": "2.4.1",
+    "rimraf": "6.0.1"
   },
   "files": [
     "dist"
   ],
   "publishConfig": {
     "main": "./dist/index.js",
-    "registry": "https://registry.npmjs.org/",
     "types": "./dist/index.d.ts",
+    "registry": "https://registry.npmjs.org/",
     "access": "public",
     "exports": {
       ".": {
@@ -66,18 +73,21 @@
   "exports": {
     ".": {
       "import": "./src/index.ts",
-      "default": "./src/index.ts",
-      "types": "./src/index.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     },
     "./client": {
       "import": "./src/exports/client.ts",
-      "default": "./src/exports/client.ts",
-      "types": "./src/exports/client.ts"
+      "types": "./src/exports/client.ts",
+      "default": "./src/exports/client.ts"
     },
     "./server": {
       "import": "./src/exports/server.ts",
-      "types": "./src/exports/server.d.ts",
+      "types": "./src/exports/server.ts",
       "default": "./src/exports/server.ts"
     }
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
   }
 }

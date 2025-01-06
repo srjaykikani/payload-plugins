@@ -1,6 +1,6 @@
 import type { Config } from 'payload'
 
-import type { PagesPluginConfig } from './types/PagesPluginConfig'
+import type { PagesPluginConfig } from './types/PagesPluginConfig.js'
 
 /** Payload plugin which integrates fields for managing website pages. */
 export const payloadPagesPlugin =

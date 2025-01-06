@@ -1,6 +1,4 @@
-import { useRef } from 'react'
-
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 /**
  * A hook similar to useEffect but skips the first execution on the initial mount.

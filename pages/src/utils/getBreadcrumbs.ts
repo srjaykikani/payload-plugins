@@ -1,9 +1,9 @@
 import { CollectionSlug, PayloadRequest } from 'payload'
-import { Breadcrumb } from '../types/Breadcrumb'
-import { Locale } from '../types/Locale'
-import { fetchRestApi } from './fetchRestApi'
-import { pathFromBreadcrumbs } from './pathFromBreadcrumbs'
-import { ROOT_PAGE_SLUG } from './setRootPageVirtualFields'
+import { Breadcrumb } from '../types/Breadcrumb.js'
+import { Locale } from '../types/Locale.js'
+import { fetchRestApi } from './fetchRestApi.js'
+import { pathFromBreadcrumbs } from './pathFromBreadcrumbs.js'
+import { ROOT_PAGE_SLUG } from './setRootPageVirtualFields.js'
 
 /** Returns the breadcrumbs to the given document. */
 export async function getBreadcrumbs({

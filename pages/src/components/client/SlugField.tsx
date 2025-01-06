@@ -2,7 +2,7 @@
 import { Banner, FieldLabel, TextInput, Tooltip, useDocumentInfo, useField } from '@payloadcms/ui'
 import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
-import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug'
+import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug.js'
 
 export const SlugField: TextFieldClientComponent =
   // @ts-ignore

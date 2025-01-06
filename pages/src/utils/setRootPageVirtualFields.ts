@@ -1,6 +1,6 @@
-import { Breadcrumb } from '../types/Breadcrumb'
-import { Locale } from '../types/Locale'
-import { SeoMetadata } from '../types/SeoMetadata'
+import { Breadcrumb } from '../types/Breadcrumb.js'
+import { Locale } from '../types/Locale.js'
+import { SeoMetadata } from '../types/SeoMetadata.js'
 
 /**
  * The slug of the root page.

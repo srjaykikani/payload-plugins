@@ -2,7 +2,7 @@ import { CollectionConfig } from 'payload'
 import {
   IncomingPageCollectionConfigAttributes,
   PageCollectionConfigAttributes,
-} from './PageCollectionConfigAttributes'
+} from './PageCollectionConfigAttributes.js'
 
 /** The plugins incoming config for page collections. */
 export type IncomingPageCollectionConfig = CollectionConfig & {

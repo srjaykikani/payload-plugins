@@ -1,6 +1,6 @@
-import { Breadcrumb } from '../types/Breadcrumb'
-import { Locale } from '../types/Locale'
-import { pathFromBreadcrumbs } from './pathFromBreadcrumbs'
+import { Breadcrumb } from '../types/Breadcrumb.js'
+import { Locale } from '../types/Locale.js'
+import { pathFromBreadcrumbs } from './pathFromBreadcrumbs.js'
 
 /**
  * Validates the breadcrumbs and throws an error if invalid.

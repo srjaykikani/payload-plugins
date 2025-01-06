@@ -1,6 +1,6 @@
 import { Field } from 'payload'
-import { beforeDuplicateSlug } from '../hooks/beforeDuplicate'
-import { createSlugFromFallbackField } from '../hooks/validateSlug'
+import { beforeDuplicateSlug } from '../hooks/beforeDuplicate.js'
+import { createSlugFromFallbackField } from '../hooks/validateSlug.js'
 
 // Note: make sure this field can be used separately from the PagesCollectionConfig (e.g. a non page collection needs a slug field as well)
 

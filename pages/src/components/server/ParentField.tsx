@@ -1,6 +1,6 @@
 import { RelationshipField } from '@payloadcms/ui'
 import { RelationshipFieldServerComponent } from 'payload'
-import { getPageCollectionConfigAttributes } from '../../utils/getPageCollectionConfigAttributes'
+import { getPageCollectionConfigAttributes } from '../../utils/getPageCollectionConfigAttributes.js'
 
 /**
  * Parent field which sets the field to be read only if the collection has a shared parent document and the field has a value.

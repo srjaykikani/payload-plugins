@@ -1,5 +1,5 @@
 import type { FieldHook } from 'payload'
-import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields'
+import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields.js'
 
 const germanCharacterReplacements: Record<string, string> = {
   ä: 'ae',

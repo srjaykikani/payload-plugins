@@ -2,7 +2,7 @@
 
 import { Button, useDocumentInfo, useField, useFormModified, useTranslation } from '@payloadcms/ui'
 import React from 'react'
-import { getPageUrl } from '../../utils/getPageUrl'
+import { getPageUrl } from '../../utils/getPageUrl.js'
 
 /**
  * Custom field to display a preview button which links to the frontend page.

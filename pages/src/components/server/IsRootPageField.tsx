@@ -1,5 +1,5 @@
 import { CheckboxFieldServerComponent } from 'payload'
-import { IsRootPageStatus } from '../client/IsRootPageStatus'
+import { IsRootPageStatus } from '../client/IsRootPageStatus.js'
 
 /**
  * Field which fetches the root page and forwards the result to the `IsRootPageStatus` client component.
