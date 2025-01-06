@@ -12,15 +12,20 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "preserve",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "skipLibCheck": true,
-    "moduleResolution": "Bundler",
-    "module": "ES6",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
     "sourceMap": true,
     "strict": true,
     "incremental": true,
     "isolatedModules": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "src/**/*.json"],
   "exclude": ["dist", "build", "node_modules"]
