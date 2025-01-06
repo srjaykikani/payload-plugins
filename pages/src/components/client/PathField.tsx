@@ -9,12 +9,12 @@ import {
   useLocale,
 } from '@payloadcms/ui'
 import { TextFieldClientComponent } from 'payload'
-import { Breadcrumb } from '../../types/Breadcrumb'
-import { Locale } from '../../types/Locale'
-import { getBreadcrumbs as getBreadcrumbsForDoc } from '../../utils/getBreadcrumbs'
-import { pathFromBreadcrumbs } from '../../utils/pathFromBreadcrumbs'
-import { useDidUpdateEffect } from '../../utils/useDidUpdateEffect'
-import { usePageCollectionConfigAttributes } from './hooks/usePageCollectionConfigAtrributes'
+import { Breadcrumb } from '../../types/Breadcrumb.js'
+import { Locale } from '../../types/Locale.js'
+import { getBreadcrumbs as getBreadcrumbsForDoc } from '../../utils/getBreadcrumbs.js'
+import { pathFromBreadcrumbs } from '../../utils/pathFromBreadcrumbs.js'
+import { useDidUpdateEffect } from '../../utils/useDidUpdateEffect.js'
+import { usePageCollectionConfigAttributes } from './hooks/usePageCollectionConfigAtrributes.js'
 
 // useFormFields is not used for the breadcrumbs because of the following payload issue:
 // see https://github.com/payloadcms/payload/issues/8146

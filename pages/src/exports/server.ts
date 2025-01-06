@@ -1,2 +1,2 @@
-export { IsRootPageField } from '../components/server/IsRootPageField'
-export { ParentField } from '../components/server/ParentField'
+export { IsRootPageField } from '../components/server/IsRootPageField.jsx'
+export { ParentField } from '../components/server/ParentField.jsx'

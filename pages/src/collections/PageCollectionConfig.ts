@@ -1,15 +1,18 @@
 import { ClientCollectionConfig, CollectionConfig, Field } from 'payload'
-import { breadcrumbsField } from '../fields/breadcrumbsField'
-import { isRootPageField } from '../fields/isRootPageField'
-import { parentField } from '../fields/parentField'
-import { pathField } from '../fields/pathField'
-import { slugField } from '../fields/slugField'
-import { beforeDuplicateTitle } from '../hooks/beforeDuplicate'
-import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation'
-import { setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields'
-import { IncomingPageCollectionConfig, PageCollectionConfig } from '../types/PageCollectionConfig'
-import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
-import { getPageUrl } from '../utils/getPageUrl'
+import { breadcrumbsField } from '../fields/breadcrumbsField.js'
+import { isRootPageField } from '../fields/isRootPageField.js'
+import { parentField } from '../fields/parentField.js'
+import { pathField } from '../fields/pathField.js'
+import { slugField } from '../fields/slugField.js'
+import { beforeDuplicateTitle } from '../hooks/beforeDuplicate.js'
+import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation.js'
+import { setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields.js'
+import {
+  IncomingPageCollectionConfig,
+  PageCollectionConfig,
+} from '../types/PageCollectionConfig.js'
+import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
+import { getPageUrl } from '../utils/getPageUrl.js'
 
 /**
  * Creates a collection config for a page-like collection by adding:

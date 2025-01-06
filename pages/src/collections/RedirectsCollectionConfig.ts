@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { validateRedirect } from '../hooks/validateRedirect'
+import { validateRedirect } from '../hooks/validateRedirect.js'
 
 // TODO: also store the destination page inside a relationship field
 

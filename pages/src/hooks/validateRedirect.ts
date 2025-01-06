@@ -1,5 +1,5 @@
 import { CollectionBeforeValidateHook } from 'payload'
-import { AdminPanelError } from '../utils/AdminPanelError'
+import { AdminPanelError } from '../utils/AdminPanelError.js'
 
 /** Hook which validates the redirect data before it is saved to ensure that no infinite redirect loops are created. */
 export const validateRedirect: CollectionBeforeValidateHook = async ({

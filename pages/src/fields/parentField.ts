@@ -1,6 +1,6 @@
 import { Field, PayloadRequest } from 'payload'
-import { IncomingPageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes'
-import { getPageCollectionConfigAttributes } from '../utils/getPageCollectionConfigAttributes'
+import { IncomingPageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
+import { getPageCollectionConfigAttributes } from '../utils/getPageCollectionConfigAttributes.js'
 
 export function parentField(
   pageConfig: IncomingPageCollectionConfigAttributes,

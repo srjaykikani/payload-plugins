@@ -1,6 +1,6 @@
 import { CollectionBeforeOperationHook } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
-import { requiredFields } from './setVirtualFields'
+import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
+import { requiredFields } from './setVirtualFields.js'
 
 /**
  * A CollectionBeforeOperationHook that ensures that all required fields for the

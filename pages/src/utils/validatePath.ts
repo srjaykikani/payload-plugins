@@ -1,4 +1,4 @@
-import { Locale } from '../types/Locale'
+import { Locale } from '../types/Locale.js'
 
 /** Validates the path and throws an error if invalid. */
 export function validatePath(path: string, docId: string, locale: Locale) {

@@ -1,9 +1,9 @@
 import { CollectionBeforeReadHook } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig'
-import { Locale } from '../types/Locale'
-import { IncomingPageCollectionConfig } from '../types/PageCollectionConfig'
-import { setPageDocumentVirtualFields } from '../utils/setPageVirtualFields'
-import { setRootPageDocumentVirtualFields } from '../utils/setRootPageVirtualFields'
+import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
+import { Locale } from '../types/Locale.js'
+import { IncomingPageCollectionConfig } from '../types/PageCollectionConfig.js'
+import { setPageDocumentVirtualFields } from '../utils/setPageVirtualFields.js'
+import { setRootPageDocumentVirtualFields } from '../utils/setRootPageVirtualFields.js'
 
 /**
  * Returns the fields that are necessary for the setVirtualFields hook to correctly generate the virtual fields.

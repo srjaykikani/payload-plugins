@@ -1,6 +1,6 @@
-import { asPageCollectionConfigOrThrow } from '../../../collections/PageCollectionConfig'
-import { PageCollectionConfigAttributes } from '../../../types/PageCollectionConfigAttributes'
-import { useCollectionConfig } from './useCollectionConfig'
+import { asPageCollectionConfigOrThrow } from '../../../collections/PageCollectionConfig.js'
+import { PageCollectionConfigAttributes } from '../../../types/PageCollectionConfigAttributes.js'
+import { useCollectionConfig } from './useCollectionConfig.js'
 
 /**
  * Returns the PageCollectionConfigAttributes for the collection of the document.

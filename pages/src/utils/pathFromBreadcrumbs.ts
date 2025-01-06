@@ -1,5 +1,5 @@
-import { Breadcrumb } from '../types/Breadcrumb'
-import { Locale } from '../types/Locale'
+import { Breadcrumb } from '../types/Breadcrumb.js'
+import { Locale } from '../types/Locale.js'
 
 /** Converts the given breadcrumbs and the locale to a path */
 export function pathFromBreadcrumbs({
