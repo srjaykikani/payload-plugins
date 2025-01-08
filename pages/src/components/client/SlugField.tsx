@@ -10,9 +10,19 @@ export const SlugField: TextFieldClientComponent =
     const { value: title } = useField<string>({ path: fallbackField })
     const { initialData, hasPublishedDoc, id } = useDocumentInfo()
     const initialSlug = initialData?.[path!]
-    const { value: slug, setValue: setSlug } = useField<string>({ path: path })
+    const { value: slug, setValue: setSlugRaw } = useField<string>({ path: path })
     const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
     const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
+
+    /**
+     * Sets the slug, but only if the new slug is different from the current slug.
+     * This prevents the useFormModified from being true without it being actually modified.
+     * */
+    const setSlug = (newSlug: string | undefined) => {
+      if (newSlug !== slug) {
+        setSlugRaw(newSlug)
+      }
+    }
 
     // TODO: use the redirectNecessary function to determine if a redirect is necessary
 
