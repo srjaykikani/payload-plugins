@@ -12,6 +12,8 @@ export const PreviewButtonField: React.FC = () => {
   const { value: path } = useField<string>({ path: 'path' })
   const initialPath = initialData?.path
 
+  // Returns true once the form is modified. When the "save" or "publish changes" button is clicked, this will reset to false.
+  // TODO: (Currently modified is not reset when the document is saved with the autosave feature. Is this a bug in paylaod?)
   const modified = useFormModified()
 
   // When the document is modified, the changes will only be visible in the preview when the document is saved.
