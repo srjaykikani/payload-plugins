@@ -54,6 +54,7 @@ export const createSlugFromFallbackField = (fallbackField: string): FieldHook =>
       const fallbackFieldValue = data?.[fallbackField] || originalDoc?.[fallbackField]
 
       if (fallbackFieldValue && typeof fallbackFieldValue === 'string') {
+        console.log('fallbackFieldValue', fallbackFieldValue)
         return formatSlug(fallbackFieldValue)
       }
     }
