@@ -24,7 +24,9 @@ export const SlugField: TextFieldClientComponent =
       }
     }
 
-    // TODO: use the redirectNecessary function to determine if a redirect is necessary
+    // TODO: create and use a mustCreateRedirect function to determine if a redirect must be created
+    // Then inside an afterChange hook use this same function to automatically create the redirect
+    const showRedirectWarning = redirectWarning && initialSlug !== slug && hasPublishedDoc
 
     useEffect(() => {
       if (isRootPage) {
@@ -107,12 +109,12 @@ export const SlugField: TextFieldClientComponent =
             )}
           </div>
 
-          {redirectWarning && initialSlug !== slug && hasPublishedDoc && (
+          {showRedirectWarning && (
             <div style={{ marginTop: '0.5rem' }}>
               <Banner type="info" icon={<InfoIcon />} alignIcon="left">
                 <div style={{ marginLeft: '0.5rem' }}>
                   The slug was changed from <code>{initialSlug}</code> to <code>{slug}</code>. This
-                  will automatically create a redirection from the old to the new page path.
+                  requires a redirection from the old to the new page path to be manually created.
                 </div>
               </Banner>
             </div>
