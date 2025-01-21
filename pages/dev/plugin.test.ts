@@ -702,6 +702,87 @@ describe('Path and breadcrumb virtual fields are set correctly for find operatio
   })
 })
 
+describe('Slug field behaves as expected for updates', () => {
+  test('Slug remains unchanged when title is updated', async () => {
+    // Create initial page
+    const initialData = {
+      title: 'Initial Title',
+      content: 'Some content',
+      slug: 'initial-title',
+    }
+
+    const page = await payload.create({
+      collection: 'pages',
+      data: initialData,
+    })
+
+    expect(page.slug).toBe('initial-title')
+
+    // Update the title
+    const updatedPage = await payload.update({
+      collection: 'pages',
+      id: page.id,
+      data: {
+        title: 'Updated Title',
+      },
+    })
+
+    // Verify slug remains unchanged
+    expect(updatedPage.slug).toBe('initial-title')
+    expect(updatedPage.title).toBe('Updated Title')
+  })
+
+  test('Slug falls back to title when not provided', async () => {
+    // Create page without providing a slug
+    const pageData = {
+      title: 'Test Page Title',
+      content: 'Some content',
+    }
+
+    const page = await payload.create({
+      collection: 'pages',
+      data: pageData,
+    })
+
+    // Verify slug was set based on title
+    expect(page.slug).toBe('test-page-title')
+    expect(page.title).toBe('Test Page Title')
+  })
+
+  test('Root page is created with an empty slug and remains empty even when updated', async () => {
+    // Create initial root page without providing a slug
+    const initialData = {
+      title: 'Root Page',
+      content: 'Root page content',
+      isRootPage: true,
+    }
+
+    const rootPage = await payload.create({
+      collection: 'pages',
+      data: initialData,
+    })
+
+    // Verify the slug is empty
+    expect(rootPage.slug).toBe('')
+    expect(rootPage.isRootPage).toBe(true)
+
+    // Try to update the slug
+    const updatedRootPage = await payload.update({
+      collection: 'pages',
+      id: rootPage.id,
+      data: {
+        slug: 'attempted-slug',
+        title: 'Updated Root Page',
+      },
+    })
+
+    // Verify slug remains empty after update
+    expect(updatedRootPage.slug).toBe('')
+    expect(updatedRootPage.title).toBe('Updated Root Page')
+    expect(updatedRootPage.isRootPage).toBe(true)
+  })
+})
+
 /**
  * Helper function to remove id field from objects in an array
  */
