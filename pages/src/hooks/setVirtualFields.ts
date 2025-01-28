@@ -1,4 +1,4 @@
-import { CollectionBeforeReadHook } from 'payload'
+import { CollectionAfterChangeHook, CollectionBeforeReadHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
 import { Locale } from '../types/Locale.js'
 import { IncomingPageCollectionConfig } from '../types/PageCollectionConfig.js'
@@ -81,6 +81,49 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
       throw new Error(
         'The slug must be an object with all available locales. Is the slug field set to be localized?',
       )
+    }
+
+    const docWithVirtualFields = await setPageDocumentVirtualFields({
+      req,
+      doc,
+      locale,
+      locales,
+      pageConfigAttributes: pageConfig.page,
+    })
+
+    return docWithVirtualFields
+  }
+}
+
+/**
+ * A `CollectionAfterChangeHook` that sets the values for all virtual fields.
+ *
+ * This "after change" hook is needed to re-fill the virtual fields after a document is changed/saved in the admin panel.
+ */
+export const setVirtualFieldsAfterChange: CollectionAfterChangeHook = async ({
+  doc,
+  req,
+  collection,
+}) => {
+  // This type of hook is only called for one locale.
+  const locale = req.locale as Locale
+  const locales = (req?.payload.config.localization! as any).localeCodes as Locale[]
+
+  const pageConfig = asPageCollectionConfigOrThrow(collection)
+
+  if (doc.isRootPage) {
+    const docWithVirtualFields = setRootPageDocumentVirtualFields({
+      doc,
+      locale,
+      locales,
+      breadcrumbLabelField: pageConfig.page.breadcrumbLabelField,
+    })
+
+    return docWithVirtualFields
+  } else {
+    // When the slug is not (yet) set, it is not possible to generate the path and breadcrumbs
+    if (!doc.slug) {
+      return doc
     }
 
     const docWithVirtualFields = await setPageDocumentVirtualFields({

@@ -35,7 +35,10 @@ export async function setPageDocumentVirtualFields({
   const paths: Record<Locale, string> = locales.reduce(
     (acc, locale) => {
       // If the slug is not set for this locale, exclude the path to not generate a 404 path
-      if (doc.slug[locale]) {
+      if (
+        (typeof doc.slug === 'object' && doc.slug[locale]) ||
+        (typeof doc.slug === 'string' && doc.slug)
+      ) {
         acc[locale] = breadcrumbs[locale].at(-1)!.path
       }
       return acc

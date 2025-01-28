@@ -6,7 +6,10 @@ import { pathField } from '../fields/pathField.js'
 import { slugField } from '../fields/slugField.js'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate.js'
 import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation.js'
-import { setVirtualFieldsBeforeRead } from '../hooks/setVirtualFields.js'
+import {
+  setVirtualFieldsAfterChange,
+  setVirtualFieldsBeforeRead,
+} from '../hooks/setVirtualFields.js'
 import {
   IncomingPageCollectionConfig,
   PageCollectionConfig,
@@ -66,6 +69,7 @@ export const createPageCollectionConfig = (
         ensureSelectedFieldsBeforeOperation,
       ],
       beforeRead: [...(config.hooks?.beforeRead || []), setVirtualFieldsBeforeRead],
+      afterChange: [...(config.hooks?.afterChange || []), setVirtualFieldsAfterChange],
     },
     fields: [
       ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
