@@ -1,18 +1,27 @@
 'use client'
-import { Banner, FieldLabel, TextInput, Tooltip, useDocumentInfo, useField } from '@payloadcms/ui'
+import {
+  Banner,
+  FieldLabel,
+  TextInput,
+  Tooltip,
+  useDocumentInfo,
+  useField,
+  useLocale,
+} from '@payloadcms/ui'
 import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
 import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug.js'
 
 export const SlugField: TextFieldClientComponent =
   // @ts-ignore
-  ({ field, path, redirectWarning, fallbackField = 'title' }) => {
+  ({ field, path, redirectWarning, fallbackField = 'title', readOnly, defaultValue }) => {
     const { value: title } = useField<string>({ path: fallbackField })
     const { initialData, hasPublishedDoc, id } = useDocumentInfo()
     const initialSlug = initialData?.[path!]
     const { value: slug, setValue: setSlugRaw } = useField<string>({ path: path })
     const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
     const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
+    const locale = useLocale()
 
     /**
      * Sets the slug, but only if the new slug is different from the current slug.
@@ -50,9 +59,23 @@ export const SlugField: TextFieldClientComponent =
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [title])
 
+    // When a defaultValue is given and the field is readOnly, the staticValue option is used.
+    // In this case, ensure the slug is set to the defaultValue.
+    useEffect(() => {
+      if (defaultValue && readOnly) {
+        const staticValue =
+          typeof defaultValue === 'string' ? defaultValue : defaultValue[locale.code]
+
+        if (staticValue !== slug) {
+          setSlug(staticValue)
+        }
+      }
+    }, [defaultValue, readOnly, slug])
+
     if (isRootPage === true) {
       return <></>
     }
+
     // TextField component could not be used here, because it does not support the onChange event
     return (
       <>
@@ -68,11 +91,12 @@ export const SlugField: TextFieldClientComponent =
             <TextInput
               value={slug}
               path={path!}
+              readOnly={readOnly}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setSlug(liveFormatSlug(e.target.value))
               }}
             />
-            {title && formatSlug(title) !== slug && (
+            {!readOnly && title && formatSlug(title) !== slug && (
               <div
                 style={{
                   position: 'absolute',

@@ -1,4 +1,5 @@
 import { Field } from 'payload'
+import { Locale } from 'src/types/Locale.js'
 import { beforeDuplicateSlug } from '../hooks/beforeDuplicate.js'
 import { createSlugFromFallbackField } from '../hooks/validateSlug.js'
 
@@ -7,19 +8,28 @@ import { createSlugFromFallbackField } from '../hooks/validateSlug.js'
 export function slugField({
   redirectWarning,
   fallbackField = 'title',
+  unique = true,
+  staticValue,
 }: {
   redirectWarning: boolean
   fallbackField?: string
+  unique?: boolean
+  staticValue?: string | Record<Locale, string>
 }): Field {
   return {
     name: 'slug',
     type: 'text',
+    defaultValue: ({ locale }) =>
+      typeof staticValue === 'string' ? staticValue : locale && staticValue?.[locale],
     admin: {
       position: 'sidebar',
+      readOnly: !!staticValue,
       components: {
         Field: {
           path: '@jhb.software/payload-pages-plugin/client#SlugField',
           clientProps: {
+            readOnly: !!staticValue,
+            defaultValue: staticValue,
             redirectWarning: redirectWarning,
             fallbackField: fallbackField,
           },
@@ -54,7 +64,7 @@ export function slugField({
       beforeDuplicate: [beforeDuplicateSlug],
       beforeValidate: [createSlugFromFallbackField(fallbackField)],
     },
-    unique: true,
+    unique: unique,
     index: true,
     localized: true,
     required: true,

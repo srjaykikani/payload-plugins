@@ -26,6 +26,8 @@ export interface Config {
     authors: Author;
     blogposts: Blogpost;
     redirects: Redirect;
+    countries: Country;
+    'country-travel-tips': CountryTravelTip;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -37,6 +39,8 @@ export interface Config {
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     blogposts: BlogpostsSelect<false> | BlogpostsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
+    countries: CountriesSelect<false> | CountriesSelect<true>;
+    'country-travel-tips': CountryTravelTipsSelect<false> | CountryTravelTipsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -137,6 +141,38 @@ export interface Redirect {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries".
+ */
+export interface Country {
+  id: string;
+  slug: string;
+  parent: string | Page;
+  path: string;
+  breadcrumbs: Breadcrumbs;
+  title: string;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "country-travel-tips".
+ */
+export interface CountryTravelTip {
+  id: string;
+  slug: string;
+  country: string | Country;
+  path: string;
+  breadcrumbs: Breadcrumbs;
+  title: string;
+  content: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -174,6 +210,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'redirects';
         value: string | Redirect;
+      } | null)
+    | ({
+        relationTo: 'countries';
+        value: string | Country;
+      } | null)
+    | ({
+        relationTo: 'country-travel-tips';
+        value: string | CountryTravelTip;
       } | null)
     | ({
         relationTo: 'users';
@@ -287,6 +331,36 @@ export interface RedirectsSelect<T extends boolean = true> {
   reason?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries_select".
+ */
+export interface CountriesSelect<T extends boolean = true> {
+  slug?: T;
+  parent?: T;
+  path?: T;
+  breadcrumbs?: T | BreadcrumbsSelect<T>;
+  title?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "country-travel-tips_select".
+ */
+export interface CountryTravelTipsSelect<T extends boolean = true> {
+  slug?: T;
+  country?: T;
+  path?: T;
+  breadcrumbs?: T | BreadcrumbsSelect<T>;
+  title?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

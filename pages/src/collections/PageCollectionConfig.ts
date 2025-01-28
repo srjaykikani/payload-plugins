@@ -34,9 +34,13 @@ export const createPageCollectionConfig = (
 
     // optional fields are set to default values if not provided
     breadcrumbLabelField: config.page.breadcrumbLabelField ?? config.admin?.useAsTitle ?? 'title',
-    slugFallbackField: config.page.slugFallbackField ?? config.admin?.useAsTitle ?? 'title',
     sharedParentDocument: config.page.sharedParentDocument ?? false,
     isRootCollection: config.page.isRootCollection ?? false,
+    slug: {
+      fallbackField: config.page?.slug?.fallbackField ?? config.admin?.useAsTitle ?? 'title',
+      unique: config.page?.slug?.unique ?? true,
+      staticValue: config.page?.slug?.staticValue,
+    },
   }
 
   return {
@@ -73,7 +77,12 @@ export const createPageCollectionConfig = (
     },
     fields: [
       ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
-      slugField({ redirectWarning: true, fallbackField: pageConfig.slugFallbackField }),
+      slugField({
+        redirectWarning: true,
+        fallbackField: pageConfig.slug.fallbackField,
+        unique: pageConfig.slug.unique,
+        staticValue: pageConfig.slug.staticValue,
+      }),
       parentField(pageConfig, config.slug),
       pathField(),
       breadcrumbsField(),

@@ -1,4 +1,5 @@
 import { CollectionSlug } from 'payload'
+import { Locale } from './Locale.js'
 
 /** The incoming attributes for the page collection config. */
 export type IncomingPageCollectionConfigAttributes = {
@@ -22,12 +23,16 @@ export type IncomingPageCollectionConfigAttributes = {
    **/
   breadcrumbLabelField?: string
 
-  /**
-   * Name of the field to use as fallback for the slug field.
-   *
-   * Defaults to `title`.
-   */
-  slugFallbackField?: string
+  slug?: {
+    /** Whether the slug must be unique. Defaults to `true`. */
+    unique?: boolean
+
+    /** Name of the field to use as fallback for the slug field. Defaults to the `useAsTitle` field. */
+    fallbackField?: string
+
+    /** Defines a static slug value for all documents in the collection. This will make the slug field readonly. */
+    staticValue?: string | Record<Locale, string>
+  }
 }
 
 /** The attributes for the page collection config after they have been processed using the incoming config attributes. */
@@ -49,8 +54,14 @@ export type PageCollectionConfigAttributes = {
    **/
   breadcrumbLabelField: string
 
-  /**
-   * Name of the field to use as fallback for the slug field.
-   */
-  slugFallbackField: string
+  slug: {
+    /** Whether the slug must be unique.  */
+    unique: boolean
+
+    /** Name of the field to use as fallback for the slug field. */
+    fallbackField: string
+
+    /** The static slug value for all documents in the collection. */
+    staticValue?: string | Record<Locale, string>
+  }
 }

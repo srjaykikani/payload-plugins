@@ -7,6 +7,8 @@ import { Authors } from './collections/authors'
 import { Blogposts } from './collections/blogposts'
 import { Pages } from './collections/pages'
 import { Redirects } from './collections/redirects'
+import { Countries } from './collections/countries'
+import { CountryTravelTips } from './collections/country-travel-tips'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -29,6 +31,8 @@ export default buildConfig({
     Authors,
     Blogposts,
     Redirects,
+    Countries,
+    CountryTravelTips,
     {
       slug: 'users',
       auth: true,
