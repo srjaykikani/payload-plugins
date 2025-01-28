@@ -28,14 +28,15 @@ export const createPageCollectionConfig = (
   config: IncomingPageCollectionConfig,
 ): PageCollectionConfig => {
   const pageConfig: PageCollectionConfigAttributes = {
-    // required fields are kept as they are
-    parentCollection: config.page.parentCollection,
-    parentField: config.page.parentField,
-
-    // optional fields are set to default values if not provided
-    breadcrumbLabelField: config.page.breadcrumbLabelField ?? config.admin?.useAsTitle ?? 'title',
-    sharedParentDocument: config.page.sharedParentDocument ?? false,
     isRootCollection: config.page.isRootCollection ?? false,
+    parent: {
+      collection: config.page.parent.collection,
+      name: config.page.parent.name,
+      sharedDocument: config.page.parent.sharedDocument ?? false,
+    },
+    breadcrumbs: {
+      labelField: config.page.breadcrumbs?.labelField ?? config.admin?.useAsTitle ?? 'title',
+    },
     slug: {
       fallbackField: config.page?.slug?.fallbackField ?? config.admin?.useAsTitle ?? 'title',
       unique: config.page?.slug?.unique ?? true,

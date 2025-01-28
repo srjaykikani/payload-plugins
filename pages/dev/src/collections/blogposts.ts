@@ -7,10 +7,14 @@ export const Blogposts: CollectionConfig = createPageCollectionConfig({
     useAsTitle: 'title',
   },
   page: {
-    parentCollection: 'authors',
-    parentField: 'author',
-    sharedParentDocument: false,
-    breadcrumbLabelField: 'shortTitle',
+    parent: {
+      collection: 'authors',
+      name: 'author',
+      sharedDocument: false,
+    },
+    breadcrumbs: {
+      labelField: 'shortTitle',
+    },
   },
   fields: [
     {

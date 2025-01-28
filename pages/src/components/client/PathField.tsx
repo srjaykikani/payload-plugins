@@ -83,9 +83,8 @@ const useBreadcrumbs = () => {
 export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, schemaPath }) => {
   const { config } = useConfig()
   const {
-    parentCollection,
-    parentField,
-    breadcrumbLabelField: breadcrumbLabelFieldName,
+    parent: { name: parentField, collection: parentCollection },
+    breadcrumbs: { labelField: breadcrumbLabelFieldName },
   } = usePageCollectionConfigAttributes()
   const { code: locale } = useLocale() as unknown as { code: Locale }
   const { getBreadcrumbs, setBreadcrumbs: setBreadcrumbsRaw } = useBreadcrumbs()

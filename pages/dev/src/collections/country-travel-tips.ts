@@ -7,8 +7,10 @@ export const CountryTravelTips: CollectionConfig = createPageCollectionConfig({
     useAsTitle: 'title',
   },
   page: {
-    parentCollection: 'countries',
-    parentField: 'country',
+    parent: {
+      collection: 'countries',
+      name: 'country',
+    },
     slug: {
       unique: false,
       staticValue: {

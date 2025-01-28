@@ -1,19 +1,19 @@
 import { CollectionAfterChangeHook, CollectionBeforeReadHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
 import { Locale } from '../types/Locale.js'
-import { IncomingPageCollectionConfig } from '../types/PageCollectionConfig.js'
+import { PageCollectionConfig } from '../types/PageCollectionConfig.js'
 import { setPageDocumentVirtualFields } from '../utils/setPageVirtualFields.js'
 import { setRootPageDocumentVirtualFields } from '../utils/setRootPageVirtualFields.js'
 
 /**
  * Returns the fields that are necessary for the setVirtualFields hook to correctly generate the virtual fields.
  */
-export function requiredFields(collectionConfig: IncomingPageCollectionConfig): string[] {
+export function requiredFields(collectionConfig: PageCollectionConfig): string[] {
   return [
     'isRootPage',
     'slug',
-    collectionConfig.page.parentField,
-    collectionConfig.page.breadcrumbLabelField ?? collectionConfig.admin?.useAsTitle ?? 'id',
+    collectionConfig.page.parent.name,
+    collectionConfig.page.breadcrumbs.labelField,
   ]
 }
 
@@ -67,7 +67,7 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
       doc,
       locale,
       locales,
-      breadcrumbLabelField: pageConfig.page.breadcrumbLabelField,
+      breadcrumbLabelField: pageConfig.page.breadcrumbs.labelField,
     })
 
     return docWithVirtualFields
@@ -116,7 +116,7 @@ export const setVirtualFieldsAfterChange: CollectionAfterChangeHook = async ({
       doc,
       locale,
       locales,
-      breadcrumbLabelField: pageConfig.page.breadcrumbLabelField,
+      breadcrumbLabelField: pageConfig.page.breadcrumbs.labelField,
     })
 
     return docWithVirtualFields

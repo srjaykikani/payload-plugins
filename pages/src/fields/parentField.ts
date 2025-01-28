@@ -7,14 +7,14 @@ export function parentField(
   collectionSlug: string,
 ): Field {
   return {
-    name: pageConfig.parentField!,
+    name: pageConfig.parent.name,
     type: 'relationship',
-    relationTo: pageConfig.parentCollection,
+    relationTo: pageConfig.parent.collection,
     required: !pageConfig.isRootCollection,
     filterOptions: ({ data }) => {
       // Exclude the current document from the list of available parents.
       // NOTE: To not hide documents with the same serial id in another collection, only apply the filter if the parent collection is the same as the current collection.
-      if (pageConfig.parentCollection === collectionSlug) {
+      if (pageConfig.parent.collection === collectionSlug) {
         return {
           id: {
             not_equals: data.id,
@@ -26,7 +26,9 @@ export function parentField(
     },
     // When this collection has a shared parent document, set the parent field
     defaultValue: async ({ req }: { req: PayloadRequest }) => {
-      const { sharedParentDocument, parentField } = getPageCollectionConfigAttributes({
+      const {
+        parent: { sharedDocument: sharedParentDocument, name: parentField },
+      } = getPageCollectionConfigAttributes({
         collectionSlug: collectionSlug,
         payload: req.payload,
       })

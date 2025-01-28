@@ -7,9 +7,11 @@ export const Countries: CollectionConfig = createPageCollectionConfig({
     useAsTitle: 'title',
   },
   page: {
-    parentCollection: 'pages',
-    parentField: 'parent',
-    sharedParentDocument: true,
+    parent: {
+      collection: 'pages',
+      name: 'parent',
+      sharedDocument: true,
+    },
   },
   versions: {
     drafts: true,

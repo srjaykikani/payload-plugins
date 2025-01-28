@@ -7,8 +7,10 @@ export const Pages: CollectionConfig = createPageCollectionConfig({
     useAsTitle: 'title',
   },
   page: {
-    parentCollection: 'pages',
-    parentField: 'parent',
+    parent: {
+      collection: 'pages',
+      name: 'parent',
+    },
     isRootCollection: true,
   },
   versions: {

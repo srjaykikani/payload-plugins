@@ -12,7 +12,9 @@ export const ParentField: RelationshipFieldServerComponent = async ({
   clientField,
   data,
 }) => {
-  const { sharedParentDocument, parentField } = getPageCollectionConfigAttributes({
+  const {
+    parent: { name: parentField, sharedDocument: sharedParentDocument },
+  } = getPageCollectionConfigAttributes({
     collectionSlug,
     payload,
   })

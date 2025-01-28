@@ -7,10 +7,14 @@ export const Authors: CollectionConfig = createPageCollectionConfig({
     useAsTitle: 'name',
   },
   page: {
-    parentCollection: 'pages',
-    parentField: 'parent',
-    sharedParentDocument: true,
-    breadcrumbLabelField: 'name',
+    parent: {
+      collection: 'pages',
+      name: 'parent',
+      sharedDocument: true,
+    },
+    breadcrumbs: {
+      labelField: 'name',
+    },
   },
   fields: [
     {
