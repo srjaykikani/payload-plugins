@@ -20,7 +20,7 @@ export async function getBreadcrumbs({
   breadcrumbLabelField: string
   parentField: string
   parentCollection: CollectionSlug
-  data: any
+  data: Record<string, any>
   locale: Locale | 'all'
 }): Promise<Breadcrumb[] | Record<Locale, Breadcrumb[]>> {
   const getCurrentDocBreadcrumb = (locale: Locale, parentBreadcrumbs: Breadcrumb[]) =>
@@ -103,7 +103,7 @@ export async function getBreadcrumbs({
 
 /** Converts a localized or unlocalized document to a breadcrumb. */
 function docToBreadcrumb(
-  doc: any,
+  doc: Record<string, any>,
   locale: Locale | 'all',
   breadcrumbLabelField?: string | undefined,
 ): Breadcrumb {

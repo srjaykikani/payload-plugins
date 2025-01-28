@@ -19,9 +19,9 @@ export function setRootPageDocumentVirtualFields({
   locales,
   breadcrumbLabelField,
 }: {
-  doc: any
-  locale: string
-  locales: string[]
+  doc: Record<string, any>
+  locale: Locale 
+  locales: Locale[]
   breadcrumbLabelField: string
 }) {
   const paths = locales.reduce(

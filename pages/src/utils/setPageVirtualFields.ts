@@ -16,7 +16,7 @@ export async function setPageDocumentVirtualFields({
   pageConfigAttributes,
 }: {
   req: PayloadRequest | undefined
-  doc: any
+  doc: Record<string, any>
   locale: Locale | 'all'
   locales: Locale[]
   pageConfigAttributes: PageCollectionConfigAttributes
