@@ -11,6 +11,7 @@ export function breadcrumbsField(): Field {
     interfaceName: 'Breadcrumbs',
     type: 'array',
     required: true,
+    localized: true,
     virtual: true,
     // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
     validate: (_: any): true => true,
@@ -22,7 +23,6 @@ export function breadcrumbsField(): Field {
             name: 'slug',
             required: true,
             type: 'text',
-            localized: true,
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
             validate: (_: any): true => true,
             admin: {
@@ -33,7 +33,6 @@ export function breadcrumbsField(): Field {
             name: 'path',
             required: true,
             type: 'text',
-            localized: true,
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
             validate: (_: any): true => true,
             admin: {
@@ -44,7 +43,6 @@ export function breadcrumbsField(): Field {
             name: 'label',
             required: true,
             type: 'text',
-            localized: true,
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
             validate: (_: any): true => true,
             admin: {

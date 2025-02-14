@@ -65,7 +65,7 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
   if (doc.isRootPage) {
     const docWithVirtualFields = setRootPageDocumentVirtualFields({
       doc,
-      locale,
+      locale: 'all', // The CollectionBeforeReadHook should always return the field values for all locales
       locales,
       breadcrumbLabelField: pageConfig.page.breadcrumbs.labelField,
     })
@@ -86,7 +86,7 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
     const docWithVirtualFields = await setPageDocumentVirtualFields({
       req,
       doc,
-      locale,
+      locale: 'all', // The CollectionBeforeReadHook should always return the field values for all locales
       locales,
       pageConfigAttributes: pageConfig.page,
     })
