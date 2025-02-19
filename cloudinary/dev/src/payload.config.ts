@@ -33,7 +33,22 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  plugins: [payloadCloudinaryPlugin({})],
+  plugins: [
+    payloadCloudinaryPlugin({
+      credentials: {
+        apiKey: process.env.CLOUDINARY_API_KEY!,
+        apiSecret: process.env.CLOUDINARY_API_SECRET!,
+      },
+      cloudinary: {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME!,
+        folder: 'payload-cloudinary-plugin',
+      },
+      uploadCollections: ['images', 'videos'],
+      uploadOptions: {
+        useFilename: true,
+      },
+    }),
+  ],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',

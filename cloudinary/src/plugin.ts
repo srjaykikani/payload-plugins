@@ -1,39 +1,34 @@
+import { v2 as cloudinary } from 'cloudinary'
 import type { Config } from 'payload'
 
 import type { CloudinaryPluginConfig } from './types/CloudinaryPluginConfig'
+import { extendUploadCollectionConfig } from './utils/extendUploadCollectionConfig'
 
 /** Payload plugin which integrates cloudinary for hosting media collection items. */
 export const payloadCloudinaryPlugin =
   (pluginOptions: CloudinaryPluginConfig) =>
   (incomingConfig: Config): Config => {
-    const config = { ...incomingConfig }
-
     // If the plugin is disabled, return the config without modifying it
     if (pluginOptions.enabled === false) {
-      return config
+      return incomingConfig
     }
 
-    config.onInit = async (payload) => {
-      if (incomingConfig.onInit) {
-        await incomingConfig.onInit(payload)
-      }
+    cloudinary.config({
+      cloud_name: pluginOptions.cloudinary.cloudName,
+      api_key: pluginOptions.credentials.apiKey,
+      api_secret: pluginOptions.credentials.apiSecret,
+    })
 
-      const neededEnvVars = [
-        'CLOUDINARY_CLOUD_NAME',
-        'CLOUDINARY_API_KEY',
-        'CLOUDINARY_API_SECRET',
-        'CLOUDINARY_FOLDER',
-      ]
-
-      const missingEnvVars = neededEnvVars.filter((envVar) => !process.env[envVar])
-      if (missingEnvVars.length > 0) {
-        throw new Error(
-          `The following environment variables are required for the cloudinary plugin but not defined: ${missingEnvVars.join(
-            ', ',
-          )}`,
-        )
-      }
+    return {
+      ...incomingConfig,
+      collections: incomingConfig.collections?.map((collection) => {
+        if (pluginOptions.uploadCollections?.includes(collection.slug)) {
+          return extendUploadCollectionConfig({
+            config: collection,
+            pluginConfig: pluginOptions,
+          })
+        }
+        return collection
+      }),
     }
-
-    return config
   }

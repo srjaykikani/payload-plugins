@@ -1,45 +1,29 @@
 import type { CollectionConfig } from 'payload'
 import afterDeleteHook from '../hooks/afterDelete'
 import beforeChangeHook from '../hooks/beforeChange'
-
-/** A collection config with additional attributes for media collections. */
-type MediaCollectionConfig = {
-  slug: string
-  labels?: CollectionConfig['labels']
-  access?: CollectionConfig['access']
-  fields?: CollectionConfig['fields']
-  hooks?: CollectionConfig['hooks']
-  admin?: CollectionConfig['admin']
-  uploads?: {
-    mimeTypes?: string[]
-  }
-}
+import { CloudinaryPluginConfig } from '../types/CloudinaryPluginConfig'
 
 /**
- * Creates the `CollectionConfig` for a Media collection with all hooks and fields needed for Cloudinary integration.
+ * Extends the given `CollectionConfig` with all hooks and fields needed for the Cloudinary integration.
  */
-export const createMediaCollectionConfig = ({
-  slug,
-  labels,
-  access,
-  fields,
-  hooks,
-  admin,
-  uploads,
-}: MediaCollectionConfig): CollectionConfig => ({
-  slug,
-  labels,
+export const extendUploadCollectionConfig = ({
+  config,
+  pluginConfig,
+}: {
+  config: CollectionConfig
+  pluginConfig: CloudinaryPluginConfig
+}): CollectionConfig => ({
+  ...config,
   admin: {
     defaultColumns: ['filename', 'createdAt'],
     listSearchableFields: ['filename'],
-    ...admin,
+    ...config.admin,
   },
   disableDuplicate: true,
-  access: access ?? {},
   hooks: {
-    ...hooks,
-    beforeChange: [...(hooks?.beforeChange ?? []), beforeChangeHook],
-    afterDelete: [...(hooks?.afterDelete ?? []), afterDeleteHook],
+    ...config.hooks,
+    beforeChange: [...(config.hooks?.beforeChange ?? []), beforeChangeHook(pluginConfig)],
+    afterDelete: [...(config.hooks?.afterDelete ?? []), afterDeleteHook],
   },
   fields: [
     {
@@ -92,13 +76,28 @@ export const createMediaCollectionConfig = ({
         condition: (data) => Boolean(data?.cloudinaryURL),
       },
     },
-    ...(fields ?? []),
+    ...(config.fields ?? []),
   ],
   upload: {
-    ...uploads,
+    ...(typeof config.upload === 'object' ? config.upload : {}),
     disableLocalStorage: true,
     crop: false,
-    adminThumbnail: ({ doc }) =>
-      `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/w_300,h_300,c_fill/f_auto,q_auto,dpr_auto/${doc.cloudinaryPublicId}`,
+    // @ts-ignore
+    adminThumbnail: ({ doc }: { doc: { cloudinaryURL: string; mimeType: string } }) => {
+      const transformOptions = 'w_300,h_300,c_fill,f_auto,q_auto,dpr_auto'
+
+      const newUrl = (doc.cloudinaryURL as string).replace('/upload', `/upload/${transformOptions}`)
+
+      // As payload does not support videos as thumbnails, create an image thumbnail of the video:
+      if (doc.mimeType.startsWith('video/')) {
+        const videoThumbnailExtension = '.webp'
+        const videoExtension = doc.cloudinaryURL.split('/').pop()?.split('.').pop()
+        const videoThumbnailUrl = newUrl.replace(`.${videoExtension}`, videoThumbnailExtension)
+
+        return videoThumbnailUrl
+      }
+
+      return newUrl
+    },
   },
 })

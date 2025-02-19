@@ -2,61 +2,68 @@
 
 [![NPM Version](https://img.shields.io/npm/v/%40jhb.software%2Fpayload-cloudinary-plugin)](https://www.npmjs.com/package/@jhb.software/payload-cloudinary-plugin)
 
-Seamlessly integrate Cloudinary with Payload CMS for professional media asset management. This plugin enables direct uploading your media files through Cloudinary's powerful platform.
+Seamlessly integrate Cloudinary with Payload CMS for professional media asset management. This plugin enables direct uploading your media files to Cloudinary's powerful platform.
 
 ## Setup
 
-Add the plugin to your payload config as follows:
+Add the plugin to your payload config as follows. Specify the slugs of all upload collections you want to integrate with Cloudinary in the `uploadCollections` option.
 
 ```ts
-plugins: [payloadCloudinaryPlugin({})]
+plugins: [
+  payloadCloudinaryPlugin({
+    uploadCollections: ['images', 'videos'],
+    credentials: {
+      apiKey: process.env.CLOUDINARY_API_KEY!,
+      apiSecret: process.env.CLOUDINARY_API_SECRET!,
+    },
+    cloudinary: {
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME!,
+    },
+  }),
+]
 ```
 
-### Environment variables
+These are the minimum required plugin options. See the [Additional plugin options](#additional-plugin-options) section for further options.
 
-The following environment variables are required:
+### Usage
 
-- `CLOUDINARY_CLOUD_NAME`
-- `CLOUDINARY_API_KEY`
-- `CLOUDINARY_API_SECRET`
-- `CLOUDINARY_FOLDER`
+The plugin automatically adds all necessary fields and hooks to the collections specified in the `uploadCollections` option.
 
-## Usage
-
-To add Cloudinary support to a media collection, just wrap its `CollectionConfig` with the `createMediaCollectionConfig` function. This adds all necessary fields and hooks to the collection.
-
-This is the most minimal configuration:
+If you need to extend the collection with additional fields (e.g. an alt field), you can do so:
 
 ```ts
-import { createMediaCollectionConfig } from '@jhb.software/payload-cloudinary-plugin'
+import { CollectionConfig } from 'payload'
 
-const mediaCollection = createMediaCollectionConfig({
-  slug: 'media',
-})
-```
-
-The following example shows that you can also add additional fields to the collection:
-
-```ts
-import { createMediaCollectionConfig } from '@jhb.software/payload-cloudinary-plugin'
-
-const imagesCollection = createMediaCollectionConfig({
+export const Images: CollectionConfig = {
   slug: 'images',
   labels: {
     singular: 'Image',
     plural: 'Images',
   },
-  uploads: {
+  upload: {
     mimeTypes: ['image/*'],
   },
   fields: [
+    // The other fields are automatically added by the plugin.
     {
       name: 'alt',
       type: 'text',
     },
   ],
-})
+}
 ```
+
+### Additional plugin options
+
+The following options are optional:
+
+- `uploadOptions`
+  - `useFilename`: Whether to use the filename of the uploaded file as the public ID. Defaults to `false`.
+  - `chunkSize`: The size of the chunks to upload the file in.
+- `cloudinary`
+  - `folder`: The folder to upload the files to.
+
+See the [CloudinaryPluginConfig](https://github.com/jhb-software/payload-plugins/blob/main/cloudinary/src/types/CloudinaryPluginConfig.ts) type for more details.
 
 ## Roadmap
 
