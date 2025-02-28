@@ -1,5 +1,6 @@
 import { payloadCloudinaryPlugin } from '@jhb.software/payload-cloudinary-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { v2 as cloudinary } from 'cloudinary'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -9,6 +10,12 @@ import { Videos } from './collections/videos'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
 export default buildConfig({
   admin: {
     autoLogin: {
@@ -16,6 +23,9 @@ export default buildConfig({
       password: 'test',
     },
     user: 'users',
+    components: {
+      beforeDashboard: ['/src/components/ClientSideCloudinaryUpload'],
+    },
   },
   collections: [
     Videos,
@@ -48,6 +58,39 @@ export default buildConfig({
         useFilename: true,
       },
     }),
+  ],
+  endpoints: [
+    {
+      path: '/sign',
+      method: 'post',
+      handler: async (req) => {
+        if (!req) {
+          return new Response(JSON.stringify({ error: 'No request provided' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
+        const body = await req.json?.()
+
+        if (!body?.paramsToSign) {
+          return new Response(JSON.stringify({ error: 'No paramsToSign provided' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' },
+          })
+        }
+
+        const signature = cloudinary.utils.api_sign_request(
+          body.paramsToSign,
+          process.env.CLOUDINARY_API_SECRET!,
+        )
+
+        return new Response(JSON.stringify({ signature }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      },
+    },
   ],
   async onInit(payload) {
     const existingUsers = await payload.find({

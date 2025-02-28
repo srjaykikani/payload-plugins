@@ -19,6 +19,7 @@
     "@jhb.software/payload-cloudinary-plugin": "workspace:*",
     "@payloadcms/db-mongodb": "^3.25.0",
     "@payloadcms/next": "^3.25.0",
+    "cloudinary": "^2.5.1",
     "next": "15.2.0",
     "payload": "^3.25.0",
     "react": "19.0.0",
