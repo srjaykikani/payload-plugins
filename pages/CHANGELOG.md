@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- localize the array breadcrumbs field itself for consistency with virtual field data (20cefed)
+
 ## 0.3.0
 
 - BREAKING: feat: add new unique and static slug options to page config (a51a47d)
