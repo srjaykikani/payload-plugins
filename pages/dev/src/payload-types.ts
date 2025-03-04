@@ -74,6 +74,7 @@ export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     pages: Page;
     authors: Author;
