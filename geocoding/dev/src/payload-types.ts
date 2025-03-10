@@ -241,6 +241,25 @@ export interface Page {
         id?: string | null;
       }[]
     | null;
+  locationsNormalized?:
+    | {
+        location_googlePlacesData?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        /**
+         * @minItems 2
+         * @maxItems 2
+         */
+        location?: [number, number] | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -339,6 +358,13 @@ export interface PagesSelect<T extends boolean = true> {
         location?: T;
       };
   locations?:
+    | T
+    | {
+        location_googlePlacesData?: T;
+        location?: T;
+        id?: T;
+      };
+  locationsNormalized?:
     | T
     | {
         location_googlePlacesData?: T;

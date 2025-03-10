@@ -63,6 +63,21 @@ geocodingField({
 }),
 ```
 
+## Field Options
+
+The `GeoCodingFieldConfig` type defines the configuration options for the geocoding field. It includes the following properties:
+
+- **pointField**: This property defines the options for the point field where the coordinates will be stored.
+
+- **geoDataFieldOverride** (optional): This property allows customization of the geocoding data field (which has the `_googlePlacesData` suffix). It can include:
+
+  - `required` (boolean): Indicates whether this field is required.
+  - `label` (string): A custom label for the field.
+  - `access` (JSONField['access']): Access control settings for the field.
+  - `admin` (JSONField['admin']): Admin-specific settings for the field.
+
+- **normalizeUndefinedPoint** (optional): When enabled, this option normalizes missing or empty geo values by storing them as `[0, 0]` in the database. This helps prevent saving errors in MongoDB when the field is optional and utilized within an array. For further details, refer to the [discussion](https://github.com/payloadcms/payload/discussions/11111) in the Payload repository.
+
 ## About this plugin
 
 This plugin uses the [react-google-places-autocomplete](https://www.npmjs.com/package/react-google-places-autocomplete) library to provide a Select/Search input for finding an address. The result of the Google Places API request is stored in a JSON field and the coordinates are stored in a Point Field.

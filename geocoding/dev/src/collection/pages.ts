@@ -88,7 +88,7 @@ export const Pages: CollectionConfig = {
       ],
     },
 
-    // Usage inside an array
+    // Usage inside an array without the normalizeUndefinedPoint option (this will cause a save error on MongoDB when there is an array item without a location set)
     {
       name: 'locations',
       type: 'array',
@@ -98,6 +98,21 @@ export const Pages: CollectionConfig = {
             name: 'location',
             type: 'point',
           },
+        }),
+      ],
+    },
+
+    // Usage inside an array with the normalizeUndefinedPoint option (this will cause a save error on MongoDB when there is an array item without a location set)
+    {
+      name: 'locationsNormalized',
+      type: 'array',
+      fields: [
+        geocodingField({
+          pointField: {
+            name: 'location',
+            type: 'point',
+          },
+          normalizeUndefinedPoint: true,
         }),
       ],
     },
