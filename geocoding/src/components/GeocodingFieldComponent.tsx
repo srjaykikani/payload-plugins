@@ -22,7 +22,7 @@ export const GeocodingFieldComponent: SelectFieldClientComponent = ({ field, pat
   return (
     <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <FieldLabel path={path} label={field.label} />
+        <FieldLabel path={path} label={field.label} required={field.required} />
         <FieldError path={path} />
       </div>
       <GooglePlacesAutocomplete
