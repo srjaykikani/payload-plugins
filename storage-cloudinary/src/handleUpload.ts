@@ -23,6 +23,7 @@ export const getHandleUpload = ({
   prefix = '',
 }: HandleUploadArgs): HandleUpload => {
   return async ({ data, file }) => {
+    console.log('Server side upload of file', data, file)
     const fileKey = path.posix.join(data.prefix || prefix, file.filename)
 
     const uploadOptions: UploadApiOptions = {

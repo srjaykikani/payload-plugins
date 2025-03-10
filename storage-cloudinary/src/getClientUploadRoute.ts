@@ -29,10 +29,7 @@ export const getClientUploadRoute =
 
     const req = rawReq as PayloadRequest
 
-    console.log('sign request')
-
     const collectionSlug = req.searchParams.get('collectionSlug')
-    console.log('collectionSlug', collectionSlug)
 
     if (!collectionSlug) {
       throw new APIError('No payload was provided')

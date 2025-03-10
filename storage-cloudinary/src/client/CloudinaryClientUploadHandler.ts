@@ -35,7 +35,7 @@ async function getSingnature(
       throw new Error('No signature found')
     }
 
-    console.log('signature', data.signature)
+    console.log('signature from server', data.signature)
 
     return data.signature
   } catch (error) {
@@ -68,7 +68,6 @@ export const CloudinaryClientUploadHandler =
 
       const publicId = `${prefix}${file.name.replace(/\.[^/.]+$/, '')}`
       formData.append('public_id', publicId)
-      console.log('publicId', publicId)
 
       formData.append('resource_type', 'auto')
 
@@ -88,17 +87,17 @@ export const CloudinaryClientUploadHandler =
       formData.append('signature', signature)
 
       const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`
-      console.log('url', url)
 
       const response = await fetch(url, {
         method: 'POST',
         body: formData,
       })
 
-      const data = await response.text()
+      if (!response.ok) {
+        throw new Error('Failed to upload file')
+      }
 
-      console.log('data', data)
-
-      return { key: '123' }
+      // Note: Here we could optionally get some data like the public id or secure url from the response
+      // and sent it as the 'clientUploadContext' to the staticHandler function
     },
   })
