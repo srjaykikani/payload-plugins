@@ -33,10 +33,10 @@ export async function getBreadcrumbs({
           additionalSlug: data.isRootPage
             ? ROOT_PAGE_SLUG
             : typeof data.slug === 'string'
-              ? data.slug
-              : typeof data.slug === 'object'
-                ? data.slug[locale]
-                : undefined,
+            ? data.slug
+            : typeof data.slug === 'object'
+            ? data.slug[locale]
+            : undefined,
         }),
       },
       locale,
@@ -83,15 +83,12 @@ export async function getBreadcrumbs({
   }
 
   if (locale === 'all') {
-    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce(
-      (acc, locale) => {
-        const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
+    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce((acc, locale) => {
+      const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
 
-        acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
-        return acc
-      },
-      {} as Record<Locale, Breadcrumb[]>,
-    )
+      acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
+      return acc
+    }, {} as Record<Locale, Breadcrumb[]>)
 
     return breadcrumbs
   } else {
@@ -111,14 +108,14 @@ function docToBreadcrumb(
     slug: doc.isRootPage
       ? ROOT_PAGE_SLUG
       : typeof doc.slug === 'string'
-        ? doc.slug
-        : typeof doc.slug === 'object'
-          ? doc.slug[locale]
-          : undefined,
+      ? doc.slug
+      : typeof doc.slug === 'object'
+      ? doc.slug[locale]
+      : undefined,
     path: typeof doc.path === 'string' ? doc.path : doc.path?.[locale],
     label: breadcrumbLabelField
       ? // the label field might not be localized (e.g. it's a persons name), therefore we need to check both localized and unlocalized
-        (doc[breadcrumbLabelField]?.[locale] ?? doc[breadcrumbLabelField])
-      : (doc.breadcrumbs?.[locale]?.at(-1)?.label ?? doc.breadcrumbs?.at(-1)?.label),
+        doc[breadcrumbLabelField]?.[locale] ?? doc[breadcrumbLabelField]
+      : doc.breadcrumbs?.[locale]?.at(-1)?.label ?? doc.breadcrumbs?.at(-1)?.label,
   }
 }
