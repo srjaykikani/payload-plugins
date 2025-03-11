@@ -79,6 +79,7 @@ export interface Config {
     pages: Page;
     authors: Author;
     blogposts: Blogpost;
+    'blogpost-categories': BlogpostCategory;
     redirects: Redirect;
     countries: Country;
     'country-travel-tips': CountryTravelTip;
@@ -92,6 +93,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     blogposts: BlogpostsSelect<false> | BlogpostsSelect<true>;
+    'blogpost-categories': BlogpostCategoriesSelect<false> | BlogpostCategoriesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     countries: CountriesSelect<false> | CountriesSelect<true>;
     'country-travel-tips': CountryTravelTipsSelect<false> | CountryTravelTipsSelect<true>;
@@ -182,6 +184,17 @@ export interface Blogpost {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogpost-categories".
+ */
+export interface BlogpostCategory {
+  id: string;
+  title: string;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -260,6 +273,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blogposts';
         value: string | Blogpost;
+      } | null)
+    | ({
+        relationTo: 'blogpost-categories';
+        value: string | BlogpostCategory;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -371,6 +388,16 @@ export interface BlogpostsSelect<T extends boolean = true> {
   title?: T;
   shortTitle?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogpost-categories_select".
+ */
+export interface BlogpostCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

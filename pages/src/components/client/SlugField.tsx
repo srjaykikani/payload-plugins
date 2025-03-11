@@ -12,141 +12,149 @@ import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
 import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug.js'
 
-export const SlugField: TextFieldClientComponent =
-  // @ts-ignore
-  ({ field, path, redirectWarning, fallbackField = 'title', readOnly, defaultValue }) => {
-    const { value: title } = useField<string>({ path: fallbackField })
-    const { initialData, hasPublishedDoc, id } = useDocumentInfo()
-    const initialSlug = initialData?.[path!]
-    const { value: slug, setValue: setSlugRaw } = useField<string>({ path: path })
-    const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
-    const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
-    const locale = useLocale()
+export type SlugFieldClientProps = {
+  pageSlug?: boolean
+  fallbackField: string
+  readOnly?: boolean
+  defaultValue?: string | Record<string, string> | undefined
+}
 
-    /**
-     * Sets the slug, but only if the new slug is different from the current slug.
-     * This prevents the useFormModified from being true without it being actually modified.
-     * */
-    const setSlug = (newSlug: string | undefined) => {
-      if (newSlug !== slug) {
-        setSlugRaw(newSlug)
+export const SlugField: TextFieldClientComponent = (clientProps) => {
+  const { field, path, readOnly } = clientProps
+  const { pageSlug, fallbackField, defaultValue } = clientProps as unknown as SlugFieldClientProps
+
+  const { value: title } = useField<string>({ path: fallbackField })
+  const { initialData, hasPublishedDoc, id } = useDocumentInfo()
+  const initialSlug = initialData?.[path]
+  const { value: slug, setValue: setSlugRaw } = useField<string>({ path: path })
+  const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
+  const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
+  const locale = useLocale()
+
+  /**
+   * Sets the slug, but only if the new slug is different from the current slug.
+   * This prevents the useFormModified from being true without it being actually modified.
+   * */
+  const setSlug = (newSlug: string | undefined) => {
+    if (newSlug !== slug) {
+      setSlugRaw(newSlug)
+    }
+  }
+
+  // TODO: create and use a mustCreateRedirect function to determine if a redirect must be created
+  // Then inside an afterChange hook use this same function to automatically create the redirect
+  const showRedirectWarning = pageSlug && initialSlug !== slug && hasPublishedDoc
+
+  useEffect(() => {
+    if (isRootPage) {
+      // do not change the slug when the document is the root page
+      return
+    }
+
+    // Only update the slug when editing the title when the document is not published to avoid
+    // the creation of a redirection due to the slug change
+    if (!hasPublishedDoc) {
+      // Payload automatically sets the title to "[Untitled]" when the document is created and to id when the title field
+      // for an existing document is empty. In this cases, and when the title is not set, clear the slug.
+      if (!title || title === id || title === '[Untitled]') {
+        setSlug(undefined)
+      } else {
+        setSlug(formatSlug(title))
       }
     }
 
-    // TODO: create and use a mustCreateRedirect function to determine if a redirect must be created
-    // Then inside an afterChange hook use this same function to automatically create the redirect
-    const showRedirectWarning = redirectWarning && initialSlug !== slug && hasPublishedDoc
+    // Only the title should trigger this effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title])
 
-    useEffect(() => {
-      if (isRootPage) {
-        // do not change the slug when the document is the root page
-        return
+  // When a defaultValue is given and the field is readOnly, the staticValue option is used.
+  // In this case, ensure the slug is set to the defaultValue.
+  useEffect(() => {
+    if (defaultValue && readOnly) {
+      const staticValue =
+        typeof defaultValue === 'string' ? defaultValue : defaultValue[locale.code]
+
+      if (staticValue !== slug) {
+        setSlug(staticValue)
       }
-
-      // Only update the slug when editing the title when the document is not published to avoid
-      // the creation of a redirection due to the slug change
-      if (!hasPublishedDoc) {
-        // Payload automatically sets the title to "[Untitled]" when the document is created and to id when the title field
-        // for an existing document is empty. In this cases, and when the title is not set, clear the slug.
-        if (!title || title === id || title === '[Untitled]') {
-          setSlug(undefined)
-        } else {
-          setSlug(formatSlug(title))
-        }
-      }
-
-      // Only the title should trigger this effect
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [title])
-
-    // When a defaultValue is given and the field is readOnly, the staticValue option is used.
-    // In this case, ensure the slug is set to the defaultValue.
-    useEffect(() => {
-      if (defaultValue && readOnly) {
-        const staticValue =
-          typeof defaultValue === 'string' ? defaultValue : defaultValue[locale.code]
-
-        if (staticValue !== slug) {
-          setSlug(staticValue)
-        }
-      }
-    }, [defaultValue, readOnly, slug])
-
-    if (isRootPage === true) {
-      return <></>
     }
+  }, [defaultValue, readOnly, slug])
 
-    // TextField component could not be used here, because it does not support the onChange event
-    return (
-      <>
-        <div className="field-type slug-field-component">
-          <FieldLabel
-            htmlFor={`field-${path}`}
-            label={field.label}
-            required={field.required}
-            localized={field.localized}
+  if (isRootPage === true) {
+    return <></>
+  }
+
+  // TextField component could not be used here, because it does not support the onChange event
+  return (
+    <>
+      <div className="field-type slug-field-component">
+        <FieldLabel
+          htmlFor={`field-${path}`}
+          label={field.label}
+          required={field.required}
+          localized={field.localized}
+        />
+
+        <div style={{ position: 'relative' }}>
+          <TextInput
+            value={slug}
+            path={path!}
+            readOnly={readOnly}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setSlug(liveFormatSlug(e.target.value))
+            }}
           />
-
-          <div style={{ position: 'relative' }}>
-            <TextInput
-              value={slug}
-              path={path!}
-              readOnly={readOnly}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setSlug(liveFormatSlug(e.target.value))
+          {!readOnly && title && formatSlug(title) !== slug && (
+            <div
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
               }}
-            />
-            {!readOnly && title && formatSlug(title) !== slug && (
-              <div
-                style={{
-                  position: 'absolute',
-                  right: '8px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                }}
-              >
-                <>
-                  <Tooltip show={showSyncButtonTooltip}>Sync slug with {fallbackField}</Tooltip>
+            >
+              <>
+                <Tooltip show={showSyncButtonTooltip}>Sync slug with {fallbackField}</Tooltip>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSlug(formatSlug(title))
-                      setShowSyncButtonTooltip(false)
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      cursor: 'pointer',
-                      color: 'var(--theme-elevation-500)',
-                      transition: 'color 0.2s',
-                      transform: 'scale(0.5)',
-                    }}
-                    onMouseEnter={(_) => setShowSyncButtonTooltip(true)}
-                    onMouseLeave={(_) => setShowSyncButtonTooltip(false)}
-                  >
-                    <RefreshIcon />
-                  </button>
-                </>
-              </div>
-            )}
-          </div>
-
-          {showRedirectWarning && (
-            <div style={{ marginTop: '0.5rem' }}>
-              <Banner type="info" icon={<InfoIcon />} alignIcon="left">
-                <div style={{ marginLeft: '0.5rem' }}>
-                  The slug was changed from <code>{initialSlug}</code> to <code>{slug}</code>. This
-                  requires a redirection from the old to the new page path to be manually created.
-                </div>
-              </Banner>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSlug(formatSlug(title))
+                    setShowSyncButtonTooltip(false)
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: 'var(--theme-elevation-500)',
+                    transition: 'color 0.2s',
+                    transform: 'scale(0.5)',
+                  }}
+                  onMouseEnter={(_) => setShowSyncButtonTooltip(true)}
+                  onMouseLeave={(_) => setShowSyncButtonTooltip(false)}
+                >
+                  <RefreshIcon />
+                </button>
+              </>
             </div>
           )}
         </div>
-      </>
-    )
-  }
+
+        {showRedirectWarning && (
+          <div style={{ marginTop: '0.5rem' }}>
+            <Banner type="info" icon={<InfoIcon />} alignIcon="left">
+              <div style={{ marginLeft: '0.5rem' }}>
+                The slug was changed from <code>{initialSlug}</code> to <code>{slug}</code>. This
+                requires a redirection from the old to the new page path to be manually created.
+              </div>
+            </Banner>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
 
 export default SlugField
 

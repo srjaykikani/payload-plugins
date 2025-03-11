@@ -3,7 +3,7 @@ import { breadcrumbsField } from '../fields/breadcrumbsField.js'
 import { isRootPageField } from '../fields/isRootPageField.js'
 import { parentField } from '../fields/parentField.js'
 import { pathField } from '../fields/pathField.js'
-import { slugField } from '../fields/slugField.js'
+import { pageSlugField } from '../fields/slugField.js'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate.js'
 import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation.js'
 import {
@@ -78,8 +78,7 @@ export const createPageCollectionConfig = (
     },
     fields: [
       ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
-      slugField({
-        redirectWarning: true,
+      pageSlugField({
         fallbackField: pageConfig.slug.fallbackField,
         unique: pageConfig.slug.unique,
         staticValue: pageConfig.slug.staticValue,

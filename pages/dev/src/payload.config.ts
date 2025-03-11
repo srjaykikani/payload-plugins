@@ -9,6 +9,7 @@ import { Countries } from './collections/countries'
 import { CountryTravelTips } from './collections/country-travel-tips'
 import { Pages } from './collections/pages'
 import { Redirects } from './collections/redirects'
+import { BlogpostCategories } from './collections/blogpost-categories'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,6 +31,7 @@ export default buildConfig({
     Pages,
     Authors,
     Blogposts,
+    BlogpostCategories,
     Redirects,
     Countries,
     CountryTravelTips,

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- add validation to the slug field
+- BREAKING: when using the `slugField` function in non-page collections
+    - the previously optional `fallbackField` option is now required
+    - the `redirectWarning` option is now removed
+
 ## 0.3.1
 
 - localize the array breadcrumbs field itself for consistency with virtual field data (20cefed)

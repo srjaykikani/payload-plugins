@@ -1,21 +1,29 @@
 import { Field } from 'payload'
 import { Locale } from 'src/types/Locale.js'
 import { beforeDuplicateSlug } from '../hooks/beforeDuplicate.js'
-import { createSlugFromFallbackField } from '../hooks/validateSlug.js'
+import { createSlugFromFallbackField, formatSlug } from '../hooks/validateSlug.js'
+import { SlugFieldClientProps } from 'src/components/client/SlugField.jsx'
+import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields.js'
 
-// Note: make sure this field can be used separately from the PagesCollectionConfig (e.g. a non page collection needs a slug field as well)
-
-export function slugField({
-  redirectWarning,
-  fallbackField = 'title',
-  unique = true,
-  staticValue,
-}: {
-  redirectWarning: boolean
-  fallbackField?: string
+type InternalSlugFieldConfig = {
+  pageSlug?: boolean
+  fallbackField: string
   unique?: boolean
   staticValue?: string | Record<Locale, string>
-}): Field {
+}
+
+type PageSlugFieldConfig = Omit<InternalSlugFieldConfig, 'pageSlug'>
+type SlugFieldConfig = Omit<InternalSlugFieldConfig, 'pageSlug'>
+
+/**
+ * The internal slug field which can be used on pages and non-page collections, depending on the `pageSlug` option.
+ */
+export function internalSlugField({
+  pageSlug,
+  fallbackField,
+  unique = true,
+  staticValue,
+}: InternalSlugFieldConfig): Field {
   return {
     name: 'slug',
     type: 'text',
@@ -30,9 +38,9 @@ export function slugField({
           clientProps: {
             readOnly: !!staticValue,
             defaultValue: staticValue,
-            redirectWarning: redirectWarning,
+            pageSlug: pageSlug,
             fallbackField: fallbackField,
-          },
+          } satisfies SlugFieldClientProps,
         },
       },
       // The condition option is not used to hide the field when the page is the root page because then the type of the slug field would be optional.
@@ -41,23 +49,20 @@ export function slugField({
       value: string | null | undefined,
       options: { data: any; siblingData: any; id?: string | number },
     ): string | true => {
-      // TODO: reactivate this code when refactoring the virtual field validation, note that this validation should only be applied in pages collections
-      // if (options.data.isRootPage) {
-      //   if (value !== ROOT_PAGE_SLUG) {
-      //     return 'The slug of the root page must be an empty string.'
-      //   } else {
-      //     return true
-      //   }
-      // } else {
-      //   if (!value) {
-      //     return 'The slug is required.'
-      //   }
-      //   const formattedValue = formatSlug(value)
-      //   if (value !== formattedValue) {
-      //     return 'The slug is not formatted correctly.'
-      //   }
-      //   return true
-      // }
+      if (pageSlug && options.data.isRootPage) {
+        return value === ROOT_PAGE_SLUG
+          ? true
+          : 'The slug of the root page must be an empty string.'
+      } else {
+        if (!value || value.trim().length === 0) {
+          return 'The slug is required.'
+        }
+
+        if (value !== formatSlug(value)) {
+          return 'The slug contains invalid characters.'
+        }
+      }
+
       return true
     },
     hooks: {
@@ -69,4 +74,14 @@ export function slugField({
     localized: true,
     required: true,
   }
+}
+
+/** The slug field used by the plugin on all pages collections. */
+export const pageSlugField = (config: PageSlugFieldConfig): Field => {
+  return internalSlugField({ ...config, pageSlug: true })
+}
+
+/** A slug field which can be used on non-page collections. */
+export const slugField = (config: SlugFieldConfig): Field => {
+  return internalSlugField({ ...config, pageSlug: false })
 }
