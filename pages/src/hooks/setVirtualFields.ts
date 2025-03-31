@@ -44,19 +44,51 @@ export const setVirtualFieldsBeforeRead: CollectionBeforeReadHook = async ({
       return doc
     }
 
-    const missingFields = requiredFields(pageConfig).filter(
+    // Fields that are required to be selected but were not selected
+    const missingSelectedFields = requiredFields(pageConfig).filter(
       (field) => !selectedFields.includes(field),
     )
 
-    if (missingFields.length > 0) {
-      throw new Error(
-        'The following fields are needed to generate the virtual fields but were not selected: ' +
-          missingFields.join(', ') +
-          '. Collection: ' +
-          collection.slug +
-          '. Document: ' +
-          doc.id,
-      )
+    // For some setups with complex relationships I noticed that when queriying a document
+    // the context.select object sometimes does not contain the real selection but the selection
+    // of a sub-query.
+    // When querying a document which has a relationship to a document with a different parent name
+    // this causes the missingSelectedFields to include this parent name even though the doc includes the parent field.
+    //
+    // To avoid throwing in this case, check if the missingSelectedFields are actually missing in the document.
+    //
+    // TODO: try to reproduce this issue in a minimal setup and find out if this is a payload bug or not.
+
+    // Fields that are required to be selected but do not exist in the document
+    const missingFields = missingSelectedFields.filter(
+      (field) => !Object.prototype.hasOwnProperty.call(doc, field),
+    )
+
+    if (missingFields.length === 0) {
+      // All "missing" fields actually exist in the document, proceed
+      if (missingSelectedFields.length > 0) {
+        console.log(
+          'Fields were not explicitly selected but exist in the document, proceeding:',
+          missingSelectedFields.join(', ') +
+            ' for document ' +
+            doc.id +
+            ' in collection ' +
+            collection.slug,
+        )
+      }
+    } else {
+      if (missingSelectedFields.length > 0) {
+        throw new Error(
+          'The following fields are needed to generate the virtual fields for document ' +
+            doc.id +
+            ' in collection ' +
+            collection.slug +
+            ' but were not selected: ' +
+            missingSelectedFields.join(', ') +
+            ' selected fields: ' +
+            selectedFields.join(', '),
+        )
+      }
     }
   }
 
