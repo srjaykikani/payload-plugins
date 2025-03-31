@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- fix: resolve issue with not selected fields in sub-queries (c333598)
+
 ## 0.4.0
 
 - add validation to the slug field
