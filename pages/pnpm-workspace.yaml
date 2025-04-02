@@ -1,3 +1,4 @@
 packages:
   - './'
   - './dev'
+  - './dev_single_locale'
