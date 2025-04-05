@@ -1,6 +1,7 @@
 import { Field, PayloadRequest } from 'payload'
 import { IncomingPageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 import { getPageCollectionConfigAttributes } from '../utils/getPageCollectionConfigAttributes.js'
+import { translatedLabel } from '../utils/translatedLabel.js'
 
 export function parentField(
   pageConfig: IncomingPageCollectionConfigAttributes,
@@ -8,6 +9,7 @@ export function parentField(
 ): Field {
   return {
     name: pageConfig.parent.name,
+    label: translatedLabel('parent'),
     type: 'relationship',
     relationTo: pageConfig.parent.collection,
     required: !pageConfig.isRootCollection,

@@ -10,6 +10,8 @@ import { CountryTravelTips } from './collections/country-travel-tips'
 import { Pages } from './collections/pages'
 import { Redirects } from './collections/redirects'
 import { BlogpostCategories } from './collections/blogpost-categories'
+import { en } from 'payload/i18n/en'
+import { de } from 'payload/i18n/de'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -51,6 +53,9 @@ export default buildConfig({
   localization: {
     locales: ['de', 'en'],
     defaultLocale: 'de',
+  },
+  i18n: {
+    supportedLanguages: { en, de },
   },
   plugins: [payloadPagesPlugin({})],
   async onInit(payload) {

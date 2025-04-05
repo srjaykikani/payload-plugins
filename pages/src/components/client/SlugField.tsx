@@ -11,6 +11,7 @@ import {
 import type { TextFieldClientComponent } from 'payload'
 import { useEffect, useState } from 'react'
 import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug.js'
+import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 
 export type SlugFieldClientProps = {
   pageSlug?: boolean
@@ -30,6 +31,7 @@ export const SlugField: TextFieldClientComponent = (clientProps) => {
   const [showSyncButtonTooltip, setShowSyncButtonTooltip] = useState(false)
   const { value: isRootPage } = useField<boolean>({ path: 'isRootPage' })
   const locale = useLocale()
+  const { t } = usePluginTranslation()
 
   /**
    * Sets the slug, but only if the new slug is different from the current slug.
@@ -114,7 +116,12 @@ export const SlugField: TextFieldClientComponent = (clientProps) => {
               }}
             >
               <>
-                <Tooltip show={showSyncButtonTooltip}>Sync slug with {fallbackField}</Tooltip>
+                <Tooltip show={showSyncButtonTooltip}>
+                  {t('syncSlugWithX').replace(
+                    '{X}',
+                    fallbackField.charAt(0).toUpperCase() + fallbackField.slice(1),
+                  )}
+                </Tooltip>
 
                 <button
                   type="button"
@@ -144,10 +151,14 @@ export const SlugField: TextFieldClientComponent = (clientProps) => {
         {showRedirectWarning && (
           <div style={{ marginTop: '0.5rem' }}>
             <Banner type="info" icon={<InfoIcon />} alignIcon="left">
-              <div style={{ marginLeft: '0.5rem' }}>
-                The slug was changed from <code>{initialSlug}</code> to <code>{slug}</code>. This
-                requires a redirection from the old to the new page path to be manually created.
-              </div>
+              <div
+                style={{ marginLeft: '0.5rem' }}
+                dangerouslySetInnerHTML={{
+                  __html: t('slugWasChangedFromXToY')
+                    .replace('{X}', initialSlug)
+                    .replace('{Y}', slug),
+                }}
+              />
             </Banner>
           </div>
         )}

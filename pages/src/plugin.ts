@@ -1,6 +1,8 @@
 import type { Config } from 'payload'
 
 import type { PagesPluginConfig } from './types/PagesPluginConfig.js'
+import { translations } from './translations/index.js'
+import { deepMergeSimple } from './utils/deepMergeSimple.js'
 
 /** Payload plugin which integrates fields for managing website pages. */
 export const payloadPagesPlugin =
@@ -30,5 +32,11 @@ export const payloadPagesPlugin =
       }
     }
 
-    return config
+    return {
+      ...config,
+      i18n: {
+        ...config.i18n,
+        translations: deepMergeSimple(translations, incomingConfig.i18n?.translations ?? {}),
+      },
+    }
   }
