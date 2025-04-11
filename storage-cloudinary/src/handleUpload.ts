@@ -12,6 +12,11 @@ const multipartThreshold = 1024 * 1024 * 99 // 99MB
 
 export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): HandleUpload => {
   return async ({ data, file }) => {
+    // TODO: this function is also called when the document is updated (e.g. chaging the alt text)
+    // In this case do not re-upload the file
+    // But attention: the file inside the document could be updated, in this case we want to re-upload the file
+    // Therefore returning early if the cloudinaryPublicId is present on the data (document) is not enough
+
     const publicId = `${prefix}${file.filename.replace(/\.[^/.]+$/, '')}` // prepend prefix to filename and remove file extension
 
     const uploadOptions: UploadApiOptions = {
