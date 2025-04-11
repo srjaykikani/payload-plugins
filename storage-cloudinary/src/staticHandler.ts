@@ -1,5 +1,4 @@
 import type { StaticHandler } from '@payloadcms/plugin-cloud-storage/types'
-import { v2 as cloudinary } from 'cloudinary'
 import type { ClientUploadContext } from './client/CloudinaryClientUploadHandler'
 
 // This is called:
@@ -58,22 +57,31 @@ export const getStaticHandler = (): StaticHandler => {
         return new Response(null, { status: 404, statusText: 'Not Found' })
       }
 
-      console.log('publicId', publicId)
-
       const response = await fetch(secureUrl)
       const arrayBuffer = await response.arrayBuffer()
 
-      // TODO: handle etag etc....
+      const etagFromHeaders = req.headers.get('etag') || req.headers.get('if-none-match')
+      const objectEtag = response.headers.get('etag')
+
+      if (etagFromHeaders && etagFromHeaders === objectEtag) {
+        return new Response(null, {
+          headers: new Headers({
+            'Content-Length': response.headers.get('Content-Type') || 'application/octet-stream',
+            'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
+            ETag: objectEtag,
+          }),
+          status: 304,
+        })
+      }
 
       return new Response(arrayBuffer, {
         headers: {
           'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
           'Content-Length': response.headers.get('Content-Length') || '',
+          ETag: objectEtag,
         },
       })
     } catch (err: unknown) {
-      // TODO: catch not found errors from cloudinary
-
       if (
         typeof err === 'object' &&
         'error' in err &&
@@ -81,7 +89,10 @@ export const getStaticHandler = (): StaticHandler => {
         'http_code' in err.error &&
         err.error.http_code === 404
       ) {
-        console.log('Error fetching file from cloudinary, 404, message:', err.error.message)
+        const cloudinaryError =
+          'message' in err.error ? err.error.message : JSON.stringify(err.error)
+
+        console.log('Error fetching file from cloudinary, 404, message:', cloudinaryError)
         return new Response(null, { status: 404, statusText: 'Not Found' })
       }
 
