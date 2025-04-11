@@ -6,17 +6,16 @@ import type {
   GeneratedAdapter,
 } from '@payloadcms/plugin-cloud-storage/types'
 import { initClientUploads } from '@payloadcms/plugin-cloud-storage/utilities'
-import type { Config, Plugin, UploadCollectionSlug } from 'payload'
-
+import type { Config, Field, Plugin, UploadCollectionSlug } from 'payload'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
 import type { ConfigOptions as CloudinaryConfigOptions } from 'cloudinary'
-
-import { VercelBlobClientUploadHandlerExtra } from './client/CloudinaryClientUploadHandler.js'
 import { getGenerateUrl } from './generateURL.js'
 import { getClientUploadRoute } from './getClientUploadRoute.js'
 import { getHandleDelete } from './handleDelete.js'
 import { getHandleUpload } from './handleUpload.js'
 import { getStaticHandler } from './staticHandler.js'
+import { getAdminThumbnail } from './getAdminThumbnail.js'
+import { CloudinaryClientUploadHandlerExtra } from './client/CloudinaryClientUploadHandler.js'
 
 export type CloudinaryStorageOptions = {
   /**
@@ -25,7 +24,7 @@ export type CloudinaryStorageOptions = {
   clientUploads?: ClientUploadsConfig
 
   /**
-   * Collections to apply the Vercel Blob adapter to
+   * Collections to apply the Cloudinary storage adapter to
    */
   collections: Partial<Record<UploadCollectionSlug, Omit<CollectionOptions, 'adapter'> | true>>
 
@@ -69,8 +68,27 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
 
     const baseUrl = `https://res.cloudinary.com/${options.config.cloud_name}`
 
+    const fields: Field[] = [
+      {
+        name: 'cloudinaryPublicId',
+        type: 'text',
+        required: true,
+        admin: {
+          hidden: true,
+        },
+      },
+      {
+        name: 'cloudinarySecureUrl',
+        type: 'text',
+        required: true,
+        admin: {
+          hidden: true,
+        },
+      },
+    ]
+
     initClientUploads<
-      VercelBlobClientUploadHandlerExtra,
+      CloudinaryClientUploadHandlerExtra,
       CloudinaryStorageOptions['collections'][string]
     >({
       clientHandler:
@@ -119,7 +137,10 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
           upload: {
             ...(typeof collection.upload === 'object' ? collection.upload : {}),
             disableLocalStorage: true,
+            crop: false,
+            adminThumbnail: getAdminThumbnail,
           },
+          fields: [...fields, ...(collection.fields || [])],
         }
       }),
     }
@@ -132,22 +153,22 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
 function cloudinaryStorageInternal(
   options: { baseUrl: string } & CloudinaryStorageOptions,
 ): Adapter {
-  return ({ collection, prefix }): GeneratedAdapter => {
+  return ({ prefix }): GeneratedAdapter => {
     const { baseUrl, config } = options
 
     const folderSrc = options.folder ? options.folder.replace(/^\/|\/$/g, '') + '/' : ''
 
     return {
       name: 'cloudinary',
-      generateURL: getGenerateUrl({ baseUrl, prefix }),
-      handleDelete: getHandleDelete({ baseUrl, prefix, folderSrc }),
+      generateURL: getGenerateUrl(),
+      handleDelete: getHandleDelete(),
       handleUpload: getHandleUpload({
         baseUrl,
         folderSrc,
         prefix,
         config,
       }),
-      staticHandler: getStaticHandler({ folderSrc }, collection),
+      staticHandler: getStaticHandler(),
     }
   }
 }

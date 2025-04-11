@@ -1,25 +1,18 @@
 import type { HandleDelete } from '@payloadcms/plugin-cloud-storage/types'
 import { v2 as cloudinary } from 'cloudinary'
-
-import path from 'path'
 import { APIError } from 'payload'
 
-type HandleDeleteArgs = {
-  baseUrl: string
-  folderSrc: string
-  prefix?: string
-}
-
-export const getHandleDelete = ({ folderSrc }: HandleDeleteArgs): HandleDelete => {
-  return async ({ doc: { prefix = '' }, filename }) => {
-    // TODO: fix the public id generation
-    const publicId = path.posix.join(folderSrc, prefix, filename)
+export const getHandleDelete = (): HandleDelete => {
+  return async ({ doc }) => {
+    if (!doc.cloudinaryPublicId) {
+      throw new APIError('File is missing a cloudinaryPublicId', 500)
+    }
 
     type ReturnType = {
       result?: 'ok' | 'not-found' | any
     }
 
-    const result = (await cloudinary.uploader.destroy(publicId)) as ReturnType
+    const result = (await cloudinary.uploader.destroy(doc.cloudinaryPublicId)) as ReturnType
 
     if (result?.result === 'ok') {
       return result

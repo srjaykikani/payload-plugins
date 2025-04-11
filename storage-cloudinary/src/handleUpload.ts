@@ -1,8 +1,6 @@
 import type { HandleUpload } from '@payloadcms/plugin-cloud-storage/types'
-
-import { v2 as cloudinary, UploadApiOptions } from 'cloudinary'
+import { v2 as cloudinary, UploadApiOptions, UploadApiResponse } from 'cloudinary'
 import path from 'path'
-
 import fs from 'fs'
 import type stream from 'stream'
 
@@ -14,14 +12,9 @@ type HandleUploadArgs = {
   folderSrc: string
 } & Omit<CloudinaryStorageOptions, 'collections'>
 
-// TODO: why?
 const multipartThreshold = 1024 * 1024 * 99 // 99MB
 
-export const getHandleUpload = ({
-  baseUrl,
-  folderSrc,
-  prefix = '',
-}: HandleUploadArgs): HandleUpload => {
+export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): HandleUpload => {
   return async ({ data, file }) => {
     console.log('Server side upload of file', data, file)
     const fileKey = path.posix.join(data.prefix || prefix, file.filename)
@@ -36,34 +29,43 @@ export const getHandleUpload = ({
       ? fs.createReadStream(file.tempFilePath)
       : file.buffer
 
-    if (file.buffer.length > 0 && file.buffer.length < multipartThreshold) {
-      await new Promise((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream(uploadOptions, (error, result) => {
-            if (error) {
-              reject(new Error(`Upload error: ${error.message}`))
-            }
+    async function uploadStream(): Promise<UploadApiResponse> {
+      if (file.buffer.length > 0 && file.buffer.length < multipartThreshold) {
+        return await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream(uploadOptions, (error, result) => {
+              if (error) {
+                reject(new Error(`Upload error: ${error.message}`))
+              }
 
-            resolve(result)
-          })
-          .end(fileBufferOrStream)
-      })
+              resolve(result)
+            })
+            .end(fileBufferOrStream)
+        })
+      } else {
+        return await new Promise((resolve, reject) => {
+          cloudinary.uploader
+            .upload_chunked_stream(uploadOptions, (error, result) => {
+              if (error) {
+                reject(new Error(`Chunked upload error: ${error.message}`))
+              }
 
-      return data
+              resolve(result)
+            })
+            .end(fileBufferOrStream)
+        })
+      }
     }
 
-    await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_chunked_stream(uploadOptions, (error, result) => {
-          if (error) {
-            reject(new Error(`Chunked upload error: ${error.message}`))
-          }
+    const result = await uploadStream()
 
-          resolve(result)
-        })
-        .end(fileBufferOrStream)
-    })
+    if (result && typeof result === 'object' && 'public_id' in result && 'secure_url' in result) {
+      data.cloudinaryPublicId = result.public_id
+      data.cloudinarySecureUrl = result.secure_url
 
-    return data
+      return data
+    } else {
+      throw new Error('No public_id in upload result')
+    }
   }
 }

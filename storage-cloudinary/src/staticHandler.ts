@@ -1,49 +1,66 @@
 import type { StaticHandler } from '@payloadcms/plugin-cloud-storage/types'
-import type { CollectionConfig } from 'payload'
-
-import { getFilePrefix } from '@payloadcms/plugin-cloud-storage/utilities'
 import { v2 as cloudinary } from 'cloudinary'
-import path from 'path'
-
-type StaticHandlerArgs = {
-  folderSrc: string
-}
+import type { ClientUploadContext } from './client/CloudinaryClientUploadHandler'
 
 // This is called:
 // - after the client upload is finished with the clientUploadContext
 // - whenever the file is requested from the api/[collection]/[filename] path
-export const getStaticHandler = (
-  { folderSrc }: StaticHandlerArgs,
-  collection: CollectionConfig,
-): StaticHandler => {
-  return async (req, { params }) => {
+export const getStaticHandler = (): StaticHandler => {
+  return async (req, { doc, params }) => {
     try {
       type Params = {
         filename: string
         collection: string
-        clientUploadContext?: unknown
+        clientUploadContext?: ClientUploadContext
+      }
+      const { filename, collection, clientUploadContext } = params as Params
+
+      let publicId: string
+      let secureUrl: string
+
+      if (
+        clientUploadContext &&
+        'publicId' in clientUploadContext &&
+        clientUploadContext.publicId &&
+        'secureUrl' in clientUploadContext &&
+        clientUploadContext.secureUrl
+      ) {
+        publicId = clientUploadContext.publicId
+        secureUrl = clientUploadContext.secureUrl
+      } else {
+        if (doc && 'cloudinaryPublicId' in doc && 'cloudinarySecureUrl' in doc) {
+          publicId = doc.cloudinaryPublicId
+          secureUrl = doc.cloudinarySecureUrl
+        } else {
+          const result = await req.payload.find({
+            collection,
+            req,
+            limit: 1,
+            pagination: false,
+            select: {
+              cloudinaryPublicId: true,
+              cloudinarySecureUrl: true,
+            },
+            where: {
+              filename: { equals: filename },
+            },
+          })
+
+          if (result.docs.length > 0) {
+            publicId = result.docs[0].cloudinaryPublicId
+            secureUrl = result.docs[0].cloudinarySecureUrl
+          }
+        }
       }
 
-      const { filename, clientUploadContext } = params as Params
-
-      console.log('Static handler', params)
-      const prefix = await getFilePrefix({ collection, filename, req })
-      const fileKey = path.posix.join(folderSrc, prefix, filename)
-      const publicId = fileKey.replace(/\.[^/.]+$/, '')
-
-      const resourceType = 'image' // TODO
+      if (!publicId || !secureUrl) {
+        console.log('No publicId or secureUrl found, returning 404')
+        return new Response(null, { status: 404, statusText: 'Not Found' })
+      }
 
       console.log('publicId', publicId)
 
-      const result = await cloudinary.api.resource(publicId)
-
-      console.log('result', result)
-
-      if (!result || !result.secure_url) {
-        console.log('File not found', publicId)
-        return new Response(null, { status: 404, statusText: 'Not Found' })
-      }
-      const response = await fetch(result.secure_url)
+      const response = await fetch(secureUrl)
       const arrayBuffer = await response.arrayBuffer()
 
       // TODO: handle etag etc....
@@ -64,7 +81,7 @@ export const getStaticHandler = (
         'http_code' in err.error &&
         err.error.http_code === 404
       ) {
-        console.log('File not found', err.error.message)
+        console.log('Error fetching file from cloudinary, 404, message:', err.error.message)
         return new Response(null, { status: 404, statusText: 'Not Found' })
       }
 

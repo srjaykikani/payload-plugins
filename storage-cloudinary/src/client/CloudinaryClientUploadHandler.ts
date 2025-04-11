@@ -7,6 +7,11 @@ export type CloudinaryClientUploadHandlerExtra = {
   folder: string
 }
 
+export type ClientUploadContext = {
+  publicId: string
+  secureUrl: string
+}
+
 async function getSingnature(
   paramsToSign: any,
   serverHandlerPath: string,
@@ -66,7 +71,7 @@ export const CloudinaryClientUploadHandler =
         formData.append('folder', folder)
       }
 
-      const publicId = `${prefix}${file.name.replace(/\.[^/.]+$/, '')}`
+      const publicId = `${prefix}${file.name.replace(/\.[^/.]+$/, '')}` // append prefix to filename and remove file extension
       formData.append('public_id', publicId)
 
       formData.append('resource_type', 'auto')
@@ -97,7 +102,12 @@ export const CloudinaryClientUploadHandler =
         throw new Error('Failed to upload file')
       }
 
-      // Note: Here we could optionally get some data like the public id or secure url from the response
-      // and sent it as the 'clientUploadContext' to the staticHandler function
+      const responseData = await response.json()
+
+      // This data is sent as the 'clientUploadContext' to the staticHandler function
+      return {
+        publicId: responseData.public_id,
+        secureUrl: responseData.secure_url,
+      } satisfies ClientUploadContext
     },
   })
