@@ -4,15 +4,21 @@ import { APIError } from 'payload'
 
 export const getHandleDelete = (): HandleDelete => {
   return async ({ doc }) => {
-    if (!doc.cloudinaryPublicId) {
-      throw new APIError('File is missing a cloudinaryPublicId', 500)
+    if (!doc.cloudinaryPublicId || !doc.mimeType) {
+      throw new APIError('File is missing a cloudinaryPublicId or mimeType', 500)
     }
 
-    type ReturnType = {
+    type DestroyReturnType = {
       result?: 'ok' | 'not-found' | any
     }
 
-    const result = (await cloudinary.uploader.destroy(doc.cloudinaryPublicId)) as ReturnType
+    const result = (await cloudinary.uploader.destroy(doc.cloudinaryPublicId, {
+      resource_type: doc.mimeType.startsWith('video')
+        ? 'video'
+        : doc.mimeType.startsWith('image')
+        ? 'image'
+        : undefined,
+    })) as DestroyReturnType
 
     if (result?.result === 'ok') {
       return result

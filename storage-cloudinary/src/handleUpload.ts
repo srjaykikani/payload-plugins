@@ -1,6 +1,5 @@
 import type { HandleUpload } from '@payloadcms/plugin-cloud-storage/types'
 import { v2 as cloudinary, UploadApiOptions, UploadApiResponse } from 'cloudinary'
-import path from 'path'
 import fs from 'fs'
 import type stream from 'stream'
 
@@ -13,11 +12,11 @@ const multipartThreshold = 1024 * 1024 * 99 // 99MB
 
 export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): HandleUpload => {
   return async ({ data, file }) => {
-    const fileKey = path.posix.join(data.prefix || prefix, file.filename)
+    const publicId = `${prefix}${file.filename.replace(/\.[^/.]+$/, '')}` // prepend prefix to filename and remove file extension
 
     const uploadOptions: UploadApiOptions = {
       folder: folderSrc,
-      public_id: fileKey.replace(/\.[^/.]+$/, ''), // Remove file extension,
+      public_id: publicId,
       resource_type: 'auto',
     }
 
