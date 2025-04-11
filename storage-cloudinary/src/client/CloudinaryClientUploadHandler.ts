@@ -54,11 +54,10 @@ export const CloudinaryClientUploadHandler =
     handler: async ({
       apiRoute,
       collectionSlug,
-      extra: { addRandomSuffix, baseURL, prefix = '', folder },
+      extra: { prefix = '', folder },
       file,
       serverHandlerPath,
       serverURL,
-      updateFilename,
     }) => {
       console.log('CloudinaryClientUploadHandler uploading file')
       const formData = new FormData()
