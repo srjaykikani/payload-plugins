@@ -1,11 +1,11 @@
 import { cloudinaryStorage } from '@jhb.software/payload-storage-cloudinary'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { v2 as cloudinary } from 'cloudinary'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { Images } from './collections/images'
 import { Videos } from './collections/videos'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,9 +23,6 @@ export default buildConfig({
       password: 'test',
     },
     user: 'users',
-    components: {
-      beforeDashboard: ['/src/components/ClientSideCloudinaryUpload'],
-    },
   },
   collections: [
     Videos,
@@ -60,40 +57,7 @@ export default buildConfig({
       clientUploads: true,
     }),
   ],
-  endpoints: [
-    {
-      path: '/sign',
-      method: 'post',
-      handler: async (req) => {
-        if (!req) {
-          return new Response(JSON.stringify({ error: 'No request provided' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
-
-        const body = await req.json?.()
-
-        if (!body?.paramsToSign) {
-          return new Response(JSON.stringify({ error: 'No paramsToSign provided' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          })
-        }
-
-        const signature = cloudinary.utils.api_sign_request(
-          body.paramsToSign,
-          process.env.CLOUDINARY_API_SECRET!,
-        )
-
-        return new Response(JSON.stringify({ signature }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      },
-    },
-  ],
-  async onInit(payload) {
+  async onInit(payload: any) {
     const existingUsers = await payload.find({
       collection: 'users',
       limit: 1,
