@@ -4,7 +4,14 @@ import { APIError } from 'payload'
 
 export const getHandleDelete = (): HandleDelete => {
   return async ({ doc }) => {
-    if (!doc.cloudinaryPublicId || !doc.mimeType) {
+    if (
+      !('cloudinaryPublicId' in doc) ||
+      !doc.cloudinaryPublicId ||
+      !('mimeType' in doc) ||
+      !doc.mimeType ||
+      typeof doc.mimeType !== 'string' ||
+      typeof doc.cloudinaryPublicId !== 'string'
+    ) {
       throw new APIError('File is missing a cloudinaryPublicId or mimeType', 500)
     }
 
@@ -21,7 +28,7 @@ export const getHandleDelete = (): HandleDelete => {
     })) as DestroyReturnType
 
     if (result?.result === 'ok') {
-      return result
+      return
     } else if (result?.result === 'not found') {
       throw new APIError(
         'File to delete not found in Cloudinary', // message

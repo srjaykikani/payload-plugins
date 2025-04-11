@@ -1,5 +1,5 @@
 import type { StaticHandler } from '@payloadcms/plugin-cloud-storage/types'
-import type { ClientUploadContext } from './client/CloudinaryClientUploadHandler'
+import type { ClientUploadContext } from './client/CloudinaryClientUploadHandler.js'
 
 // This is called:
 // - after the client upload is finished with the clientUploadContext
@@ -14,8 +14,8 @@ export const getStaticHandler = (): StaticHandler => {
       }
       const { filename, collection, clientUploadContext } = params as Params
 
-      let publicId: string
-      let secureUrl: string
+      let publicId: string | undefined
+      let secureUrl: string | undefined
 
       if (
         clientUploadContext &&
@@ -27,7 +27,13 @@ export const getStaticHandler = (): StaticHandler => {
         publicId = clientUploadContext.publicId
         secureUrl = clientUploadContext.secureUrl
       } else {
-        if (doc && 'cloudinaryPublicId' in doc && 'cloudinarySecureUrl' in doc) {
+        if (
+          doc &&
+          'cloudinaryPublicId' in doc &&
+          'cloudinarySecureUrl' in doc &&
+          typeof doc.cloudinaryPublicId === 'string' &&
+          typeof doc.cloudinarySecureUrl === 'string'
+        ) {
           publicId = doc.cloudinaryPublicId
           secureUrl = doc.cloudinarySecureUrl
         } else {
@@ -46,8 +52,8 @@ export const getStaticHandler = (): StaticHandler => {
           })
 
           if (result.docs.length > 0) {
-            publicId = result.docs[0].cloudinaryPublicId
-            secureUrl = result.docs[0].cloudinarySecureUrl
+            publicId = result.docs[0].cloudinaryPublicId as string
+            secureUrl = result.docs[0].cloudinarySecureUrl as string
           }
         }
       }
@@ -78,13 +84,15 @@ export const getStaticHandler = (): StaticHandler => {
         headers: {
           'Content-Type': response.headers.get('Content-Type') || 'application/octet-stream',
           'Content-Length': response.headers.get('Content-Length') || '',
-          ETag: objectEtag,
+          ETag: objectEtag || '',
         },
       })
     } catch (err: unknown) {
       if (
+        err &&
         typeof err === 'object' &&
         'error' in err &&
+        err.error &&
         typeof err.error === 'object' &&
         'http_code' in err.error &&
         err.error.http_code === 404

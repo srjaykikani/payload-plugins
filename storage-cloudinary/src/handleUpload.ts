@@ -33,7 +33,7 @@ export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): H
                 reject(new Error(`Upload error: ${error.message}`))
               }
 
-              resolve(result)
+              resolve(result!)
             })
             .end(fileBufferOrStream)
         })
@@ -45,7 +45,7 @@ export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): H
                 reject(new Error(`Chunked upload error: ${error.message}`))
               }
 
-              resolve(result)
+              resolve(result!)
             })
             .end(fileBufferOrStream)
         })
