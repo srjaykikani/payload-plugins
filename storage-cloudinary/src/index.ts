@@ -15,6 +15,7 @@ import { getHandleUpload } from './handleUpload.js'
 import { getStaticHandler } from './staticHandler.js'
 import { getAdminThumbnail } from './getAdminThumbnail.js'
 import { CloudinaryClientUploadHandlerExtra } from './client/CloudinaryClientUploadHandler.js'
+import { v2 as cloudinary } from 'cloudinary'
 
 export type CloudinaryStorageOptions = {
   /**
@@ -65,6 +66,12 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
     if (options.enabled === false) {
       return incomingConfig
     }
+
+    cloudinary.config({
+      cloud_name: options.cloudName,
+      api_key: options.credentials.apiKey,
+      api_secret: options.credentials.apiSecret,
+    })
 
     const optionsWithDefaults = {
       ...defaultUploadOptions,
