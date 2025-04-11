@@ -1,51 +1,50 @@
-# Vercel Blob Storage for Payload
+# Cloudinary Storage for Payload
 
-This package provides a simple way to use [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) storage with Payload.
-
-**NOTE:** This package removes the need to use `@payloadcms/plugin-cloud-storage` as was needed in Payload 2.x.
-
-## Installation
-
-```sh
-pnpm add @payloadcms/storage-vercel-blob
-```
+This package provides a simple way to use [Cloudinary](https://cloudinary.com/) storage with Payload.
 
 ## Usage
 
-- Configure the `collections` object to specify which collections should use the Vercel Blob adapter. The slug _must_ match one of your existing collection slugs.
-- Ensure you have `BLOB_READ_WRITE_TOKEN` set in your Vercel environment variables. This is usually set by Vercel automatically after adding blob storage to your project.
+- Configure the `collections` object to specify which collections should use the Cloudinary adapter. The slug _must_ match one of your existing collection slugs.
 - When enabled, this package will automatically set `disableLocalStorage` to `true` for each collection.
 - When deploying to Vercel, server uploads are limited with 4.5MB. Set `clientUploads` to `true` to do uploads directly on the client.
 
 ```ts
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { cloudinaryStorage } from '@jhb.software/payload-storage-cloudinary'
 import { Media } from './collections/Media'
 import { MediaWithPrefix } from './collections/MediaWithPrefix'
 
 export default buildConfig({
   collections: [Media, MediaWithPrefix],
   plugins: [
-    vercelBlobStorage({
-      enabled: true, // Optional, defaults to true
-      // Specify which collections should use Vercel Blob
+    cloudinaryStorage({
       collections: {
         media: true,
         'media-with-prefix': {
           prefix: 'my-prefix',
         },
       },
-      // Token provided by Vercel once Blob storage is added to your Vercel project
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      credentials: {
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET,
+      },
+      // Optional, specifies the folder to upload files to:
+      folder: 'uploads',
+      // Optional, enables client uploads to bypass limits on Vercel:
+      clientUploads: true,
     }),
   ],
 })
 ```
 
-| Option               | Description                                                          | Default                       |
-| -------------------- | -------------------------------------------------------------------- | ----------------------------- |
-| `enabled`            | Whether or not to enable the plugin                                  | `true`                        |
-| `collections`        | Collections to apply the Vercel Blob adapter to                      |                               |
-| `addRandomSuffix`    | Add a random suffix to the uploaded file name in Vercel Blob storage | `false`                       |
-| `cacheControlMaxAge` | Cache-Control max-age in seconds                                     | `365 * 24 * 60 * 60` (1 Year) |
-| `token`              | Vercel Blob storage read/write token                                 | `''`                          |
-| `clientUploads`      | Do uploads directly on the client to bypass limits on Vercel         |                               |
+The plugin automatically adds a `cloudinaryPublicId` and `cloudinarySecureUrl` field to your upload collections. This can be used to directly access the uploaded file from Cloudinary.
+
+## Roadmap
+
+> ⚠️ **Warning**: This plugin is actively evolving and may undergo significant changes. While it is functional, please thoroughly test before using in production environments.
+
+Have a suggestion for the plugin? Any feedback is welcome!
+
+## Contributing
+
+We welcome contributions! Please open an issue to report bugs or suggest improvements, or submit a pull request with your changes.
