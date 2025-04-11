@@ -4,19 +4,15 @@ import path from 'path'
 import fs from 'fs'
 import type stream from 'stream'
 
-import type { CloudinaryStorageOptions } from './index.js'
-
 type HandleUploadArgs = {
-  baseUrl: string
   prefix?: string
   folderSrc: string
-} & Omit<CloudinaryStorageOptions, 'collections'>
+}
 
 const multipartThreshold = 1024 * 1024 * 99 // 99MB
 
 export const getHandleUpload = ({ folderSrc, prefix = '' }: HandleUploadArgs): HandleUpload => {
   return async ({ data, file }) => {
-    console.log('Server side upload of file', data, file)
     const fileKey = path.posix.join(data.prefix || prefix, file.filename)
 
     const uploadOptions: UploadApiOptions = {

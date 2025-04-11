@@ -49,10 +49,10 @@ export default buildConfig({
         },
       },
       folder: 'cloudinary-storage-plugin-test',
-      config: {
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME!,
+      credentials: {
+        apiKey: process.env.CLOUDINARY_API_KEY!,
+        apiSecret: process.env.CLOUDINARY_API_SECRET!,
       },
       clientUploads: true,
     }),

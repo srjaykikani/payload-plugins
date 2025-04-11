@@ -2,9 +2,10 @@
 import { createClientUploadHandler } from '@payloadcms/plugin-cloud-storage/client'
 
 export type CloudinaryClientUploadHandlerExtra = {
-  baseURL: string
   prefix: string
   folder: string
+  cloudName: string
+  apiKey: string
 }
 
 export type ClientUploadContext = {
@@ -40,8 +41,6 @@ async function getSingnature(
       throw new Error('No signature found')
     }
 
-    console.log('signature from server', data.signature)
-
     return data.signature
   } catch (error) {
     console.error('Error getting signature', error)
@@ -51,26 +50,20 @@ async function getSingnature(
 
 export const CloudinaryClientUploadHandler =
   createClientUploadHandler<CloudinaryClientUploadHandlerExtra>({
-    handler: async ({
-      apiRoute,
-      collectionSlug,
-      extra: { prefix = '', folder },
-      file,
-      serverHandlerPath,
-      serverURL,
-    }) => {
-      console.log('CloudinaryClientUploadHandler uploading file')
+    handler: async ({ apiRoute, collectionSlug, extra, file, serverHandlerPath, serverURL }) => {
+      const { prefix, folder, cloudName, apiKey } = extra as CloudinaryClientUploadHandlerExtra
+
       const formData = new FormData()
       formData.append('file', file)
 
       formData.append('timestamp', Math.round(new Date().getTime() / 1000).toString())
-      formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY!)
+      formData.append('api_key', apiKey)
 
       if (folder) {
         formData.append('folder', folder)
       }
 
-      const publicId = `${prefix}${file.name.replace(/\.[^/.]+$/, '')}` // append prefix to filename and remove file extension
+      const publicId = `${prefix}${file.name.replace(/\.[^/.]+$/, '')}` // prepend prefix to filename and remove file extension
       formData.append('public_id', publicId)
 
       formData.append('resource_type', 'auto')
@@ -90,7 +83,7 @@ export const CloudinaryClientUploadHandler =
       )
       formData.append('signature', signature)
 
-      const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`
 
       const response = await fetch(url, {
         method: 'POST',

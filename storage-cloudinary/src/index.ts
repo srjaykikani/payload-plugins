@@ -8,7 +8,6 @@ import type {
 import { initClientUploads } from '@payloadcms/plugin-cloud-storage/utilities'
 import type { Config, Field, Plugin, UploadCollectionSlug } from 'payload'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
-import type { ConfigOptions as CloudinaryConfigOptions } from 'cloudinary'
 import { getGenerateUrl } from './generateURL.js'
 import { getClientUploadRoute } from './getClientUploadRoute.js'
 import { getHandleDelete } from './handleDelete.js'
@@ -36,14 +35,20 @@ export type CloudinaryStorageOptions = {
   enabled?: boolean
 
   /**
-   * Cloudinary client configuration.
-   *
-   * @see https://github.com/cloudinary/cloudinary_npm
+   * Cloudinary cloud name.
    */
-  config: CloudinaryConfigOptions
+  cloudName: string
 
   /**
-   * Folder name to upload files.
+   * Cloudinary client configuration.
+   */
+  credentials: {
+    apiKey: string
+    apiSecret: string
+  }
+
+  /**
+   * Folder name to upload files to.
    */
   folder?: string
 }
@@ -65,8 +70,6 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
       ...defaultUploadOptions,
       ...options,
     }
-
-    const baseUrl = `https://res.cloudinary.com/${options.config.cloud_name}`
 
     const fields: Field[] = [
       {
@@ -96,19 +99,22 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
       collections: options.collections,
       config: incomingConfig,
       enabled: !!options.clientUploads,
-      extraClientHandlerProps: (collection) => ({
-        baseURL: baseUrl,
-        prefix: (typeof collection === 'object' && collection.prefix) || '',
-        folder: options.folder,
-      }),
+      extraClientHandlerProps: (collection) =>
+        ({
+          cloudName: options.cloudName,
+          apiKey: options.credentials.apiKey,
+          prefix: (typeof collection === 'object' && collection.prefix) || '',
+          folder: options.folder,
+        } satisfies CloudinaryClientUploadHandlerExtra),
       serverHandler: getClientUploadRoute({
         access:
           typeof options.clientUploads === 'object' ? options.clientUploads.access : undefined,
+        apiSecret: options.credentials.apiSecret,
       }),
       serverHandlerPath: '/cloudinary-client-upload-route', // the route where the signature is generated
     })
 
-    const adapter = cloudinaryStorageInternal({ ...optionsWithDefaults, baseUrl })
+    const adapter = cloudinaryStorageAdapter({ ...optionsWithDefaults })
 
     // Add adapter to each collection option object
     const collectionsWithAdapter: CloudStoragePluginOptions['collections'] = Object.entries(
@@ -150,12 +156,8 @@ export const cloudinaryStorage: CloudinaryStoragePlugin =
     })(config)
   }
 
-function cloudinaryStorageInternal(
-  options: { baseUrl: string } & CloudinaryStorageOptions,
-): Adapter {
+function cloudinaryStorageAdapter(options: CloudinaryStorageOptions): Adapter {
   return ({ prefix }): GeneratedAdapter => {
-    const { baseUrl, config } = options
-
     const folderSrc = options.folder ? options.folder.replace(/^\/|\/$/g, '') + '/' : ''
 
     return {
@@ -163,10 +165,8 @@ function cloudinaryStorageInternal(
       generateURL: getGenerateUrl(),
       handleDelete: getHandleDelete(),
       handleUpload: getHandleUpload({
-        baseUrl,
         folderSrc,
         prefix,
-        config,
       }),
       staticHandler: getStaticHandler(),
     }

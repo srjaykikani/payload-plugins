@@ -12,13 +12,14 @@ type Args = {
     collectionSlug: UploadCollectionSlug
     req: PayloadRequest
   }) => boolean | Promise<boolean>
+  apiSecret: string
 }
 
 const defaultAccess: Args['access'] = ({ req }) => !!req.user
 
 // This route handler generates a signature of the file which the client can then sent to cloudinary together with the file
 export const getClientUploadRoute =
-  ({ access = defaultAccess }: Args): PayloadHandler =>
+  ({ access = defaultAccess, apiSecret }: Args): PayloadHandler =>
   async (rawReq) => {
     if (!rawReq) {
       return new Response(JSON.stringify({ error: 'No request provided' }), {
@@ -35,7 +36,6 @@ export const getClientUploadRoute =
       throw new APIError('No payload was provided')
     }
 
-    // TODO: isnt this insecure as the collection slug can be manipulated by the client?
     if (!(await access({ collectionSlug: collectionSlug as UploadCollectionSlug, req }))) {
       throw new Forbidden()
     }
@@ -49,10 +49,7 @@ export const getClientUploadRoute =
       })
     }
 
-    const signature = cloudinary.utils.api_sign_request(
-      body.paramsToSign,
-      process.env.CLOUDINARY_API_SECRET!,
-    )
+    const signature = cloudinary.utils.api_sign_request(body.paramsToSign, apiSecret)
 
     return new Response(JSON.stringify({ signature }), {
       status: 200,
