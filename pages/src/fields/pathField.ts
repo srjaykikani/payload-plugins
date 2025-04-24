@@ -1,4 +1,5 @@
 import { Field } from 'payload'
+import { translatedLabel } from '../utils/translatedLabel.js'
 
 /**
  * Creates a virtual path field that generates the path based on the parents' slugs, the document's slug and the locale.
@@ -8,6 +9,7 @@ import { Field } from 'payload'
 export function pathField(): Field {
   return {
     name: 'path',
+    label: translatedLabel('path'),
     type: 'text',
     required: true,
     virtual: true,

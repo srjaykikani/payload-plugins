@@ -1,9 +1,15 @@
 import { Field } from 'payload'
+import { translatedLabel } from '../utils/translatedLabel.js'
 
 /** Virtual field which holds the paths for the alternate languages. */
 export function alternatePathsField(): Field {
   return {
     name: 'alternatePaths',
+    label: translatedLabel('alternatePaths'),
+    labels: {
+      singular: translatedLabel('alternatePath'),
+      plural: translatedLabel('alternatePaths'),
+    },
     type: 'array',
     required: true,
     localized: false,

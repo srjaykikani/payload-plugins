@@ -1,4 +1,5 @@
 import { Field } from 'payload'
+import { translatedLabel } from '../utils/translatedLabel.js'
 
 /**
  * Creates a virtual breadcrumbs field that generates the breadcrumbs based on the documents parents.
@@ -9,6 +10,11 @@ export function breadcrumbsField(): Field {
   return {
     name: 'breadcrumbs',
     interfaceName: 'Breadcrumbs',
+    label: translatedLabel('breadcrumbs'),
+    labels: {
+      singular: translatedLabel('breadcrumb'),
+      plural: translatedLabel('breadcrumbs'),
+    },
     type: 'array',
     required: true,
     localized: true,
@@ -21,6 +27,7 @@ export function breadcrumbsField(): Field {
         fields: [
           {
             name: 'slug',
+            label: translatedLabel('slug'),
             required: true,
             type: 'text',
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
@@ -31,6 +38,7 @@ export function breadcrumbsField(): Field {
           },
           {
             name: 'path',
+            label: translatedLabel('path'),
             required: true,
             type: 'text',
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.
@@ -41,6 +49,7 @@ export function breadcrumbsField(): Field {
           },
           {
             name: 'label',
+            label: translatedLabel('label'),
             required: true,
             type: 'text',
             // Validate by default to allow the document to be updated, without having to set the breadcrumbs field.

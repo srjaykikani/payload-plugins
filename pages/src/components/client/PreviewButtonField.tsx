@@ -3,6 +3,7 @@
 import { Button, useDocumentInfo, useField, useFormModified, useTranslation } from '@payloadcms/ui'
 import React from 'react'
 import { getPageUrl } from '../../utils/getPageUrl.js'
+import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 
 /**
  * Custom field to display a preview button which links to the frontend page.
@@ -10,6 +11,9 @@ import { getPageUrl } from '../../utils/getPageUrl.js'
 export const PreviewButtonField: React.FC = () => {
   const { id, initialData } = useDocumentInfo()
   const { value: path } = useField<string>({ path: 'path' })
+  const { t: pluginTranslation } = usePluginTranslation()
+  const { t } = useTranslation()
+
   const initialPath = initialData?.path
 
   // Returns true once the form is modified. When the "save" or "publish changes" button is clicked, this will reset to false.
@@ -21,14 +25,12 @@ export const PreviewButtonField: React.FC = () => {
   const disable = modified
 
   const tooltip = disable
-    ? 'Save the document to preview the changes'
-    : 'Open Frontend Page in preview mode'
+    ? pluginTranslation('saveDocumentToPreview')
+    : pluginTranslation('openWebsitePageInPreviewMode')
 
   // The preview button should only be displayed, when the document has a draft/published version
   // with a path before any action to this form. Only then the frontend will have a page for this document.
   const previewUrl = initialPath && id ? getPageUrl({ path, preview: true }) : undefined
-
-  const { t } = useTranslation()
 
   return (
     previewUrl && (
