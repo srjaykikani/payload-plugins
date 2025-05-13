@@ -25,6 +25,9 @@
           "rootPage": {
             "type": "string"
           },
+          "isRootPage": {
+            "type": "string"
+          },
           "alternatePaths": {
             "type": "string"
           },
@@ -56,6 +59,7 @@
           "slug",
           "parent",
           "rootPage",
+          "isRootPage",
           "alternatePaths",
           "alternatePath",
           "breadcrumbs",

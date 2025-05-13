@@ -8,6 +8,7 @@ export const de: GenericTranslationsObject = {
     slug: 'URL-Endung',
     parent: 'Übergeordnete Seite',
     rootPage: 'Startseite',
+    isRootPage: 'ist Startseite',
     alternatePaths: 'Alternative Pfade',
     alternatePath: 'Alternative Pfad',
     breadcrumbs: 'Navigationspfade',

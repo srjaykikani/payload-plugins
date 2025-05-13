@@ -8,6 +8,7 @@ export const en: GenericTranslationsObject = {
     slug: 'Slug',
     parent: 'Parent Page',
     rootPage: 'Root Page',
+    isRootPage: 'is Root Page',
     alternatePaths: 'Alternate Paths',
     alternatePath: 'Alternate Path',
     breadcrumbs: 'Breadcrumbs',
