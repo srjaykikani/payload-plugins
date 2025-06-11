@@ -19,12 +19,12 @@
   },
   "dependencies": {
     "@jhb.software/payload-pages-plugin": "workspace:*",
-    "@payloadcms/db-mongodb": "3.37.0",
-    "@payloadcms/next": "3.37.0",
-    "@payloadcms/translations": "^3.37.0",
-    "@payloadcms/ui": "3.37.0",
-    "next": "15.3.2",
-    "payload": "3.37.0",
+    "@payloadcms/db-mongodb": "3.42.0",
+    "@payloadcms/next": "3.42.0",
+    "@payloadcms/translations": "^3.42.0",
+    "@payloadcms/ui": "3.42.0",
+    "next": "15.3.3",
+    "payload": "3.42.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
@@ -33,6 +33,6 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "vite": "^6.3.5",
-    "vitest": "^3.1.3"
+    "vitest": "^3.2.3"
   }
 }
