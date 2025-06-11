@@ -11,24 +11,27 @@ import { validateRedirect } from '../hooks/validateRedirect.js'
  */
 export const createRedirectsCollectionConfig = ({
   labels,
+  versions,
   access,
   overrides = {
     admin: {},
   },
 }: {
   labels?: CollectionConfig['labels']
+  versions?: CollectionConfig['versions']
   access?: CollectionConfig['access']
   overrides?: {
     admin?: CollectionConfig['admin']
   }
 }): CollectionConfig => ({
   slug: 'redirects',
+  versions: versions ?? undefined, // fallback to undefined (e.g. when an empty object is passed) to use the default versions settings
   admin: {
     defaultColumns: ['sourcePath', 'destinationPath', 'permanent', 'createdAt'],
     listSearchableFields: ['sourcePath', 'destinationPath'],
     ...overrides.admin,
   },
-  labels: labels ?? undefined, // set to undefined to use the default labels if not provided
+  labels: labels ?? undefined, // fallback to undefined (e.g. when an empty object is passed) to use the default labels
   access: access ?? {},
   hooks: {
     beforeValidate: [validateRedirect],
