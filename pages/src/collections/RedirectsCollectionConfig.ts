@@ -1,7 +1,9 @@
 import { CollectionConfig } from 'payload'
 import { validateRedirect } from '../hooks/validateRedirect.js'
 
-// TODO: also store the destination page inside a relationship field
+// TODO: Consider the potential benefits of storing the destination page in a relationship field.
+//       Note: The destination path should still be explicitly defined to ensure the redirect path remains consistent,
+//       even if the destination page's path changes.
 
 /** Creates a collection which stores redirects from one path to another.
  *
@@ -53,6 +55,12 @@ export const createRedirectsCollectionConfig = ({
 
         return true
       },
+      hooks: {
+        beforeDuplicate: [
+          // append "-copy" to the value to ensure that the validation succeeds when duplicating a redirect
+          ({ value }) => value + '-copy',
+        ],
+      },
     },
     {
       name: 'destinationPath',
@@ -74,6 +82,12 @@ export const createRedirectsCollectionConfig = ({
         }
 
         return true
+      },
+      hooks: {
+        beforeDuplicate: [
+          // append "-copy" to the value to ensure that the validation succeeds when duplicating a redirect
+          ({ value }) => value + '-copy',
+        ],
       },
     },
     {
