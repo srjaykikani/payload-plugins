@@ -45,7 +45,7 @@ export const SlugField: TextFieldClientComponent = (clientProps) => {
 
   // TODO: create and use a mustCreateRedirect function to determine if a redirect must be created
   // Then inside an afterChange hook use this same function to automatically create the redirect
-  const showRedirectWarning = pageSlug && initialSlug !== slug && hasPublishedDoc
+  const showRedirectWarning = initialSlug && pageSlug && initialSlug !== slug && hasPublishedDoc
 
   useEffect(() => {
     if (isRootPage) {
