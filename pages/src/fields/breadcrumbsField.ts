@@ -64,6 +64,9 @@ export function breadcrumbsField(): Field {
     admin: {
       readOnly: true,
       position: 'sidebar',
+      components: {
+        Field: '@jhb.software/payload-pages-plugin/client#BreadcrumbsField',
+      },
     },
     hooks: {
       afterRead: [

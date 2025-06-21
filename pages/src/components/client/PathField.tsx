@@ -1,5 +1,13 @@
 'use client'
-import { TextField, useConfig, useField, useFormFields, useLocale } from '@payloadcms/ui'
+import {
+  FieldLabel,
+  TextField,
+  TextInput,
+  useConfig,
+  useField,
+  useFormFields,
+  useLocale,
+} from '@payloadcms/ui'
 import { TextFieldClientComponent } from 'payload'
 import { Breadcrumb } from '../../types/Breadcrumb.js'
 import { Locale } from '../../types/Locale.js'
@@ -8,6 +16,7 @@ import { pathFromBreadcrumbs } from '../../utils/pathFromBreadcrumbs.js'
 import { useDidUpdateEffect } from '../../utils/useDidUpdateEffect.js'
 import { usePageCollectionConfigAttributes } from './hooks/usePageCollectionConfigAtrributes.js'
 import { useBreadcrumbs } from './hooks/useBreadcrumbs.js'
+import { BreadcrumbsFieldModalButton } from './BreadcrumbsField.js'
 
 export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, schemaPath }) => {
   const { config } = useConfig()
@@ -189,5 +198,24 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRootPage])
 
-  return <TextField field={field} path={fieldPath} schemaPath={schemaPath} readOnly />
+  return (
+    <div className="field-type path-field-component">
+      <FieldLabel
+        htmlFor={`field-${path}`}
+        label={field.label}
+        required={field.required}
+        localized={field.localized}
+      />
+
+      <div style={{ position: 'relative' }}>
+        <TextInput value={path} path={path!} readOnly />
+
+        <div
+          style={{ position: 'absolute', top: '50%', right: '0', transform: 'translateY(-50%)' }}
+        >
+          <BreadcrumbsFieldModalButton />
+        </div>
+      </div>
+    </div>
+  )
 }
