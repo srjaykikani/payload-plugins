@@ -90,11 +90,14 @@ export const createPageCollectionConfig = (
 
       // add the beforeDuplicate hook to the title field
       ...config.fields.map((field) =>
-        'name' in field && field.name === config.admin?.useAsTitle
+        'name' in field &&
+        field.name === (config.admin?.useAsTitle ?? 'title') &&
+        field.type === 'text'
           ? {
               ...field,
               hooks: {
-                beforeDuplicate: [beforeDuplicateTitle],
+                ...field.hooks,
+                beforeDuplicate: [...(field.hooks?.beforeDuplicate || []), beforeDuplicateTitle],
               },
             }
           : field,
