@@ -1,4 +1,4 @@
-import payload from 'payload'
+import payload, { ValidationError } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import config from './src/payload.config'
 
@@ -356,7 +356,7 @@ describe('Path and breadcrumb virtual fields are set correctly for find operatio
   })
 })
 
-describe('Slug field behaves as expected for updates', () => {
+describe('Slug field behaves as expected for create and update operations', () => {
   test('Slug remains unchanged when title is updated', async () => {
     // Create initial page
     const initialData = {
@@ -367,7 +367,6 @@ describe('Slug field behaves as expected for updates', () => {
 
     const page = await payload.create({
       collection: 'pages',
-      // @ts-expect-error
       data: initialData,
     })
 
@@ -387,25 +386,42 @@ describe('Slug field behaves as expected for updates', () => {
     expect(updatedPage.title).toBe('Updated Title')
   })
 
-  test('Slug falls back to title when not provided', async () => {
+  test('Validation Error is thrown when creating a page without providing a slug', async () => {
     // Create page without providing a slug
     const pageData = {
       title: 'Test Page Title',
       content: 'Some content',
     }
 
-    const page = await payload.create({
-      collection: 'pages',
-      // @ts-expect-error
-      data: pageData,
-    })
-
-    // Verify slug was set based on title
-    expect(page.slug).toBe('test-page-title')
-    expect(page.title).toBe('Test Page Title')
+    try {
+      await payload.create({
+        collection: 'pages',
+        data: pageData,
+      })
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError)
+    }
   })
 
-  test('Root page is created with an empty slug and remains empty even when updated', async () => {
+  test('Validation Error is thrown when creating a page with an invalid slug', async () => {
+    // Create page without providing a slug
+    const pageData = {
+      title: 'Test Page Title 2',
+      content: 'Some content 2',
+      slug: 'invalid slug &!=',
+    }
+
+    try {
+      await payload.create({
+        collection: 'pages',
+        data: pageData,
+      })
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError)
+    }
+  })
+
+  test('Validation Error is thrown when trying to create a root page without providing a slug', async () => {
     // Create initial root page without providing a slug
     const initialData = {
       title: 'Root Page',
@@ -413,9 +429,35 @@ describe('Slug field behaves as expected for updates', () => {
       isRootPage: true,
     }
 
+    try {
+      await payload.create({
+        collection: 'pages',
+        data: initialData,
+      })
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError)
+    }
+  })
+
+  test('Root page is created sucessfully with an empty slug and throws validation error when slug is updated', async () => {
+    // Delete any existing root page
+    await payload.delete({
+      collection: 'pages',
+      where: {
+        slug: '',
+      },
+    })
+
+    // Create initial root page without providing a slug
+    const initialData = {
+      title: 'Root Page',
+      content: 'Root page content',
+      isRootPage: true,
+      slug: '',
+    }
+
     const rootPage = await payload.create({
       collection: 'pages',
-      // @ts-expect-error
       data: initialData,
     })
 
@@ -424,19 +466,17 @@ describe('Slug field behaves as expected for updates', () => {
     expect(rootPage.isRootPage).toBe(true)
 
     // Try to update the slug
-    const updatedRootPage = await payload.update({
-      collection: 'pages',
-      id: rootPage.id,
-      data: {
-        slug: 'attempted-slug',
-        title: 'Updated Root Page',
-      },
-    })
-
-    // Verify slug remains empty after update
-    expect(updatedRootPage.slug).toBe('')
-    expect(updatedRootPage.title).toBe('Updated Root Page')
-    expect(updatedRootPage.isRootPage).toBe(true)
+    try {
+      await payload.update({
+        collection: 'pages',
+        id: rootPage.id,
+        data: {
+          slug: 'attempted-slug',
+        },
+      })
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError)
+    }
   })
 })
 

@@ -1,7 +1,7 @@
 import { Field } from 'payload'
 import { Locale } from 'src/types/Locale.js'
 import { beforeDuplicateSlug } from '../hooks/beforeDuplicate.js'
-import { createSlugFromFallbackField, formatSlug } from '../hooks/validateSlug.js'
+import { formatSlug } from '../hooks/validateSlug.js'
 import { SlugFieldClientProps } from 'src/components/client/SlugField.jsx'
 import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields.js'
 import { translatedLabel } from '../utils/translatedLabel.js'
@@ -69,7 +69,6 @@ export function internalSlugField({
     },
     hooks: {
       beforeDuplicate: [beforeDuplicateSlug],
-      beforeValidate: [createSlugFromFallbackField(fallbackField)],
     },
     unique: unique,
     index: true,
