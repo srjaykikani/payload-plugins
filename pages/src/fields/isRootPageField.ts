@@ -1,5 +1,6 @@
 import { Field } from 'payload'
 import { translatedLabel } from '../utils/translatedLabel.js'
+import { beforeDuplicateIsRootPage } from '../hooks/beforeDuplicate.js'
 
 export function isRootPageField(): Field {
   return {
@@ -13,6 +14,9 @@ export function isRootPageField(): Field {
           path: '@jhb.software/payload-pages-plugin/server#IsRootPageField',
         },
       },
+    },
+    hooks: {
+      beforeDuplicate: [beforeDuplicateIsRootPage],
     },
   }
 }
