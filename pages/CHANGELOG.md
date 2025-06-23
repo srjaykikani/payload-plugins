@@ -1,9 +1,18 @@
 # Changelog
 
-## 0.5.0 (unreleased)
+## 0.5.0
 
-- add support for unlocalized page collections
-- add admin panel i18n (currently only German and English)
+- feat: add support for unlocalized page collections (de138bc)
+- feat: add admin panel i18n support (EN, DE) (9c4f55d)
+- feat: allow version config to be passed to redirects collection config (652bc9e)
+- feat: add custom breadcrumb field component which displays breadcrumbs in modal (cd58475)
+- feat!: remove auto fixing of invalid/missing slug (f0a8531)
+- fix: append "-copy" to path when duplicating redirects (33be9aa)
+- fix: resolve issue with not selected fields in sub-queries (c333598)
+- fix: do not show slug redirect warning when draft document is published (7765706) 
+- fix: ensure title field hooks are not overridden (f8c48a0)
+- fix: correct field hooks to use the correct field value (f6a41df)
+- fix: update slug and isRootPage field when duplicating the root page (f6db809)
 
 ## 0.4.1
 
