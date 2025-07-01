@@ -49,7 +49,14 @@ export async function getBreadcrumbs({
   }
 
   // If the parent is set, fetch its breadcrumbs, add the breadcrumb of the current doc and return
-  const parentId = typeof data[parentField] === 'string' ? data[parentField] : data[parentField].id
+  const parentId =
+    typeof data[parentField] === 'string' || typeof data[parentField] === 'number'
+      ? data[parentField]
+      : data[parentField].id
+
+  if (!parentId) {
+    throw new Error('Parent ID not found for document ' + data.id)
+  }
 
   const parent = req
     ? await req.payload.findByID({

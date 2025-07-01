@@ -2,9 +2,6 @@ import payload, { ValidationError } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import config from './src/payload.config'
 
-// TODO: add the following tests:
-// - redirects are sucessfully created when the slug of a doc changed
-
 beforeAll(async () => {
   await payload.init({
     config: config,
@@ -19,9 +16,10 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  // terminate the connection to the database
-  if (typeof payload.db.destroy === 'function') {
+  if (payload.db && typeof payload.db.destroy === 'function') {
     await payload.db.destroy()
+  } else {
+    console.log('Could not destroy database')
   }
 })
 
@@ -182,8 +180,8 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
       slug: 'nested-page-en',
       content: 'Nested Page EN',
     }
-    let rootPageId: string | undefined // will be set in the beforeEach hook
-    let nestedPageId: string | undefined // will be set in the beforeEach hook
+    let rootPageId: string | number | undefined // will be set in the beforeEach hook
+    let nestedPageId: string | number | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
       await payload.delete({

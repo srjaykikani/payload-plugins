@@ -42,8 +42,13 @@ export default buildConfig({
     },
   ],
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI!,
+    url: process.env.MONGODB_URL!,
   }),
+  /* db: sqliteAdapter({
+    client: {
+      url: process.env.SQLITE_URL!,
+    },
+  }), */
   secret: process.env.PAYLOAD_SECRET!,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

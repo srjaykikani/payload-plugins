@@ -14,6 +14,11 @@ export function parentField(
     relationTo: pageConfig.parent.collection,
     required: !pageConfig.isRootCollection,
     filterOptions: ({ data }) => {
+      if (!data.id) {
+        // Before the document is created, there is no id, therefore do not filter
+        return true
+      }
+
       // Exclude the current document from the list of available parents.
       // NOTE: To not hide documents with the same serial id in another collection, only apply the filter if the parent collection is the same as the current collection.
       if (pageConfig.parent.collection === collectionSlug) {
