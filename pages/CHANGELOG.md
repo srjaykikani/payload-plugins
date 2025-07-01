@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- fix: ensure compatibility with sqlite db adapter (4a2efdc)
+
 ## 0.5.0
 
 - feat: add support for unlocalized page collections (de138bc)
