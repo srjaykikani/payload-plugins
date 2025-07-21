@@ -1,102 +1,81 @@
 {
-  "name": "plugin",
-  "version": "1.0.0",
-  "description": "A blank template to get started with Payload 3.0",
+  "name": "@payload-plugin/admin-search",
+  "version": "0.0.1",
+  "description": "A global search plugin for the Payload admin panel.",
+  "keywords": [
+    "payload",
+    "plugin",
+    "search"
+  ],
+  "author": "Your Name",
   "license": "MIT",
   "type": "module",
-  "exports": {
-    ".": {
-      "import": "./src/exports/index.ts",
-      "types": "./src/exports/index.ts",
-      "default": "./src/exports/index.ts"
-    }
-  },
-  "main": "./src/exports/index.ts",
-  "types": "./src/exports/index.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "build": "pnpm copyfiles && pnpm build:types && pnpm build:swc",
     "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
     "build:types": "tsc --outDir dist --rootDir ./src",
-    "clean": "rimraf {dist,*.tsbuildinfo}",
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
-    "dev": "next dev dev --turbo",
-    "dev:generate-importmap": "pnpm dev:payload generate:importmap",
-    "dev:generate-types": "pnpm dev:payload generate:types",
-    "dev:payload": "cross-env PAYLOAD_CONFIG_PATH=./dev/payload.config.ts payload",
-    "generate:types": "pnpm dev:generate-types",
-    "generate:importmap": "pnpm dev:generate-importmap",
-    "lint": "eslint",
-    "lint:fix": "eslint ./src --fix",
-    "prepublishOnly": "pnpm clean && pnpm build",
-    "test": "pnpm test:int && pnpm test:e2e",
-    "test:e2e": "playwright test",
-    "test:int": "vitest",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@payloadcms/db-mongodb": "3.45.0",
-    "@payloadcms/db-postgres": "3.45.0",
-    "@payloadcms/db-sqlite": "3.45.0",
-    "@payloadcms/eslint-config": "3.9.0",
-    "@payloadcms/next": "3.45.0",
-    "@payloadcms/richtext-lexical": "3.45.0",
-    "@payloadcms/ui": "3.45.0",
-    "@playwright/test": "^1.52.0",
-    "@swc-node/register": "1.10.9",
-    "@swc/cli": "0.6.0",
-    "@types/node": "^22.5.4",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.2",
-    "copyfiles": "2.4.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.23.0",
-    "eslint-config-next": "15.3.0",
-    "graphql": "^16.8.1",
-    "husky": "^9.1.7",
-    "mongodb-memory-server": "10.1.4",
-    "next": "15.3.0",
-    "open": "^10.1.0",
-    "payload": "3.45.0",
-    "prettier": "^3.4.2",
-    "qs-esm": "7.0.2",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "rimraf": "3.0.2",
-    "sharp": "0.32.6",
-    "sort-package-json": "^2.10.0",
-    "typescript": "5.7.3",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.2",
-    "@payloadcms/plugin-search": "3.45.0"
+    "clean": "rimraf --glob {dist,*.tsbuildinfo}",
+    "dev": "tsc -w",
+
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "prepublishOnly": "pnpm clean && pnpm build"
   },
   "peerDependencies": {
-    "payload": "^3.45.0"
+    "@payloadcms/ui": "3.x",
+    "next": "15.x",
+    "payload": "3.x",
+    "react": "19.x",
+    "react-dom": "19.x"
   },
-  "engines": {
-    "node": "^18.20.2 || >=20.9.0",
-    "pnpm": "^9 || ^10"
+  "devDependencies": {
+    "@payloadcms/eslint-config": "^3.28.0",
+    "@swc/cli": "^0.4.0",
+    "@swc/core": "^1.7.0",
+    "@types/react": "19.x",
+    "@types/react-dom": "19.x",
+    "copyfiles": "^2.4.1",
+    "eslint": "9.x",
+    "rimraf": "^5.0.10",
+        "typescript": "5.x"
   },
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
     "exports": {
       ".": {
-        "import": "./dist/exports/index.js",
-        "types": "./dist/exports/index.d.ts",
-        "default": "./dist/exports/index.js"
+        "import": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./components": {
+        "import": "./dist/admin/components/index.js",
+        "types": "./dist/admin/components/index.d.ts",
+        "default": "./dist/admin/components/index.js"
       }
+    }
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     },
-    "main": "./dist/exports/index.js",
-    "types": "./dist/exports/index.d.ts"
+    "./components": {
+      "import": "./src/admin/components/index.ts",
+      "types": "./src/admin/components/index.ts",
+      "default": "./src/admin/components/index.ts"
+    }
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp",
-      "esbuild",
-      "unrs-resolver"
-    ]
-  },
-  "registry": "https://registry.npmjs.org/"
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  }
 }

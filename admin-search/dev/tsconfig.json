@@ -1,35 +1,33 @@
 {
-  "extends": "../tsconfig.json",
-  "exclude": [],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.mjs",
-    "**/*.cjs",
-    "**/*.ts",
-    "**/*.tsx",
-    "../src/**/*.ts",
-    "../src/**/*.tsx",
-    "next.config.mjs",
-    ".next/types/**/*.ts"
-  ],
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@payload-config": [
-        "./payload.config.ts"
-      ],
-      "plugin-package-name-placeholder": [
-        "../src/index.ts"
-      ],
-      "plugin-package-name-placeholder/client": [
-        "../src/exports/client.ts"
-      ],
-      "plugin-package-name-placeholder/rsc": [
-        "../src/exports/rsc.ts"
-      ]
-    },
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "..",
+    "jsx": "preserve",
+    "allowImportingTsExtensions": true,
     "noEmit": true,
-    "emitDeclarationOnly": false,
-  }
+    "paths": {
+      "@/src/*": ["./src/*"],
+      "@payload-config": ["./src/payload.config.ts"],
+      "payload/generated-types": ["./payload-types.ts"],
+      "@/payload-plugin/admin-search/*": ["../src/*"]
+    },
+    "incremental": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../src/**/*.ts", "../src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "build"]
 }
