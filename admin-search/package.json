@@ -22,7 +22,8 @@
 
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "prepublishOnly": "pnpm clean && pnpm build"
+    "prepublishOnly": "pnpm clean && pnpm build",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "@payloadcms/ui": "3.x",
@@ -57,9 +58,9 @@
         "default": "./dist/index.js"
       },
       "./components": {
-        "import": "./dist/admin/components/index.js",
-        "types": "./dist/admin/components/index.d.ts",
-        "default": "./dist/admin/components/index.js"
+        "import": "./dist/components/index.js",
+        "types": "./dist/components/index.d.ts",
+        "default": "./dist/components/index.js"
       }
     }
   },
@@ -70,9 +71,9 @@
       "default": "./src/index.ts"
     },
     "./components": {
-      "import": "./src/admin/components/index.ts",
-      "types": "./src/admin/components/index.ts",
-      "default": "./src/admin/components/index.ts"
+      "import": "./src/components/index.ts",
+      "types": "./src/components/index.ts",
+      "default": "./src/components/index.ts"
     }
   },
   "engines": {

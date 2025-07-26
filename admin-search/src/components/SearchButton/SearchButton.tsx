@@ -2,7 +2,7 @@
 import { Button, SearchIcon, useHotkey } from '@payloadcms/ui'
 import { useState } from 'react'
 
-import { SearchModal } from './search-modal.tsx'
+import { SearchModal } from '../SearchModal/SearchModal.tsx'
 
 export function SearchButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -34,3 +34,5 @@ export function SearchButton() {
     </>
   )
 }
+
+export default SearchButton

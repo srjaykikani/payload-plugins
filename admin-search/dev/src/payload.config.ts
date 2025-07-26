@@ -70,7 +70,7 @@ export default buildConfig({
       beforeSync: ({ originalDoc, searchDoc }) => {
         return {
           ...searchDoc,
-          collectionName: originalDoc.collection,
+          collectionSlug: originalDoc.collection,
           title: originalDoc.title,
         }
       },
@@ -79,7 +79,7 @@ export default buildConfig({
         fields: ({ defaultFields }) => [
           ...defaultFields,
           {
-            name: 'collectionName',
+            name: 'collectionSlug',
             type: 'text',
           },
         ],

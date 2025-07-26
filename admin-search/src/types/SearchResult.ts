@@ -1,7 +1,6 @@
 export interface SearchResult {
   collectionName?: string
-  collectionSlug?: string
-  createdAt?: string
+  collectionSlug: string
   doc?: {
     relationTo: string
     value:
@@ -12,8 +11,6 @@ export interface SearchResult {
       | string
   }
   id: string
-  priority?: number
   title: string
-  updatedAt?: string
   url?: string
 }

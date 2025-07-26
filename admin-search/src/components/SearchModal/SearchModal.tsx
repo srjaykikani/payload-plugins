@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
 
-import './search-modal.css'
+import './SearchModal.css'
 
 export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose }) => {
   const [query, setQuery] = useState('')
@@ -145,7 +145,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     return parts.map((part, index) => {
       if (part.toLowerCase() === searchTerm.toLowerCase()) {
         return (
-          <span className="search-modal__highlight" key={index}>
+          <span className="search-modal__highlighted-text" key={index}>
             {part}
           </span>
         )
@@ -172,13 +172,13 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         tabIndex={0}
       >
         <div className="search-modal__header">
-          <div className="search-modal__input-container">
-            <span className="search-modal__input-icon">
+          <div className="search-modal__input-wrapper">
+            <span className="search-modal__search-icon">
               <SearchIcon />
             </span>
             <input
               aria-label="Search for documents"
-              className="search-modal__input"
+              className="search-modal__input-field"
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && results.length > 0) {
@@ -201,14 +201,14 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
               type="text"
               value={query}
             />
-            <span className="search-modal__esc-hint">ESC</span>
+            <span className="search-modal__escape-hint">ESC</span>
           </div>
         </div>
 
-        <div className="search-modal__results">
+        <div className="search-modal__results-container">
           {data?.isLoading && (
-            <div className="search-modal__loading">
-              <div className="search-modal__loading-spinner"></div>
+            <div className="search-modal__loading-indicator">
+              <div className="search-modal__spinner"></div>
               <p>Searching...</p>
             </div>
           )}
@@ -216,27 +216,30 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
           {!data?.isLoading && !data?.isError && results.length === 0 && debouncedQuery && (
-            <div className="search-modal__no-results">
+            <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
               <p className="search-modal__no-results-hint">
                 Try different keywords or check your spelling
               </p>
             </div>
           )}
-          <ul ref={resultsRef}>
+          <ul className="search-modal__results-list" ref={resultsRef}>
             {results.map((result, index) => (
               <li
-                className={selectedIndex === index ? 'selected' : ''}
+                className={`search-modal__result-item-container ${
+                  selectedIndex === index ? 'selected' : ''
+                }`}
                 key={result.id}
                 onMouseEnter={() => setSelectedIndex(index)}
               >
                 <button
                   aria-label={`Open ${result.title} in ${getCollectionDisplayName(result)}`}
+                  className="search-modal__result-item-button"
                   onClick={() => handleResultClick(result)}
                   onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
                   type="button"
                 >
-                  <div className="search-modal__result-item">
+                  <div className="search-modal__result-content">
                     <span className="search-modal__result-title">
                       {highlightSearchTerm(result.title, query)}
                     </span>
@@ -249,18 +252,18 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         </div>
 
         <div className="search-modal__footer">
-          <div className="search-modal__keyboard-hint">
-            <div className="search-modal__key-hint-item">
-              <span className="search-modal__key">↑↓</span>
-              <span className="search-modal__hint-text">to navigate</span>
+          <div className="search-modal__keyboard-shortcuts">
+            <div className="search-modal__shortcut-item">
+              <span className="search-modal__shortcut-key">↑↓</span>
+              <span className="search-modal__shortcut-description">to navigate</span>
             </div>
-            <div className="search-modal__key-hint-item">
-              <span className="search-modal__key">←</span>
-              <span className="search-modal__hint-text">to select</span>
+            <div className="search-modal__shortcut-item">
+              <span className="search-modal__shortcut-key">←</span>
+              <span className="search-modal__shortcut-description">to select</span>
             </div>
-            <div className="search-modal__key-hint-item">
-              <span className="search-modal__key">esc</span>
-              <span className="search-modal__hint-text">to close</span>
+            <div className="search-modal__shortcut-item">
+              <span className="search-modal__shortcut-key">esc</span>
+              <span className="search-modal__shortcut-description">to close</span>
             </div>
           </div>
         </div>

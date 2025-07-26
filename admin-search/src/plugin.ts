@@ -17,7 +17,7 @@ export const searchPlugin =
           ...incomingConfig.admin?.components,
           actions: [
             ...(incomingConfig.admin?.components?.actions || []),
-            '@/payload-plugin/admin-search/admin/components/search-button#SearchButton',
+            '@/payload-plugin/admin-search/components/SearchButton/SearchButton',
           ],
         },
       },
