@@ -1,16 +1,8 @@
 export interface SearchResult {
-  collectionName?: string
-  collectionSlug: string
-  doc?: {
+  doc: {
     relationTo: string
-    value:
-      | {
-          [key: string]: unknown
-          id: string
-        }
-      | string
+    value: string
   }
   id: string
   title: string
-  url?: string
 }

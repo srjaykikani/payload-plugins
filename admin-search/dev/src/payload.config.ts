@@ -70,20 +70,10 @@ export default buildConfig({
       beforeSync: ({ originalDoc, searchDoc }) => {
         return {
           ...searchDoc,
-          collectionSlug: originalDoc.collection,
-          title: originalDoc.title,
+          title: searchDoc.doc.relationTo === 'authors' ? originalDoc.name : originalDoc.title,
         }
       },
       collections: ['pages', 'posts', 'authors'],
-      searchOverrides: {
-        fields: ({ defaultFields }) => [
-          ...defaultFields,
-          {
-            name: 'collectionSlug',
-            type: 'text',
-          },
-        ],
-      },
     }),
   ],
 })

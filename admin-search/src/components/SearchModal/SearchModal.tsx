@@ -67,13 +67,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
       if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
         const { relationTo, value } = result.doc
         collectionSlug = relationTo
-        documentId = typeof value === 'string' ? value : value?.id
-      } else if (result.collectionSlug) {
-        collectionSlug = result.collectionSlug
-        documentId = result.id
-      } else if (result.collectionName) {
-        collectionSlug = result.collectionName.toLowerCase()
-        documentId = result.id
+        documentId = value
       }
 
       if (collectionSlug && documentId) {
@@ -120,15 +114,6 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
   }, [selectedIndex])
 
   const getCollectionDisplayName = (result: SearchResult) => {
-    if (result.collectionName) {
-      return result.collectionName
-    }
-    if (result.collectionSlug) {
-      return result.collectionSlug
-        .split('-')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-    }
     if (result.doc && 'relationTo' in result.doc) {
       return result.doc.relationTo
         .split('-')

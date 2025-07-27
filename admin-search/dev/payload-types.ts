@@ -250,7 +250,6 @@ export interface Search {
         relationTo: 'authors';
         value: string | Author;
       };
-  collectionSlug?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -407,7 +406,6 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
-  collectionSlug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
