@@ -246,7 +246,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
                     <span className="search-modal__result-title">
                       {highlightSearchTerm(result.title, query)}
                     </span>
-                    <Pill>{highlightSearchTerm(getCollectionDisplayName(result), query)}</Pill>
+                    <Pill size="small">{getCollectionDisplayName(result)}</Pill>
                   </div>
                 </button>
               </li>
