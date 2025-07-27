@@ -261,11 +261,11 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
               <span className="search-modal__shortcut-description">to navigate</span>
             </div>
             <div className="search-modal__shortcut-item">
-              <span className="search-modal__shortcut-key">←</span>
+              <span className="search-modal__shortcut-key">↵</span>
               <span className="search-modal__shortcut-description">to select</span>
             </div>
             <div className="search-modal__shortcut-item">
-              <span className="search-modal__shortcut-key">esc</span>
+              <span className="search-modal__shortcut-key">ESC</span>
               <span className="search-modal__shortcut-description">to close</span>
             </div>
           </div>
