@@ -1,4 +1,6 @@
-# Payload Admin Search Plugin
+# JHB Software - Payload Admin Search Plugin
+
+[![NPM Version](https://img.shields.io/npm/v/%40jhb.software%2Fpayload-admin-search)](https://www.npmjs.com/package/@jhb.software/payload-admin-search)
 
 A plugin for [Payload CMS](https://payloadcms.com) that adds a search modal to quickly find documents across collections in the admin panel.
 
@@ -16,7 +18,7 @@ A plugin for [Payload CMS](https://payloadcms.com) that adds a search modal to q
 This plugin requires the official [Payload search plugin](https://payloadcms.com/docs/plugins/search) to be installed. To use this plugin, simply install it and add it to your Payload config.
 
 ```ts
-import { adminSearchPlugin } from '@payloadcms/plugin-admin-search'
+import { adminSearchPlugin } from '@jhb.software/payload-admin-search'
 import { searchPlugin } from '@payloadcms/plugin-search'
 
 export default {

@@ -54,7 +54,7 @@ importers:
 
   dev:
     dependencies:
-      '@payload-plugin/admin-search':
+      '@jhb.software/payload-admin-search':
         specifier: workspace:*
         version: link:..
       '@payloadcms/db-mongodb':
