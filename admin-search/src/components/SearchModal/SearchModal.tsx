@@ -148,9 +148,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     return parts.map((part, index) => {
       if (part.toLowerCase() === searchTerm.toLowerCase()) {
         return (
-          <span className="search-modal__highlighted-text" key={index}>
+          <mark className="search-modal__highlighted-text" key={index}>
             {part}
-          </span>
+          </mark>
         )
       }
       return part
