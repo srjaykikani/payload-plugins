@@ -17,7 +17,14 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
+  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {
+    initialParams: {
+      depth: 0,
+      limit: 10,
+      pagination: false,
+      sort: '-priority',
+    },
+  })
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -33,8 +40,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     }
 
     setParams({
-      depth: 1,
+      depth: 0,
       limit: 10,
+      pagination: false,
       sort: '-priority',
       where: {
         title: {
