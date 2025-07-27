@@ -1,6 +1,6 @@
 import type { Config } from 'payload'
 
-import type { AdminSearchPluginConfig } from './types/AdminSearchPluginConfig.ts'
+import type { AdminSearchPluginConfig } from './types/AdminSearchPluginConfig.js'
 
 export const adminSearchPlugin =
   (pluginOptions: AdminSearchPluginConfig) =>

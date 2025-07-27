@@ -1,1 +1,1 @@
-export { default as SearchButton } from '../components/SearchButton/SearchButton.tsx'
+export { SearchButton } from '../components/SearchButton/SearchButton.js'
