@@ -14,7 +14,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
   const debouncedQuery = useDebounce(query, 300)
   const {
     config: {
-      routes: { api },
+      routes: { admin, api },
     },
   } = useConfig()
   const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
@@ -51,26 +51,29 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     }
   }, [data])
 
-  const handleResultClick = useCallback((result: SearchResult) => {
-    let collectionSlug: string | undefined
-    let documentId: string | undefined
+  const handleResultClick = useCallback(
+    (result: SearchResult) => {
+      let collectionSlug: string | undefined
+      let documentId: string | undefined
 
-    if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
-      const { relationTo, value } = result.doc
-      collectionSlug = relationTo
-      documentId = typeof value === 'string' ? value : value?.id
-    } else if (result.collectionSlug) {
-      collectionSlug = result.collectionSlug
-      documentId = result.id
-    } else if (result.collectionName) {
-      collectionSlug = result.collectionName.toLowerCase()
-      documentId = result.id
-    }
+      if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
+        const { relationTo, value } = result.doc
+        collectionSlug = relationTo
+        documentId = typeof value === 'string' ? value : value?.id
+      } else if (result.collectionSlug) {
+        collectionSlug = result.collectionSlug
+        documentId = result.id
+      } else if (result.collectionName) {
+        collectionSlug = result.collectionName.toLowerCase()
+        documentId = result.id
+      }
 
-    if (collectionSlug && documentId) {
-      window.location.href = `/admin/collections/${collectionSlug}/${documentId}`
-    }
-  }, [])
+      if (collectionSlug && documentId) {
+        window.location.href = `${admin}/collections/${collectionSlug}/${documentId}`
+      }
+    },
+    [admin],
+  )
 
   useEffect(() => {
     // Manual keyboard handling instead of useHotkey to avoid modal state conflicts
