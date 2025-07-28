@@ -1,0 +1,82 @@
+{
+  "name": "@jhb.software/payload-admin-search",
+  "version": "0.1.2",
+  "description": "A global search plugin for the Payload CMS admin panel.",
+  "keywords": [
+    "payload",
+    "plugin",
+    "search",
+    "admin"
+  ],
+  "author": "JHB Software",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "pnpm copyfiles && pnpm build:types && pnpm build:swc",
+    "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
+    "build:types": "tsc --outDir dist --rootDir ./src",
+    "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
+    "clean": "rimraf --glob {dist,*.tsbuildinfo}",
+    "dev": "tsc -w",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "prepublishOnly": "pnpm clean && pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@payloadcms/ui": "3.x",
+    "next": "15.x",
+    "payload": "3.x",
+    "react": "19.x",
+    "react-dom": "19.x"
+  },
+  "devDependencies": {
+    "@payloadcms/eslint-config": "^3.28.0",
+    "@swc/cli": "^0.4.0",
+    "@swc/core": "^1.7.0",
+    "@types/react": "19.x",
+    "@types/react-dom": "19.x",
+    "copyfiles": "^2.4.1",
+    "eslint": "9.x",
+    "rimraf": "^5.0.10",
+    "typescript": "5.x"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "registry": "https://registry.npmjs.org/",
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./client": {
+        "import": "./dist/exports/client.js",
+        "types": "./dist/exports/client.d.ts",
+        "default": "./dist/exports/client.js"
+      }
+    }
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./client": {
+      "import": "./dist/exports/client.js",
+      "types": "./dist/exports/client.d.ts",
+      "default": "./dist/exports/client.js"
+    }
+  },
+  "engines": {
+    "node": "^18.20.2 || >=20.9.0"
+  }
+}
