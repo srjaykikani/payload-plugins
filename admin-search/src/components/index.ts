@@ -1,2 +1,2 @@
-export * from './SearchButton/SearchButton.tsx'
-export * from './SearchModal/SearchModal.tsx' 
+export * from './SearchButton/SearchButton.js'
+export * from './SearchModal/SearchModal.js' 

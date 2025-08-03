@@ -1,1 +1,1 @@
-export * from '../SearchButton/SearchButton.tsx'
+export * from '../SearchButton/SearchButton.js'
