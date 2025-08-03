@@ -48,7 +48,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   // Initial search to show default results
   useEffect(() => {
     setParams(getSearchParams())
-  }, [setParams])
+  }, [setParams, getSearchParams])
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -58,7 +58,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
     }
 
     setParams(getSearchParams(debouncedQuery))
-  }, [debouncedQuery, setParams])
+  }, [debouncedQuery, setParams, getSearchParams])
 
   useEffect(() => {
     if (data?.docs && Array.isArray(data.docs)) {
@@ -96,7 +96,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
         handleClose()
       }
     },
-    [results.length, selectedIndex, handleResultClick, handleClose],
+    [results, selectedIndex, handleResultClick, handleClose],
   )
 
   useEffect(() => {
