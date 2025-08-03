@@ -7,30 +7,48 @@ import type { SearchResult } from '../../types/SearchResult.js'
 
 import './SearchModal.css'
 
-export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose }) => {
+interface SearchModalProps {
+  handleClose: () => void
+}
+
+const SEARCH_DEBOUNCE_MS = 300
+const SEARCH_RESULTS_LIMIT = 5
+
+export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(-1)
-  const debouncedQuery = useDebounce(query, 300)
+  const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS)
   const {
     config: {
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {
-    initialParams: {
-      depth: 0,
-      limit: 10,
-      pagination: false,
-      sort: '-priority',
-    },
-  })
+  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const getSearchParams = useCallback((searchQuery?: string) => ({
+    depth: 1,
+    limit: SEARCH_RESULTS_LIMIT,
+    sort: '-priority',
+    ...(searchQuery && {
+      where: {
+        title: {
+          like: searchQuery,
+        },
+      },
+    }),
+  }), [])
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
+
+  // Initial search to show default results
+  useEffect(() => {
+    setParams(getSearchParams())
+  }, [setParams])
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -39,17 +57,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
       return
     }
 
-    setParams({
-      depth: 0,
-      limit: 10,
-      pagination: false,
-      sort: '-priority',
-      where: {
-        title: {
-          like: debouncedQuery,
-        },
-      },
-    })
+    setParams(getSearchParams(debouncedQuery))
   }, [debouncedQuery, setParams])
 
   useEffect(() => {
@@ -61,14 +69,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
-      let collectionSlug: string | undefined
-      let documentId: string | undefined
-
-      if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
-        const { relationTo, value } = result.doc
-        collectionSlug = relationTo
-        documentId = value
-      }
+      const { relationTo, value } = result.doc
+      const collectionSlug = relationTo
+      const documentId = value
 
       if (collectionSlug && documentId) {
         window.location.href = `${admin}/collections/${collectionSlug}/${documentId}`
@@ -77,14 +80,8 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     [admin],
   )
 
-  useEffect(() => {
-    // Manual keyboard handling instead of useHotkey to avoid modal state conflicts
-    // useHotkey is designed for opening modals, not navigation within open modals
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement && e.key !== 'Escape') {
-        return
-      }
-
+  const handleKeyboardNavigation = useCallback(
+    (e: KeyboardEvent | React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev))
@@ -98,11 +95,21 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         e.preventDefault()
         handleClose()
       }
+    },
+    [results.length, selectedIndex, handleResultClick, handleClose],
+  )
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement && e.key !== 'Escape') {
+        return
+      }
+      handleKeyboardNavigation(e)
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [results, selectedIndex, handleClose, handleResultClick])
+  }, [handleKeyboardNavigation])
 
   useEffect(() => {
     if (selectedIndex !== -1 && resultsRef.current) {
@@ -178,12 +185,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && results.length > 0) {
-                  e.preventDefault()
-                  if (e.key === 'ArrowDown') {
-                    setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev))
-                  } else if (e.key === 'ArrowUp') {
-                    setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0))
-                  }
+                  handleKeyboardNavigation(e)
                 } else if (e.key === 'Enter' && selectedIndex !== -1) {
                   e.preventDefault()
                   handleResultClick(results[selectedIndex])
