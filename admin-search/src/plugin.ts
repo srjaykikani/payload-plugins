@@ -1,9 +1,9 @@
 import type { Config } from 'payload'
 
-import type { SearchPluginConfig } from './types/SearchPluginConfig.ts'
+import type { AdminSearchPluginConfig } from './types/AdminSearchPluginConfig.js'
 
-export const searchPlugin =
-  (pluginOptions: SearchPluginConfig) =>
+export const adminSearchPlugin =
+  (pluginOptions: AdminSearchPluginConfig) =>
   (incomingConfig: Config): Config => {
     if (pluginOptions.enabled === false) {
       return incomingConfig
@@ -17,7 +17,7 @@ export const searchPlugin =
           ...incomingConfig.admin?.components,
           actions: [
             ...(incomingConfig.admin?.components?.actions || []),
-            '@/payload-plugin/admin-search/components/SearchButton/SearchButton',
+            '@jhb.software/payload-admin-search/client#SearchButton',
           ],
         },
       },

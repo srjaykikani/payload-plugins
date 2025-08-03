@@ -1,4 +1,4 @@
-import { searchPlugin as adminSearchPlugin } from '@payload-plugin/admin-search'
+import { adminSearchPlugin } from '@jhb.software/payload-admin-search'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -70,20 +70,10 @@ export default buildConfig({
       beforeSync: ({ originalDoc, searchDoc }) => {
         return {
           ...searchDoc,
-          collectionSlug: originalDoc.collection,
-          title: originalDoc.title,
+          title: searchDoc.doc.relationTo === 'authors' ? originalDoc.name : originalDoc.title,
         }
       },
       collections: ['pages', 'posts', 'authors'],
-      searchOverrides: {
-        fields: ({ defaultFields }) => [
-          ...defaultFields,
-          {
-            name: 'collectionSlug',
-            type: 'text',
-          },
-        ],
-      },
     }),
   ],
 })

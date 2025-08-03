@@ -6,6 +6,17 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Allow for ESM .js import statements
+  webpack: (webpackConfig) => {
+    webpackConfig.resolve.extensionAlias = {
+      '.cjs': ['.cts', '.cjs'],
+      '.js': ['.ts', '.tsx', '.js', '.jsx'],
+      '.mjs': ['.mts', '.mjs'],
+    }
+
+    return webpackConfig
+  },
+
   redirects: () => [
     {
       source: '/',

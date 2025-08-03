@@ -19,8 +19,6 @@
     "emitDeclarationOnly": true,
     "target": "ES2022",
     "composite": true,
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
     "plugins": [
       {
         "name": "next"

@@ -14,10 +14,17 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
   const debouncedQuery = useDebounce(query, 300)
   const {
     config: {
-      routes: { api },
+      routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
+  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {
+    initialParams: {
+      depth: 0,
+      limit: 10,
+      pagination: false,
+      sort: '-priority',
+    },
+  })
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -33,8 +40,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     }
 
     setParams({
-      depth: 1,
+      depth: 0,
       limit: 10,
+      pagination: false,
       sort: '-priority',
       where: {
         title: {
@@ -51,26 +59,23 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     }
   }, [data])
 
-  const handleResultClick = useCallback((result: SearchResult) => {
-    let collectionSlug: string | undefined
-    let documentId: string | undefined
+  const handleResultClick = useCallback(
+    (result: SearchResult) => {
+      let collectionSlug: string | undefined
+      let documentId: string | undefined
 
-    if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
-      const { relationTo, value } = result.doc
-      collectionSlug = relationTo
-      documentId = typeof value === 'string' ? value : value?.id
-    } else if (result.collectionSlug) {
-      collectionSlug = result.collectionSlug
-      documentId = result.id
-    } else if (result.collectionName) {
-      collectionSlug = result.collectionName.toLowerCase()
-      documentId = result.id
-    }
+      if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
+        const { relationTo, value } = result.doc
+        collectionSlug = relationTo
+        documentId = value
+      }
 
-    if (collectionSlug && documentId) {
-      window.location.href = `/admin/collections/${collectionSlug}/${documentId}`
-    }
-  }, [])
+      if (collectionSlug && documentId) {
+        window.location.href = `${admin}/collections/${collectionSlug}/${documentId}`
+      }
+    },
+    [admin],
+  )
 
   useEffect(() => {
     // Manual keyboard handling instead of useHotkey to avoid modal state conflicts
@@ -109,15 +114,6 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
   }, [selectedIndex])
 
   const getCollectionDisplayName = (result: SearchResult) => {
-    if (result.collectionName) {
-      return result.collectionName
-    }
-    if (result.collectionSlug) {
-      return result.collectionSlug
-        .split('-')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
-    }
     if (result.doc && 'relationTo' in result.doc) {
       return result.doc.relationTo
         .split('-')
@@ -145,9 +141,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     return parts.map((part, index) => {
       if (part.toLowerCase() === searchTerm.toLowerCase()) {
         return (
-          <span className="search-modal__highlighted-text" key={index}>
+          <mark className="search-modal__highlighted-text" key={index}>
             {part}
-          </span>
+          </mark>
         )
       }
       return part
@@ -243,7 +239,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
                     <span className="search-modal__result-title">
                       {highlightSearchTerm(result.title, query)}
                     </span>
-                    <Pill>{highlightSearchTerm(getCollectionDisplayName(result), query)}</Pill>
+                    <Pill size="small">{getCollectionDisplayName(result)}</Pill>
                   </div>
                 </button>
               </li>
@@ -258,11 +254,11 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
               <span className="search-modal__shortcut-description">to navigate</span>
             </div>
             <div className="search-modal__shortcut-item">
-              <span className="search-modal__shortcut-key">←</span>
+              <span className="search-modal__shortcut-key">↵</span>
               <span className="search-modal__shortcut-description">to select</span>
             </div>
             <div className="search-modal__shortcut-item">
-              <span className="search-modal__shortcut-key">esc</span>
+              <span className="search-modal__shortcut-key">ESC</span>
               <span className="search-modal__shortcut-description">to close</span>
             </div>
           </div>

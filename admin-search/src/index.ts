@@ -1,3 +1,3 @@
-export { searchPlugin } from './plugin.ts'
-export type { SearchPluginConfig } from './types/SearchPluginConfig.ts'
-export type { SearchResult } from './types/SearchResult.ts'
+export { adminSearchPlugin } from './plugin.js'
+export type { AdminSearchPluginConfig } from './types/AdminSearchPluginConfig.js'
+export type { SearchResult } from './types/SearchResult.js'

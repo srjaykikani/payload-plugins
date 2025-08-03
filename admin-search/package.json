@@ -1,17 +1,18 @@
 {
-  "name": "@payload-plugin/admin-search",
-  "version": "0.0.1",
-  "description": "A global search plugin for the Payload admin panel.",
+  "name": "@jhb.software/payload-admin-search",
+  "version": "0.1.2",
+  "description": "A global search plugin for the Payload CMS admin panel.",
   "keywords": [
     "payload",
     "plugin",
-    "search"
+    "search",
+    "admin"
   ],
-  "author": "Your Name",
+  "author": "JHB Software",
   "license": "MIT",
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "pnpm copyfiles && pnpm build:types && pnpm build:swc",
     "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
@@ -19,7 +20,6 @@
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
     "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
-
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "prepublishOnly": "pnpm clean && pnpm build",
@@ -41,7 +41,7 @@
     "copyfiles": "^2.4.1",
     "eslint": "9.x",
     "rimraf": "^5.0.10",
-        "typescript": "5.x"
+    "typescript": "5.x"
   },
   "files": [
     "dist"
@@ -57,23 +57,23 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       },
-      "./components": {
-        "import": "./dist/components/index.js",
-        "types": "./dist/components/index.d.ts",
-        "default": "./dist/components/index.js"
+      "./client": {
+        "import": "./dist/exports/client.js",
+        "types": "./dist/exports/client.d.ts",
+        "default": "./dist/exports/client.js"
       }
     }
   },
   "exports": {
     ".": {
-      "import": "./src/index.ts",
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
-    "./components": {
-      "import": "./src/components/index.ts",
-      "types": "./src/components/index.ts",
-      "default": "./src/components/index.ts"
+    "./client": {
+      "import": "./dist/exports/client.js",
+      "types": "./dist/exports/client.d.ts",
+      "default": "./dist/exports/client.js"
     }
   },
   "engines": {

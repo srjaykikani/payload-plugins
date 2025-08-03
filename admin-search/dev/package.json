@@ -17,7 +17,7 @@
     "seed": "cross-env PAYLOAD_CONFIG_PATH=./src/payload.config.ts tsx seed-db.ts"
   },
   "dependencies": {
-    "@payload-plugin/admin-search": "workspace:*",
+    "@jhb.software/payload-admin-search": "workspace:*",
     "@payloadcms/db-mongodb": "3.x",
     "@payloadcms/next": "3.x",
     "@payloadcms/plugin-search": "3.x",
