@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { SearchModal } from '../SearchModal/SearchModal.js'
 
-export function SearchButton() {
+export function SearchButton(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useHotkey(

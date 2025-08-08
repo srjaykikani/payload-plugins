@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
 
+import { SearchModalSkeleton } from './SearchModalSkeleton.js'
 import './SearchModal.css'
 
 interface SearchModalProps {
@@ -204,12 +205,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
         </div>
 
         <div className="search-modal__results-container">
-          {data?.isLoading && (
-            <div className="search-modal__loading-indicator">
-              <div className="search-modal__spinner"></div>
-              <p>Searching...</p>
-            </div>
-          )}
+          {data?.isLoading && <SearchModalSkeleton count={SEARCH_RESULTS_LIMIT} />}
           {data?.isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
@@ -221,32 +217,34 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
               </p>
             </div>
           )}
-          <ul className="search-modal__results-list" ref={resultsRef}>
-            {results.map((result, index) => (
-              <li
-                className={`search-modal__result-item-container ${
-                  selectedIndex === index ? 'selected' : ''
-                }`}
-                key={result.id}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <button
-                  aria-label={`Open ${result.title} in ${getCollectionDisplayName(result)}`}
-                  className="search-modal__result-item-button"
-                  onClick={() => handleResultClick(result)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
-                  type="button"
+          {!data?.isLoading && !data?.isError && results.length > 0 && (
+            <ul className="search-modal__results-list" ref={resultsRef}>
+              {results.map((result, index) => (
+                <li
+                  className={`search-modal__result-item-container ${
+                    selectedIndex === index ? 'selected' : ''
+                  }`}
+                  key={result.id}
+                  onMouseEnter={() => setSelectedIndex(index)}
                 >
-                  <div className="search-modal__result-content">
-                    <span className="search-modal__result-title">
-                      {highlightSearchTerm(result.title, query)}
-                    </span>
-                    <Pill size="small">{getCollectionDisplayName(result)}</Pill>
-                  </div>
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <button
+                    aria-label={`Open ${result.title} in ${getCollectionDisplayName(result)}`}
+                    className="search-modal__result-item-button"
+                    onClick={() => handleResultClick(result)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
+                    type="button"
+                  >
+                    <div className="search-modal__result-content">
+                      <span className="search-modal__result-title">
+                        {highlightSearchTerm(result.title, query)}
+                      </span>
+                      <Pill size="small">{getCollectionDisplayName(result)}</Pill>
+                    </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="search-modal__footer">

@@ -112,6 +112,15 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
 .search-modal__no-results-message {
   color: var(--theme-elevation-500);
   padding: 40px 20px;
@@ -237,6 +246,45 @@
   color: var(--theme-error-500);
   padding: 20px;
   text-align: center;
+}
+
+/* Skeleton Loading Styles */
+.skeleton-item {
+  background: none !important;
+  cursor: default !important;
+}
+
+.skeleton-item:hover {
+  background: none !important;
+}
+
+.skeleton-title {
+  background: linear-gradient(
+    90deg,
+    var(--theme-elevation-200) 25%,
+    var(--theme-elevation-100) 50%,
+    var(--theme-elevation-200) 75%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  height: 16px;
+  width: 70%;
+  flex: 1;
+}
+
+.skeleton-pill {
+  background: linear-gradient(
+    90deg,
+    var(--theme-elevation-200) 25%,
+    var(--theme-elevation-100) 50%,
+    var(--theme-elevation-200) 75%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+  height: 20px;
+  width: 80px;
 }
 
 /* Make search icons bolder */
