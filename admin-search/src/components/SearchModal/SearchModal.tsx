@@ -1,6 +1,6 @@
 'use client'
 
-import { Banner, Pill, SearchIcon, useConfig, useDebounce, usePayloadAPI } from '@payloadcms/ui'
+import { Banner, Pill, SearchIcon, useConfig, useDebounce, usePayloadAPI, useTranslation } from '@payloadcms/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
@@ -20,6 +20,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   const [results, setResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS)
+  const { t } = useTranslation()
   const {
     config: {
       routes: { admin, api },
@@ -228,30 +229,35 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
           )}
           {!data?.isLoading && !data?.isError && results.length > 0 && (
             <ul className="search-modal__results-list" ref={resultsRef}>
-              {results.map((result, index) => (
-                <li
-                  className={`search-modal__result-item-container ${
-                    selectedIndex === index ? 'selected' : ''
-                  }`}
-                  key={result.id}
-                  onMouseEnter={() => setSelectedIndex(index)}
-                >
-                  <button
-                    aria-label={`Open ${result.title} in ${getCollectionDisplayName(result)}`}
-                    className="search-modal__result-item-button"
-                    onClick={() => handleResultClick(result)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
-                    type="button"
+              {results.map((result, index) => {
+                const displayTitle = result.title && result.title.trim().length > 0
+                  ? result.title
+                  : `[${t('general:untitled')}]`
+                return (
+                  <li
+                    className={`search-modal__result-item-container ${
+                      selectedIndex === index ? 'selected' : ''
+                    }`}
+                    key={result.id}
+                    onMouseEnter={() => setSelectedIndex(index)}
                   >
-                    <div className="search-modal__result-content">
-                      <span className="search-modal__result-title">
-                        {highlightSearchTerm(result.title, query)}
-                      </span>
-                      <Pill size="small">{getCollectionDisplayName(result)}</Pill>
-                    </div>
-                  </button>
-                </li>
-              ))}
+                    <button
+                      aria-label={`Open ${displayTitle} in ${getCollectionDisplayName(result)}`}
+                      className="search-modal__result-item-button"
+                      onClick={() => handleResultClick(result)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
+                      type="button"
+                    >
+                      <div className="search-modal__result-content">
+                        <span className="search-modal__result-title">
+                          {highlightSearchTerm(displayTitle, query)}
+                        </span>
+                        <Pill size="small">{getCollectionDisplayName(result)}</Pill>
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           )}
         </div>
