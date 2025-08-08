@@ -28,6 +28,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const requestNonceRef = useRef(0)
 
   const getSearchParams = useCallback((searchQuery?: string) => ({
     depth: 1,
@@ -42,14 +43,24 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
     }),
   }), [])
 
+  const triggerSearch = useCallback(
+    (searchQuery?: string) => {
+      requestNonceRef.current += 1
+      const baseParams = getSearchParams(searchQuery)
+      const paramsWithNonce = { ...baseParams, __nonce: requestNonceRef.current, __ts: Date.now() }
+      setParams(paramsWithNonce)
+    },
+    [getSearchParams, setParams],
+  )
+
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
 
   // Initial search to show default results
   useEffect(() => {
-    setParams(getSearchParams())
-  }, [setParams, getSearchParams])
+    triggerSearch()
+  }, [triggerSearch])
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -58,8 +69,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
       return
     }
 
-    setParams(getSearchParams(debouncedQuery))
-  }, [debouncedQuery, setParams, getSearchParams])
+    triggerSearch(debouncedQuery)
+  }, [debouncedQuery, triggerSearch])
 
   useEffect(() => {
     if (data?.docs && Array.isArray(data.docs)) {
@@ -125,7 +136,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
     if (result.doc && 'relationTo' in result.doc) {
       return result.doc.relationTo
         .split('-')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
     }
     return 'Unknown'
@@ -212,9 +223,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
           {!data?.isLoading && !data?.isError && results.length === 0 && debouncedQuery && (
             <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
-              <p className="search-modal__no-results-hint">
-                Try different keywords or check your spelling
-              </p>
+              <p className="search-modal__no-results-hint">Try different keywords or check your spelling</p>
             </div>
           )}
           {!data?.isLoading && !data?.isError && results.length > 0 && (
