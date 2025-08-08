@@ -1,10 +1,12 @@
 'use client'
+import type React from 'react'
+
 import { Button, SearchIcon, useHotkey } from '@payloadcms/ui'
 import { useState } from 'react'
 
 import { SearchModal } from '../SearchModal/SearchModal.js'
 
-export function SearchButton(): JSX.Element {
+export function SearchButton(): React.ReactElement {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useHotkey(
