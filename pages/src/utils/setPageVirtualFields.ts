@@ -33,16 +33,19 @@ export async function setPageDocumentVirtualFields({
       locale: 'all',
     })) as Record<Locale, Breadcrumb[]>
 
-    const paths: Record<Locale, string> = locales.reduce((acc, locale) => {
-      // If the slug is not set for this locale, exclude the path to not generate a 404 path
-      if (
-        (typeof doc.slug === 'object' && doc.slug[locale]) ||
-        (typeof doc.slug === 'string' && doc.slug)
-      ) {
-        acc[locale] = breadcrumbs[locale].at(-1)!.path
-      }
-      return acc
-    }, {} as Record<Locale, string>)
+    const paths: Record<Locale, string> = locales.reduce(
+      (acc, locale) => {
+        // If the slug is not set for this locale, exclude the path to not generate a 404 path
+        if (
+          (typeof doc.slug === 'object' && doc.slug[locale]) ||
+          (typeof doc.slug === 'string' && doc.slug)
+        ) {
+          acc[locale] = breadcrumbs[locale].at(-1)!.path
+        }
+        return acc
+      },
+      {} as Record<Locale, string>,
+    )
 
     const alternatePaths: SeoMetadata['alternatePaths'] = Object.entries(paths).map(
       ([locale, path]) => ({
