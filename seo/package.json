@@ -17,6 +17,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
+    "format": "prettier --write src",
     "test": "jest",
     "lint": "eslint .",
     "prepublish": "tsc"
@@ -36,7 +37,8 @@
   "devDependencies": {
     "typescript": "5.7.2",
     "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1"
+    "@types/react-dom": "^19.0.1",
+    "prettier": "^3.6.2"
   },
   "files": [
     "dist"

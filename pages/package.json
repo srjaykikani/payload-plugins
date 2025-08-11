@@ -21,6 +21,7 @@
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
     "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
+    "format": "prettier --write src",
     "test": "pnpm test:localized && pnpm test:unlocalized",
     "test:localized": "cd dev && pnpm test",
     "test:unlocalized": "cd dev_unlocalized && pnpm test",
@@ -44,6 +45,7 @@
     "@types/react-dom": "19.1.6",
     "typescript": "5.8.3",
     "copyfiles": "2.4.1",
+    "prettier": "^3.6.2",
     "rimraf": "6.0.1"
   },
   "files": [

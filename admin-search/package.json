@@ -20,6 +20,7 @@
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
     "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
+    "format": "prettier --write src",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "prepublishOnly": "pnpm clean && pnpm build",
@@ -40,6 +41,7 @@
     "@types/react-dom": "19.x",
     "copyfiles": "^2.4.1",
     "eslint": "9.x",
+    "prettier": "^3.6.2",
     "rimraf": "^5.0.10",
     "typescript": "5.x"
   },

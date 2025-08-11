@@ -17,6 +17,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
+    "format": "prettier --write src",
     "test": "jest",
     "lint": "eslint .",
     "prepublish": "tsc"
@@ -28,6 +29,7 @@
     "payload": "^3.25.0"
   },
   "devDependencies": {
+    "prettier": "^3.6.2",
     "typescript": "5.7.3"
   },
   "files": [
