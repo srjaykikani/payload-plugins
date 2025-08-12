@@ -84,12 +84,15 @@ export async function getBreadcrumbs({
   }
 
   if (locale === 'all' && locales) {
-    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce((acc, locale) => {
-      const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
+    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce(
+      (acc, locale) => {
+        const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
 
-      acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
-      return acc
-    }, {} as Record<Locale, Breadcrumb[]>)
+        acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
+        return acc
+      },
+      {} as Record<Locale, Breadcrumb[]>,
+    )
 
     return breadcrumbs
   } else {
@@ -111,8 +114,8 @@ function docToBreadcrumb(
     label: breadcrumbLabelField
       ? pickFieldValue(doc[breadcrumbLabelField], locale)
       : typeof doc.breadcrumbs === 'object' && locale
-      ? doc.breadcrumbs?.[locale]?.at(-1)?.label
-      : doc.breadcrumbs?.at(-1)?.label,
+        ? doc.breadcrumbs?.[locale]?.at(-1)?.label
+        : doc.breadcrumbs?.at(-1)?.label,
   }
 }
 

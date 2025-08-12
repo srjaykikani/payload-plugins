@@ -161,18 +161,19 @@ export const PathField: TextFieldClientComponent = ({ field, path: fieldPath, sc
       })
 
       // update the path in the breadcrumbs
-      const updatedBreadcrumbsPath: Breadcrumb[] = updatedBreadcrumbsSlug.map((breadcrumb, index) =>
-        index === breadcrumbs.length - 1
-          ? {
-              path: updatedPath,
-              slug: breadcrumb.slug,
-              label: breadcrumb.label,
-            }
-          : {
-              path: breadcrumb.path,
-              slug: breadcrumb.slug,
-              label: breadcrumb.label,
-            },
+      const updatedBreadcrumbsPath: Breadcrumb[] = updatedBreadcrumbsSlug.map(
+        (breadcrumb, index) =>
+          index === breadcrumbs.length - 1
+            ? {
+                path: updatedPath,
+                slug: breadcrumb.slug,
+                label: breadcrumb.label,
+              }
+            : {
+                path: breadcrumb.path,
+                slug: breadcrumb.slug,
+                label: breadcrumb.label,
+              },
       )
 
       setPath(updatedPath)

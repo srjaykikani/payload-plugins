@@ -25,6 +25,7 @@
     "build:app": "pnpm -C dev build",
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png}\" dist/",
     "dev": "pnpm -C dev dev",
+    "format": "prettier --write src",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepack": "pnpm prepublishOnly",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
+    "prettier": "^3.6.2",
     "typescript": "5.8.2"
   },
   "publishConfig": {

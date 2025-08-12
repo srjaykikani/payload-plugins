@@ -10,6 +10,7 @@
     "dev:safe": "rm -rf .next && pnpm dev",
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "format": "prettier --write src",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=./src/payload.config.ts payload",
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=./src/payload.config.ts payload generate:types",
     "generate:schema": "payload-graphql generate:schema",
