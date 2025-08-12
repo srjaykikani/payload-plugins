@@ -17,7 +17,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {
+  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {
     initialParams: {
       depth: 0,
       limit: 10,
@@ -202,16 +202,16 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         </div>
 
         <div className="search-modal__results-container">
-          {data?.isLoading && (
+          {isLoading && (
             <div className="search-modal__loading-indicator">
               <div className="search-modal__spinner"></div>
               <p>Searching...</p>
             </div>
           )}
-          {data?.isError && (
+          {isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
-          {!data?.isLoading && !data?.isError && results.length === 0 && debouncedQuery && (
+          {!isLoading && !isError && results.length === 0 && debouncedQuery && (
             <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
               <p className="search-modal__no-results-hint">
