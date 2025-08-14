@@ -1,4 +1,4 @@
-import { CheckboxFieldServerComponent } from 'payload'
+import { CheckboxFieldServerComponent, serverProps, Where } from 'payload'
 import { IsRootPageStatus } from '../client/IsRootPageStatus.js'
 
 /**
@@ -10,21 +10,20 @@ export const IsRootPageField: CheckboxFieldServerComponent = async ({
   field,
   collectionSlug,
   payload,
+  req,
+  baseFilter,
 }) => {
-  const response = await payload.find({
-    limit: 1,
-    draft: true,
-    pagination: false,
+  const baseFilterWhere: Where | undefined =
+    typeof baseFilter === 'function' ? baseFilter({ req }) : undefined
+
+  const response = await payload.count({
     collection: collectionSlug,
     where: {
-      isRootPage: { equals: true },
-    },
-    select: {
-      isRootPage: true,
+      and: [{ isRootPage: { equals: true } }, { ...baseFilterWhere }],
     },
   })
 
-  const hasRootPage = response.docs.length > 0
+  const hasRootPage = response.totalDocs > 0
 
   return (
     <IsRootPageStatus

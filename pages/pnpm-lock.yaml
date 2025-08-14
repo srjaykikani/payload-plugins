@@ -95,6 +95,55 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.13.4)(sass@1.77.4)(tsx@4.20.3)
 
+  dev_multi_tenant:
+    dependencies:
+      '@jhb.software/payload-pages-plugin':
+        specifier: workspace:*
+        version: link:..
+      '@payloadcms/db-mongodb':
+        specifier: 3.50.0
+        version: 3.50.0(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))
+      '@payloadcms/db-sqlite':
+        specifier: 3.50.0
+        version: 3.50.0(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))
+      '@payloadcms/next':
+        specifier: 3.50.0
+        version: 3.50.0(@types/react@19.1.10)(graphql@16.10.0)(monaco-editor@0.52.2)(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
+      '@payloadcms/plugin-multi-tenant':
+        specifier: 3.50.0
+        version: 3.50.0(@payloadcms/ui@3.50.0(@types/react@19.1.10)(monaco-editor@0.52.2)(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2))(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))
+      '@payloadcms/ui':
+        specifier: 3.50.0
+        version: 3.50.0(@types/react@19.1.10)(monaco-editor@0.52.2)(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
+      next:
+        specifier: 15.4.6
+        version: 15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4)
+      payload:
+        specifier: 3.50.0
+        version: 3.50.0(graphql@16.10.0)(typescript@5.9.2)
+      react:
+        specifier: 19.1.1
+        version: 19.1.1
+      react-dom:
+        specifier: 19.1.1
+        version: 19.1.1(react@19.1.1)
+    devDependencies:
+      copyfiles:
+        specifier: ^2.4.1
+        version: 2.4.1
+      cross-env:
+        specifier: ^10.0.0
+        version: 10.0.0
+      dotenv:
+        specifier: ^17.2.1
+        version: 17.2.1
+      vite:
+        specifier: ^7.1.2
+        version: 7.1.2(@types/node@22.13.4)(sass@1.77.4)(tsx@4.20.3)
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/node@22.13.4)(sass@1.77.4)(tsx@4.20.3)
+
   dev_unlocalized:
     dependencies:
       '@jhb.software/payload-pages-plugin':
@@ -1195,6 +1244,13 @@ packages:
     engines: {node: ^18.20.2 || >=20.9.0}
     peerDependencies:
       graphql: ^16.8.1
+      next: ^15.2.3
+      payload: 3.50.0
+
+  '@payloadcms/plugin-multi-tenant@3.50.0':
+    resolution: {integrity: sha512-jVebBT4MkEzoUJmihpSljzqd6+YQlb/1cUXvWUqc+e5g4xU1zX+l0IoTjoSWhG8509LNQKOuhTKr5ex4syBYVg==}
+    peerDependencies:
+      '@payloadcms/ui': 3.50.0
       next: ^15.2.3
       payload: 3.50.0
 
@@ -3678,6 +3734,12 @@ snapshots:
       - react-dom
       - supports-color
       - typescript
+
+  '@payloadcms/plugin-multi-tenant@3.50.0(@payloadcms/ui@3.50.0(@types/react@19.1.10)(monaco-editor@0.52.2)(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2))(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))':
+    dependencies:
+      '@payloadcms/ui': 3.50.0(@types/react@19.1.10)(monaco-editor@0.52.2)(next@15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4))(payload@3.50.0(graphql@16.10.0)(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
+      next: 15.4.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.77.4)
+      payload: 3.50.0(graphql@16.10.0)(typescript@5.9.2)
 
   '@payloadcms/translations@3.50.0':
     dependencies:

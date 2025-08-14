@@ -76,6 +76,7 @@ export const createPageCollectionConfig = ({
       ...incomingCollectionConfig.custom,
       // This makes the page attributes available in hooks etc.
       pageConfig,
+      pagesPluginConfig: pluginConfig,
     },
     page: pageConfig,
     hooks: {
@@ -94,13 +95,19 @@ export const createPageCollectionConfig = ({
       ],
     },
     fields: [
-      ...(pageConfig.isRootCollection ? ([isRootPageField()] satisfies Field[]) : []),
+      ...(pageConfig.isRootCollection
+        ? [
+            isRootPageField({
+              baseFilter: pluginConfig.baseFilter,
+            }),
+          ]
+        : []),
       pageSlugField({
         fallbackField: pageConfig.slug.fallbackField,
         unique: pageConfig.slug.unique,
         staticValue: pageConfig.slug.staticValue,
       }),
-      parentField(pageConfig, incomingCollectionConfig.slug),
+      parentField(pageConfig, incomingCollectionConfig.slug, pluginConfig.baseFilter),
       pathField(),
       breadcrumbsField(),
       // add the user defined fields below the fields defined by the plugin to ensure a correct order in the sidebar

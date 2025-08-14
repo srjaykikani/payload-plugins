@@ -1,11 +1,13 @@
-import { Field, PayloadRequest } from 'payload'
+import { Field, PayloadRequest, Where } from 'payload'
 import { IncomingPageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
+import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { getPageCollectionConfigAttributes } from '../utils/getPageCollectionConfigAttributes.js'
 import { translatedLabel } from '../utils/translatedLabel.js'
 
 export function parentField(
   pageConfig: IncomingPageCollectionConfigAttributes,
   collectionSlug: string,
+  baseFilter?: PagesPluginConfig['baseFilter'],
 ): Field {
   return {
     name: pageConfig.parent.name,
@@ -44,15 +46,19 @@ export function parentField(
         // If the current document
         // 1. is the first document in the collection, this will return null, so the user can choose a parent for the first document
         // 2. is another new document, then this will return the shared parent value
+        const baseFilterWhere: Where | undefined =
+          typeof baseFilter === 'function' ? baseFilter({ req }) : undefined
+        
         const response = await req.payload.find({
           limit: 1,
           draft: true,
           depth: 0, // only get the id of the parent document
           collection: collectionSlug,
           where: {
-            [parentField]: {
-              not_equals: null,
-            },
+            and: [
+              { [parentField]: { not_equals: null } },
+              ...(baseFilterWhere ? [baseFilterWhere] : []),
+            ],
           },
           select: {
             [parentField]: true,

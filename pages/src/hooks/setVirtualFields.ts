@@ -2,6 +2,7 @@ import { CollectionAfterChangeHook, CollectionBeforeReadHook, PayloadRequest } f
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
 import { Locale } from '../types/Locale.js'
 import { PageCollectionConfig } from '../types/PageCollectionConfig.js'
+import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { setPageDocumentVirtualFields } from '../utils/setPageVirtualFields.js'
 import { setRootPageDocumentVirtualFields } from '../utils/setRootPageVirtualFields.js'
 import { localeFromRequest, localesFromRequest } from '../utils/localeFromRequest.js'
