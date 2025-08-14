@@ -6,12 +6,10 @@ import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 /**
  * Field which displays either a checkbox to set the page to be root page or a message if the page is the root page.
  */
-export const IsRootPageStatus = ({
+export const IsRootPageStatus: React.FC<CheckboxFieldClientProps & { hasRootPage: boolean }> = ({
   field,
   path,
   hasRootPage,
-}: CheckboxFieldClientProps & {
-  hasRootPage: boolean
 }) => {
   const { value } = useField<boolean>({ path: path! })
   const isRootPage = value ?? false

@@ -11,6 +11,7 @@ export const IsRootPageField: CheckboxFieldServerComponent = async ({
   collectionSlug,
   payload,
   req,
+  // @ts-expect-error: TODO: extend the CheckboxFieldServerComponent type to allow passing the baseFilter
   baseFilter,
 }) => {
   const baseFilterWhere: Where | undefined =
