@@ -1,4 +1,4 @@
-import { adminSearchPlugin } from '@jhb.software/payload-admin-search'
+import { adminSearchPlugin } from '../../src/plugin.js'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
