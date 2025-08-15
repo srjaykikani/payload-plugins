@@ -26,7 +26,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {})
+  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {})
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const requestNonceRef = useRef(0)
@@ -217,17 +217,17 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
         </div>
 
         <div className="search-modal__results-container">
-          {data?.isLoading && <SearchModalSkeleton count={SEARCH_RESULTS_LIMIT} />}
-          {data?.isError && (
+          {isLoading && <SearchModalSkeleton count={SEARCH_RESULTS_LIMIT} />}
+          {isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
-          {!data?.isLoading && !data?.isError && results.length === 0 && debouncedQuery && (
+          {!isLoading && !isError && results.length === 0 && debouncedQuery && (
             <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
               <p className="search-modal__no-results-hint">Try different keywords or check your spelling</p>
             </div>
           )}
-          {!data?.isLoading && !data?.isError && results.length > 0 && (
+          {!isLoading && !isError && results.length > 0 && (
             <ul className="search-modal__results-list" ref={resultsRef}>
               {results.map((result, index) => {
                 const displayTitle = result.title && result.title.trim().length > 0
