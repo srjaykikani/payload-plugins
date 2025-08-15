@@ -10,6 +10,7 @@
     "devsafe": "rm -rf .next && pnpm dev",
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "format": "prettier --write src",
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:schema": "payload-graphql generate:schema",
@@ -19,20 +20,20 @@
   },
   "dependencies": {
     "@jhb.software/payload-pages-plugin": "workspace:*",
-    "@payloadcms/db-mongodb": "3.42.0",
-    "@payloadcms/db-sqlite": "3.42.0",
-    "@payloadcms/next": "3.42.0",
-    "@payloadcms/ui": "3.42.0",
-    "next": "15.3.3",
-    "payload": "3.42.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "@payloadcms/db-mongodb": "3.50.0",
+    "@payloadcms/db-sqlite": "3.50.0",
+    "@payloadcms/next": "3.50.0",
+    "@payloadcms/ui": "3.50.0",
+    "next": "15.4.6",
+    "payload": "3.50.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
     "copyfiles": "^2.4.1",
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.5.0",
-    "vite": "^6.3.5",
-    "vitest": "^3.2.3"
+    "cross-env": "^10.0.0",
+    "dotenv": "^17.2.1",
+    "vite": "^7.1.2",
+    "vitest": "^3.2.4"
   }
 }

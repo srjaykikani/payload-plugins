@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-pages-plugin",
-  "version": "0.5.1",
+  "version": "0.6.0-beta.0",
   "description": "Payload CMS plugin that adds essential fields for hierarchical page structure to collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
@@ -21,9 +21,11 @@
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
     "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
-    "test": "pnpm test:localized && pnpm test:unlocalized",
+    "format": "prettier --write src",
+    "test": "pnpm test:localized && pnpm test:unlocalized && pnpm test:multi-tenant",
     "test:localized": "cd dev && pnpm test",
     "test:unlocalized": "cd dev_unlocalized && pnpm test",
+    "test:multi-tenant": "cd dev_multi_tenant && pnpm test",
     "test:watch": "cd dev && pnpm test:watch",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
@@ -33,18 +35,21 @@
     "qs-esm": "^7.0.2"
   },
   "peerDependencies": {
-    "@payloadcms/ui": "3.42.0",
-    "next": "15.3.3",
-    "payload": "3.42.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "@payloadcms/ui": "3.50.0",
+    "next": "15.4.6",
+    "payload": "3.50.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
-    "@types/react": "19.1.7",
-    "@types/react-dom": "19.1.6",
-    "typescript": "5.8.3",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.3",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
     "copyfiles": "2.4.1",
-    "rimraf": "6.0.1"
+    "prettier": "^3.6.2",
+    "rimraf": "6.0.1",
+    "typescript": "5.9.2"
   },
   "files": [
     "dist"

@@ -3,5 +3,13 @@
   "parser": "typescript",
   "semi": false,
   "singleQuote": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": ["**/importMap.js", "**/payload-types.ts", "**/**.yaml"],
+      "options": {
+        "requirePragma": true
+      }
+    }
+  ]
 }

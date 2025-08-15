@@ -26,7 +26,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {})
+  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {
+    initialParams: {
+      depth: 0,
+      limit: 10,
+      pagination: false,
+      sort: '-priority',
+    },
+  })
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const requestNonceRef = useRef(0)
@@ -217,7 +224,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
         </div>
 
         <div className="search-modal__results-container">
-          {isLoading && <SearchModalSkeleton count={SEARCH_RESULTS_LIMIT} />}
+          {isLoading && (
+            <div className="search-modal__loading-indicator">
+              <div className="search-modal__spinner"></div>
+              <p>Searching...</p>
+            </div>
+          )}
           {isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}

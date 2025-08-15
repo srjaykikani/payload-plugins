@@ -36,4 +36,3 @@ export function SearchButton(): React.ReactElement {
     </>
   )
 }
-

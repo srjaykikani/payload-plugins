@@ -1,6 +1,7 @@
-import { CollectionSlug, PayloadRequest } from 'payload'
+import { CollectionSlug, PayloadRequest, Where } from 'payload'
 import { Breadcrumb } from '../types/Breadcrumb.js'
 import { Locale } from '../types/Locale.js'
+import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { fetchRestApi } from './fetchRestApi.js'
 import { pathFromBreadcrumbs } from './pathFromBreadcrumbs.js'
 import { ROOT_PAGE_SLUG } from './setRootPageVirtualFields.js'
@@ -54,6 +55,8 @@ export async function getBreadcrumbs({
       ? data[parentField]
       : data[parentField].id
 
+  // TODO: if the parent is an object and has the breadcrumbs already set, it may not be necessary to fetch the parent document again
+
   if (!parentId) {
     throw new Error('Parent ID not found for document ' + data.id)
   }
@@ -84,12 +87,15 @@ export async function getBreadcrumbs({
   }
 
   if (locale === 'all' && locales) {
-    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce((acc, locale) => {
-      const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
+    const breadcrumbs: Record<Locale, Breadcrumb[]> = locales.reduce(
+      (acc, locale) => {
+        const parentBreadcrumbs = (parent?.breadcrumbs as any)[locale] ?? []
 
-      acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
-      return acc
-    }, {} as Record<Locale, Breadcrumb[]>)
+        acc[locale] = [...parentBreadcrumbs, getCurrentDocBreadcrumb(locale, parentBreadcrumbs)]
+        return acc
+      },
+      {} as Record<Locale, Breadcrumb[]>,
+    )
 
     return breadcrumbs
   } else {
@@ -111,8 +117,8 @@ function docToBreadcrumb(
     label: breadcrumbLabelField
       ? pickFieldValue(doc[breadcrumbLabelField], locale)
       : typeof doc.breadcrumbs === 'object' && locale
-      ? doc.breadcrumbs?.[locale]?.at(-1)?.label
-      : doc.breadcrumbs?.at(-1)?.label,
+        ? doc.breadcrumbs?.[locale]?.at(-1)?.label
+        : doc.breadcrumbs?.at(-1)?.label,
   }
 }
 

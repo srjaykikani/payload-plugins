@@ -12,7 +12,6 @@
     "publish:pages": "cd ./pages && pnpm publish",
     "publish:seo": "cd ./seo && pnpm publish",
     "build:geocoding": "cd ./geocoding && pnpm build",
-    "publish:geocoding": "cd ./geocoding && pnpm publish",
-    "format": "prettier --write \"**/*.{js,ts,json,md}\""
+    "publish:geocoding": "cd ./geocoding && pnpm publish"
   }
 }

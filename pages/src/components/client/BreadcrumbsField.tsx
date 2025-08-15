@@ -5,7 +5,7 @@ import { ArrayFieldClientComponent } from 'payload'
 
 const breadcrumbsModalSlug = 'breadcrumbs-drawer'
 
-export const BreadcrumbsFieldModalButton = () => {
+export const BreadcrumbsFieldModalButton: React.FC = () => {
   const { toggleModal } = useModal()
 
   return (
