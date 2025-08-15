@@ -104,6 +104,61 @@ export default buildConfig({
 })
 ```
 
+### Multi-tenant support
+
+> ⚠️ **Warning**: The multi-tenant support is currently experimental and may change in the future.
+
+The plugin supports multi-tenant setups via the official [Multi-tenant plugin](https://payloadcms.com/docs/plugins/multi-tenant).
+
+By default the plugin adds a unique constraint to the slug field of all page collections. In a multi-tenant setup you can disable this constraint by setting the `unique` field to `false` in the page collection config. To ensure uniqueness for a tenant to now have pages with multiple slugs, you can create a compound unique index.
+
+Example:    
+
+```ts
+export const Pages: PageCollectionConfig = {
+  slug: 'pages',
+  page: {
+    slug: {
+      // Disable the slug uniqueness because of the multi-tenant setup (see indexes below)
+      unique: false,
+    },
+  },
+  indexes: [
+    {
+      fields: ['slug', 'tenant'],
+      unique: true,
+    },
+  ],
+  fields: [ /* your fields */],
+} 
+```
+
+Some features (e.g. the parent and isRootPage fields) internally fetch documents from the database. To ensure only documents from the current tenant are fetched, you need to pass the `baseFilter` function to the plugin config. It receives the current request object and should return a `Where` object which will be added to the query.
+For the validation of the redirects, you need to pass the `redirectValidationFilter` function to the plugin config. It receives the current request object and the document object and should return a `Where` object which will be added to the query.
+
+Example:
+
+```ts
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
+
+export default buildConfig({
+  // ...
+  plugins: [
+    payloadPagesPlugin({
+      baseFilter: ({ req }) => {
+        const tenant = getTenantFromCookie(req.headers, req.payload.db.defaultIDType)
+
+        return { tenant: { equals: tenant } }
+      },
+      redirectValidationFilter: ({ doc }) => {
+        return { tenant: { equals: doc.tenant } }
+      },
+    }),
+  ],
+})
+```
+
 ### Environment variables
 
 The following environment variables are required:

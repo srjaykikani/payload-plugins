@@ -1,6 +1,7 @@
-import { CollectionSlug, PayloadRequest } from 'payload'
+import { CollectionSlug, PayloadRequest, Where } from 'payload'
 import { Breadcrumb } from '../types/Breadcrumb.js'
 import { Locale } from '../types/Locale.js'
+import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { fetchRestApi } from './fetchRestApi.js'
 import { pathFromBreadcrumbs } from './pathFromBreadcrumbs.js'
 import { ROOT_PAGE_SLUG } from './setRootPageVirtualFields.js'
@@ -53,6 +54,8 @@ export async function getBreadcrumbs({
     typeof data[parentField] === 'string' || typeof data[parentField] === 'number'
       ? data[parentField]
       : data[parentField].id
+
+  // TODO: if the parent is an object and has the breadcrumbs already set, it may not be necessary to fetch the parent document again
 
   if (!parentId) {
     throw new Error('Parent ID not found for document ' + data.id)

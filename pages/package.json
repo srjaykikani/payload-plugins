@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-pages-plugin",
-  "version": "0.5.1",
+  "version": "0.6.0-beta.0",
   "description": "Payload CMS plugin that adds essential fields for hierarchical page structure to collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
@@ -22,9 +22,10 @@
     "clean": "rimraf --glob {dist,*.tsbuildinfo}",
     "dev": "tsc -w",
     "format": "prettier --write src",
-    "test": "pnpm test:localized && pnpm test:unlocalized",
+    "test": "pnpm test:localized && pnpm test:unlocalized && pnpm test:multi-tenant",
     "test:localized": "cd dev && pnpm test",
     "test:unlocalized": "cd dev_unlocalized && pnpm test",
+    "test:multi-tenant": "cd dev_multi_tenant && pnpm test",
     "test:watch": "cd dev && pnpm test:watch",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
@@ -41,6 +42,8 @@
     "react-dom": "19.1.1"
   },
   "devDependencies": {
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.3",
     "@types/react": "19.1.10",
     "@types/react-dom": "19.1.7",
     "copyfiles": "2.4.1",

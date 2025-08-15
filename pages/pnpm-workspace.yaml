@@ -2,3 +2,4 @@ packages:
   - './'
   - './dev'
   - './dev_unlocalized'
+  - './dev_multi_tenant'
