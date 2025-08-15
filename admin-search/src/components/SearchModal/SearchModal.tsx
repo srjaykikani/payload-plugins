@@ -1,23 +1,32 @@
 'use client'
 
-import { Banner, Pill, SearchIcon, useConfig, useDebounce, usePayloadAPI } from '@payloadcms/ui'
+import { Banner, Pill, SearchIcon, useConfig, useDebounce, usePayloadAPI, useTranslation } from '@payloadcms/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
 
+import { SearchModalSkeleton } from './SearchModalSkeleton.js'
 import './SearchModal.css'
 
-export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose }) => {
+interface SearchModalProps {
+  handleClose: () => void
+}
+
+const SEARCH_DEBOUNCE_MS = 300
+const SEARCH_RESULTS_LIMIT = 5
+
+export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(-1)
-  const debouncedQuery = useDebounce(query, 300)
+  const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS)
+  const { t } = useTranslation()
   const {
     config: {
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data }, { setParams }] = usePayloadAPI(`${api}/search`, {
+  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {
     initialParams: {
       depth: 0,
       limit: 10,
@@ -27,10 +36,39 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
   })
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const requestNonceRef = useRef(0)
+
+  const getSearchParams = useCallback((searchQuery?: string) => ({
+    depth: 1,
+    limit: SEARCH_RESULTS_LIMIT,
+    sort: '-priority',
+    ...(searchQuery && {
+      where: {
+        title: {
+          like: searchQuery,
+        },
+      },
+    }),
+  }), [])
+
+  const triggerSearch = useCallback(
+    (searchQuery?: string) => {
+      requestNonceRef.current += 1
+      const baseParams = getSearchParams(searchQuery)
+      const paramsWithNonce = { ...baseParams, __nonce: requestNonceRef.current, __ts: Date.now() }
+      setParams(paramsWithNonce)
+    },
+    [getSearchParams, setParams],
+  )
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
+
+  // Initial search to show default results
+  useEffect(() => {
+    triggerSearch()
+  }, [triggerSearch])
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -39,18 +77,8 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
       return
     }
 
-    setParams({
-      depth: 0,
-      limit: 10,
-      pagination: false,
-      sort: '-priority',
-      where: {
-        title: {
-          like: debouncedQuery,
-        },
-      },
-    })
-  }, [debouncedQuery, setParams])
+    triggerSearch(debouncedQuery)
+  }, [debouncedQuery, triggerSearch])
 
   useEffect(() => {
     if (data?.docs && Array.isArray(data.docs)) {
@@ -61,14 +89,9 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
 
   const handleResultClick = useCallback(
     (result: SearchResult) => {
-      let collectionSlug: string | undefined
-      let documentId: string | undefined
-
-      if (result.doc && 'relationTo' in result.doc && 'value' in result.doc) {
-        const { relationTo, value } = result.doc
-        collectionSlug = relationTo
-        documentId = value
-      }
+      const { relationTo, value } = result.doc
+      const collectionSlug = relationTo
+      const documentId = value
 
       if (collectionSlug && documentId) {
         window.location.href = `${admin}/collections/${collectionSlug}/${documentId}`
@@ -77,14 +100,8 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     [admin],
   )
 
-  useEffect(() => {
-    // Manual keyboard handling instead of useHotkey to avoid modal state conflicts
-    // useHotkey is designed for opening modals, not navigation within open modals
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.target instanceof HTMLInputElement && e.key !== 'Escape') {
-        return
-      }
-
+  const handleKeyboardNavigation = useCallback(
+    (e: KeyboardEvent | React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
         setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev))
@@ -98,11 +115,21 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         e.preventDefault()
         handleClose()
       }
+    },
+    [results, selectedIndex, handleResultClick, handleClose],
+  )
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement && e.key !== 'Escape') {
+        return
+      }
+      handleKeyboardNavigation(e)
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [results, selectedIndex, handleClose, handleResultClick])
+  }, [handleKeyboardNavigation])
 
   useEffect(() => {
     if (selectedIndex !== -1 && resultsRef.current) {
@@ -117,7 +144,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
     if (result.doc && 'relationTo' in result.doc) {
       return result.doc.relationTo
         .split('-')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
     }
     return 'Unknown'
@@ -178,12 +205,7 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => {
                 if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && results.length > 0) {
-                  e.preventDefault()
-                  if (e.key === 'ArrowDown') {
-                    setSelectedIndex((prev) => (prev < results.length - 1 ? prev + 1 : prev))
-                  } else if (e.key === 'ArrowUp') {
-                    setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0))
-                  }
+                  handleKeyboardNavigation(e)
                 } else if (e.key === 'Enter' && selectedIndex !== -1) {
                   e.preventDefault()
                   handleResultClick(results[selectedIndex])
@@ -202,49 +224,54 @@ export const SearchModal: React.FC<{ handleClose: () => void }> = ({ handleClose
         </div>
 
         <div className="search-modal__results-container">
-          {data?.isLoading && (
+          {isLoading && (
             <div className="search-modal__loading-indicator">
               <div className="search-modal__spinner"></div>
               <p>Searching...</p>
             </div>
           )}
-          {data?.isError && (
+          {isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
-          {!data?.isLoading && !data?.isError && results.length === 0 && debouncedQuery && (
+          {!isLoading && !isError && results.length === 0 && debouncedQuery && (
             <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
-              <p className="search-modal__no-results-hint">
-                Try different keywords or check your spelling
-              </p>
+              <p className="search-modal__no-results-hint">Try different keywords or check your spelling</p>
             </div>
           )}
-          <ul className="search-modal__results-list" ref={resultsRef}>
-            {results.map((result, index) => (
-              <li
-                className={`search-modal__result-item-container ${
-                  selectedIndex === index ? 'selected' : ''
-                }`}
-                key={result.id}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <button
-                  aria-label={`Open ${result.title} in ${getCollectionDisplayName(result)}`}
-                  className="search-modal__result-item-button"
-                  onClick={() => handleResultClick(result)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
-                  type="button"
-                >
-                  <div className="search-modal__result-content">
-                    <span className="search-modal__result-title">
-                      {highlightSearchTerm(result.title, query)}
-                    </span>
-                    <Pill size="small">{getCollectionDisplayName(result)}</Pill>
-                  </div>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {!isLoading && !isError && results.length > 0 && (
+            <ul className="search-modal__results-list" ref={resultsRef}>
+              {results.map((result, index) => {
+                const displayTitle = result.title && result.title.trim().length > 0
+                  ? result.title
+                  : `[${t('general:untitled')}]`
+                return (
+                  <li
+                    className={`search-modal__result-item-container ${
+                      selectedIndex === index ? 'selected' : ''
+                    }`}
+                    key={result.id}
+                    onMouseEnter={() => setSelectedIndex(index)}
+                  >
+                    <button
+                      aria-label={`Open ${displayTitle} in ${getCollectionDisplayName(result)}`}
+                      className="search-modal__result-item-button"
+                      onClick={() => handleResultClick(result)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleResultClick(result)}
+                      type="button"
+                    >
+                      <div className="search-modal__result-content">
+                        <span className="search-modal__result-title">
+                          {highlightSearchTerm(displayTitle, query)}
+                        </span>
+                        <Pill size="small">{getCollectionDisplayName(result)}</Pill>
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
         </div>
 
         <div className="search-modal__footer">
