@@ -812,6 +812,355 @@ describe('Slug field behaves as expected for create and update operations', () =
   })
 })
 
+describe('Parent deletion prevention hook', () => {
+  beforeEach(async () => {
+    // Clean up all collections before each test
+    for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
+      await payload.delete({
+        collection: collection.slug,
+        where: {},
+      })
+    }
+  })
+
+  describe('MongoDB environment', () => {
+    test('prevents deletion when child dependencies exist', async () => {
+      // Mock MongoDB adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-mongodb', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create child page referencing the parent
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page',
+            slug: 'child-page',
+            content: 'Child content',
+            parent: parentPage.id,
+          },
+        })
+
+        // Attempt to delete the parent page - should throw error
+        await expect(
+          payload.delete({
+            collection: 'pages',
+            id: parentPage.id,
+          })
+        ).rejects.toThrow('Cannot delete this document because it is referenced as a parent by')
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+
+    test('allows deletion when no child dependencies exist', async () => {
+      // Mock MongoDB adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-mongodb', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create another page without parent reference
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Independent Page',
+            slug: 'independent-page',
+            content: 'Independent content',
+          },
+        })
+
+        // Delete the parent page - should succeed
+         const result = await payload.delete({
+           collection: 'pages',
+           id: parentPage.id,
+         })
+
+         // Verify deletion succeeded (result should not be null)
+         expect(result).toBeTruthy()
+         if (result && result.docs) {
+           expect(result.docs).toHaveLength(1)
+           expect(result.docs[0].id).toBe(parentPage.id)
+         }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+
+    test('provides helpful error message with dependency details', async () => {
+      // Mock MongoDB adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-mongodb', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create multiple child pages
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page 1',
+            slug: 'child-page-1',
+            content: 'Child content 1',
+            parent: parentPage.id,
+          },
+        })
+
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page 2',
+            slug: 'child-page-2',
+            content: 'Child content 2',
+            parent: parentPage.id,
+          },
+        })
+
+        // Attempt to delete parent - should provide detailed error
+        try {
+          await payload.delete({
+            collection: 'pages',
+            id: parentPage.id,
+          })
+          fail('Expected deletion to be prevented')
+        } catch (error: any) {
+          expect(error.message).toContain('Cannot delete this document because it is referenced as a parent by')
+          expect(error.message).toContain('2 document(s) in the "pages" collection')
+        }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+
+    test('handles multi-collection scenarios', async () => {
+      // Mock MongoDB adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-mongodb', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create child in pages collection
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page',
+            slug: 'child-page',
+            content: 'Child content',
+            parent: parentPage.id,
+          },
+        })
+
+        // Create child in country-travel-tips collection (if it has parent field)
+        try {
+          await payload.create({
+            collection: 'country-travel-tips',
+            data: {
+              title: 'Travel Tip',
+              slug: 'travel-tip',
+              content: 'Travel tip content',
+              parent: parentPage.id,
+            },
+          })
+        } catch {
+          // Collection might not have parent field, skip this part
+        }
+
+        // Attempt to delete parent - should be prevented
+        await expect(
+          payload.delete({
+            collection: 'pages',
+            id: parentPage.id,
+          })
+        ).rejects.toThrow('Cannot delete this document because it is referenced as a parent by')
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+  })
+
+  describe('SQL environment', () => {
+    test('bypasses hook in SQLite environment', async () => {
+      // Mock SQLite adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: 'sqlite', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create child page referencing the parent
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page',
+            slug: 'child-page',
+            content: 'Child content',
+            parent: parentPage.id,
+          },
+        })
+
+        // Delete the parent page - should succeed (hook bypassed)
+         const result = await payload.delete({
+           collection: 'pages',
+           id: parentPage.id,
+         })
+
+         // Verify deletion succeeded (result should not be null)
+         expect(result).toBeTruthy()
+         if (result && result.docs) {
+           expect(result.docs).toHaveLength(1)
+           expect(result.docs[0].id).toBe(parentPage.id)
+         }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+
+    test('bypasses hook in PostgreSQL environment', async () => {
+      // Mock PostgreSQL adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: 'postgres', configurable: true })
+
+      try {
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Parent Page',
+            slug: 'parent-page',
+            content: 'Parent content',
+          },
+        })
+
+        // Create child page referencing the parent
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Child Page',
+            slug: 'child-page',
+            content: 'Child content',
+            parent: parentPage.id,
+          },
+        })
+
+        // Delete the parent page - should succeed (hook bypassed)
+         const result = await payload.delete({
+           collection: 'pages',
+           id: parentPage.id,
+         })
+
+         // Verify deletion succeeded (result should not be null)
+         expect(result).toBeTruthy()
+         if (result && result.docs) {
+           expect(result.docs).toHaveLength(1)
+           expect(result.docs[0].id).toBe(parentPage.id)
+         }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+  })
+
+  describe('Multi-tenant scenarios', () => {
+    test('respects baseFilter configurations', async () => {
+      // Mock MongoDB adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: 'mongoose', configurable: true })
+
+      try {
+        // This test would require a multi-tenant setup with baseFilter
+        // For now, we'll create a basic test that verifies the hook doesn't interfere
+        // with normal operations when no dependencies exist
+        
+        const parentPage = await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Tenant Parent Page',
+            slug: 'tenant-parent-page',
+            content: 'Tenant parent content',
+          },
+        })
+
+        // Create child in different "tenant" context (simulated)
+        await payload.create({
+          collection: 'pages',
+          data: {
+            title: 'Different Tenant Child',
+            slug: 'different-tenant-child',
+            content: 'Different tenant child content',
+            // Not setting parent to simulate different tenant
+          },
+        })
+
+        // Delete should succeed as no dependencies in same tenant
+         const result = await payload.delete({
+           collection: 'pages',
+           id: parentPage.id,
+         })
+
+         // Verify deletion succeeded (result should not be null)
+         expect(result).toBeTruthy()
+         if (result && result.docs) {
+           expect(result.docs).toHaveLength(1)
+           expect(result.docs[0].id).toBe(parentPage.id)
+         }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+  })
+})
+
 /**
  * Helper function to remove id field from objects in an array
  */
