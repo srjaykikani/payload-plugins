@@ -1,0 +1,14 @@
+{
+  "name": "sql-adapter-test",
+  "description": "Test environment for SQL adapter parent deletion behavior",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "test": "node test-deletion.js"
+  },
+  "dependencies": {
+    "@payloadcms/db-sqlite": "3.50.0",
+    "payload": "3.50.0",
+    "dotenv": "^17.2.1"
+  }
+}

@@ -13,3 +13,5 @@ export type {
 } from './types/RedirectsCollectionConfigAttributes.js'
 export type { PagesPluginConfig } from './types/PagesPluginConfig.js'
 export { getPageUrl } from './utils/getPageUrl.js'
+export { childDocumentsOf, hasChildDocuments } from './utils/childDocumentsOf.js'
+export type { ChildDocumentReference } from './utils/childDocumentsOf.js'
