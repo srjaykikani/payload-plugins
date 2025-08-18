@@ -15,7 +15,7 @@ export const BreadcrumbsFieldModalButton: React.FC = () => {
       size="small"
       icon={
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M2 4l3 4-3 4h2l3-4-3-4H2zm5 0l3 4-3 4h2l3-4-3-4H7z" />
+          <path d="M1 4l4 4-4 4h2l4-4-4-4H1zm6 0l4 4-4 4h2l4-4-4-4H7z" />
         </svg>
       }
       tooltip="Show Breadcrumbs"
