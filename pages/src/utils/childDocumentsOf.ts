@@ -1,5 +1,7 @@
 import { PayloadRequest, CollectionSlug } from 'payload'
+import type { SanitizedCollectionConfig } from 'payload'
 import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
+import type { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 
 /**
  * Result type for child document references
@@ -32,22 +34,13 @@ export async function childDocumentsOf(
   const allCollections = req.payload.config.collections || []
   
   // Find collections that have page configuration and can reference the current collection as parent
-  const pageCollections = allCollections.filter(col => {
-    if (!('page' in col) || !col.page || typeof col.page !== 'object') {
-      return false
-    }
-    
-    const pageConfig = col.page as any
-    const parentCollectionSlug = pageConfig.parent?.collection
-    
-    // Include if this collection can use the current collection as parent
-    return parentCollectionSlug === collectionSlug
-  })
+  const pageCollections = allCollections.filter(
+    isPageCollectionWithParent(collectionSlug)
+  )
   
   // Check each relevant collection for child documents
   for (const targetCollection of pageCollections) {
-    const pageConfig = targetCollection.page as any
-    const parentFieldName = pageConfig.parent?.name || 'parent'
+    const parentFieldName = targetCollection.page.parent.name || 'parent'
     
     // Build the base filter for multi-tenant scenarios
     const baseFilterWhere = typeof baseFilter === 'function' 
@@ -64,8 +57,9 @@ export async function childDocumentsOf(
             ...(baseFilterWhere ? [baseFilterWhere] : []),
           ],
         },
-        depth: 0, // Only get IDs, no need for full document data
-        limit: 1000, // Set a reasonable limit to prevent memory issues
+        depth: 0, // Only get IDs of related documents
+        select: {},
+        limit: 0,
       })
       
       // Add found documents to the results
@@ -102,4 +96,16 @@ export async function hasChildDocuments(
 ): Promise<boolean> {
   const children = await childDocumentsOf(req, docId, collectionSlug, baseFilter)
   return children.length > 0
+}
+
+function isPageCollectionWithParent(expectedParent: CollectionSlug) {
+  return (
+    col: SanitizedCollectionConfig
+  ): col is SanitizedCollectionConfig & { page: PageCollectionConfigAttributes } => {
+    if (!('page' in col)) return false
+    const p = (col as unknown as { page?: unknown }).page
+    if (!p || typeof p !== 'object') return false
+    const parent = (p as { parent?: { collection?: unknown } }).parent
+    return !!parent && parent.collection === expectedParent
+  }
 }
