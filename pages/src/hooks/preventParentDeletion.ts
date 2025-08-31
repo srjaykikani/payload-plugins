@@ -26,7 +26,7 @@ export const preventParentDeletion: CollectionBeforeDeleteHook = async ({
   collection,
 }) => {
   // Only apply this protection for adapters that require custom logic
-  const databaseAdapter = req.payload.db.name
+  const databaseAdapter = req.payload.db.packageName || req.payload.db.name
   if (!ADAPTERS_REQUIRING_CUSTOM_LOGIC.includes(databaseAdapter)) {
     return
   }
