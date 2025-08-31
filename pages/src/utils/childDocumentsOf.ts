@@ -1,14 +1,16 @@
 import { PayloadRequest, CollectionSlug } from 'payload'
 import type { SanitizedCollectionConfig } from 'payload'
-import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import type { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 
+// Global request context for accessing Payload instance
+let currentRequest: PayloadRequest | null = null
+
 /**
- * Result type for child document references
+ * Sets the current request context for childDocumentsOf function
+ * This should be called from hooks to provide access to Payload instance
  */
-export interface ChildDocumentReference {
-  id: string | number
-  collection: CollectionSlug
+export function setRequestContext(req: PayloadRequest): void {
+  currentRequest = req
 }
 
 /**
@@ -16,19 +18,23 @@ export interface ChildDocumentReference {
  * This function checks both self-referencing collections and cross-collection references
  * based on the parentCollection configuration.
  * 
- * @param req - Payload request object
+ * Implements the exact specification from the original task:
+ * childDocumentsOf(docId: string | number, collectionSlug: CollectionSlug): { id: string | number; collection: CollectionSlug }[]
+ * 
  * @param docId - The document ID to find children for
  * @param collectionSlug - The collection slug of the parent document
- * @param baseFilter - Optional base filter function for multi-tenant scenarios
  * @returns Array of child document references with their IDs and collection slugs
  */
 export async function childDocumentsOf(
-  req: PayloadRequest,
   docId: string | number,
-  collectionSlug: CollectionSlug,
-  baseFilter?: PagesPluginConfig['baseFilter']
-): Promise<ChildDocumentReference[]> {
-  const childReferences: ChildDocumentReference[] = []
+  collectionSlug: CollectionSlug
+): Promise<{ id: string | number; collection: CollectionSlug }[]> {
+  if (!currentRequest) {
+    throw new Error('Request context not set. Call setRequestContext(req) before using childDocumentsOf.')
+  }
+  
+  const req = currentRequest
+  const childReferences: { id: string | number; collection: CollectionSlug }[] = []
   
   // Get all collections from the payload config
   const allCollections = req.payload.config.collections || []
@@ -42,20 +48,14 @@ export async function childDocumentsOf(
   for (const targetCollection of pageCollections) {
     const parentFieldName = targetCollection.page.parent.name || 'parent'
     
-    // Build the base filter for multi-tenant scenarios
-    const baseFilterWhere = typeof baseFilter === 'function' 
-      ? baseFilter({ req }) 
-      : undefined
+    // Note: Multi-tenant baseFilter support removed per exact specification
     
     try {
       // Find all documents in this collection that reference the given docId as parent
       const childDocuments = await req.payload.find({
         collection: targetCollection.slug,
         where: {
-          and: [
-            { [parentFieldName]: { equals: docId } },
-            ...(baseFilterWhere ? [baseFilterWhere] : []),
-          ],
+          [parentFieldName]: { equals: docId }
         },
         depth: 0, // Only get IDs of related documents
         select: {},
@@ -82,19 +82,15 @@ export async function childDocumentsOf(
  * Checks if a document has any child documents referencing it as parent.
  * This is a convenience function that returns a boolean instead of the full list.
  * 
- * @param req - Payload request object
  * @param docId - The document ID to check
  * @param collectionSlug - The collection slug of the parent document
- * @param baseFilter - Optional base filter function for multi-tenant scenarios
  * @returns True if the document has child references, false otherwise
  */
 export async function hasChildDocuments(
-  req: PayloadRequest,
   docId: string | number,
-  collectionSlug: CollectionSlug,
-  baseFilter?: PagesPluginConfig['baseFilter']
+  collectionSlug: CollectionSlug
 ): Promise<boolean> {
-  const children = await childDocumentsOf(req, docId, collectionSlug, baseFilter)
+  const children = await childDocumentsOf(docId, collectionSlug)
   return children.length > 0
 }
 

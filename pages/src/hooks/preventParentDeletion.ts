@@ -1,7 +1,6 @@
 import { CollectionBeforeDeleteHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
-import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
-import { childDocumentsOf } from '../utils/childDocumentsOf.js'
+import { childDocumentsOf, setRequestContext } from '../utils/childDocumentsOf.js'
 
 /**
  * Database adapter types that require custom parent deletion prevention logic.
@@ -32,15 +31,13 @@ export const preventParentDeletion: CollectionBeforeDeleteHook = async ({
   }
 
   const pageConfig = asPageCollectionConfigOrThrow(collection)
-  const pagesPluginConfig = collection.custom?.pagesPluginConfig as PagesPluginConfig
+  
+  // Set request context for childDocumentsOf function
+  setRequestContext(req)
   
   // Use the helper function to find all child documents
-  const childDocuments = await childDocumentsOf(
-    req,
-    id,
-    collection.slug,
-    pagesPluginConfig?.baseFilter
-  )
+  // Matches exact specification: childDocumentsOf(docId, collectionSlug)
+  const childDocuments = await childDocumentsOf(id, collection.slug)
 
   if (childDocuments.length > 0) {
     // Group children by collection for better error messaging
