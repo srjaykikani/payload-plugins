@@ -65,7 +65,7 @@ export default buildConfig({
   },
 
   plugins: [
-    adminSearchPlugin({}),
+    adminSearchPlugin({headerSearchComponentStyle: 'bar'}),
     searchPlugin({
       beforeSync: ({ originalDoc, searchDoc }) => {
         return {

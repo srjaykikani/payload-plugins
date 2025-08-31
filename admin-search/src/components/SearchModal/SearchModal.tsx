@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
 
-import { SearchModalSkeleton } from './SearchModalSkeleton.js'
 import './SearchModal.css'
 
 interface SearchModalProps {
