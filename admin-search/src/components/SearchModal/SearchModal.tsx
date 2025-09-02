@@ -1,10 +1,19 @@
 'use client'
 
-import { Banner, Pill, SearchIcon, useConfig, useDebounce, usePayloadAPI, useTranslation } from '@payloadcms/ui'
+import {
+  Banner,
+  Pill,
+  SearchIcon,
+  useConfig,
+  useDebounce,
+  usePayloadAPI,
+  useTranslation,
+} from '@payloadcms/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { SearchResult } from '../../types/SearchResult.js'
 
+import { SearchModalSkeleton } from './SearchModalSkeleton.js'
 import './SearchModal.css'
 
 interface SearchModalProps {
@@ -37,18 +46,21 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const requestNonceRef = useRef(0)
 
-  const getSearchParams = useCallback((searchQuery?: string) => ({
-    depth: 1,
-    limit: SEARCH_RESULTS_LIMIT,
-    sort: '-priority',
-    ...(searchQuery && {
-      where: {
-        title: {
-          like: searchQuery,
+  const getSearchParams = useCallback(
+    (searchQuery?: string) => ({
+      depth: 1,
+      limit: SEARCH_RESULTS_LIMIT,
+      sort: '-priority',
+      ...(searchQuery && {
+        where: {
+          title: {
+            like: searchQuery,
+          },
         },
-      },
+      }),
     }),
-  }), [])
+    [],
+  )
 
   const triggerSearch = useCallback(
     (searchQuery?: string) => {
@@ -223,12 +235,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
         </div>
 
         <div className="search-modal__results-container">
-          {isLoading && (
-            <div className="search-modal__loading-indicator">
-              <div className="search-modal__spinner"></div>
-              <p>Searching...</p>
-            </div>
-          )}
+          {isLoading && <SearchModalSkeleton count={SEARCH_RESULTS_LIMIT} />}
           {isError && (
             <Banner type="error">An error occurred while searching. Please try again.</Banner>
           )}
@@ -241,9 +248,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
           {!isLoading && !isError && results.length > 0 && (
             <ul className="search-modal__results-list" ref={resultsRef}>
               {results.map((result, index) => {
-                const displayTitle = result.title && result.title.trim().length > 0
-                  ? result.title
-                  : `[${t('general:untitled')}]`
+                const displayTitle =
+                  result.title && result.title.trim().length > 0
+                    ? result.title
+                    : `[${t('general:untitled')}]`
                 return (
                   <li
                     className={`search-modal__result-item-container ${
