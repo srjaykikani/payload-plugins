@@ -1019,10 +1019,10 @@ describe('Parent deletion prevention hook', () => {
   })
 
   describe('SQL environment', () => {
-    test('bypasses hook in SQLite environment', async () => {
-      // Mock SQLite adapter
+    test('prevents deletion when child dependencies exist (SQLite)', async () => {
+      // Mock SQLite adapter 
       const originalAdapter = payload.db.name
-      Object.defineProperty(payload.db, 'name', { value: 'sqlite', configurable: true })
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-sqlite', configurable: true })
 
       try {
         // Create parent page
@@ -1046,28 +1046,23 @@ describe('Parent deletion prevention hook', () => {
           },
         })
 
-        // Delete the parent page - should succeed (hook bypassed)
-         const result = await payload.delete({
-           collection: 'pages',
-           id: parentPage.id,
-         })
-
-         // Verify deletion succeeded (result should not be null)
-         expect(result).toBeTruthy()
-         if (result && result.docs) {
-           expect(result.docs).toHaveLength(1)
-           expect(result.docs[0].id).toBe(parentPage.id)
-         }
+        // Attempt to delete the parent page - should throw error (hook active)
+        await expect(
+          payload.delete({
+            collection: 'pages',
+            id: parentPage.id,
+          })
+        ).rejects.toThrow('Cannot delete this document because it is referenced as a parent by')
       } finally {
         // Restore original adapter
         Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
       }
     })
 
-    test('bypasses hook in PostgreSQL environment', async () => {
-      // Mock PostgreSQL adapter
+    test('prevents deletion when child dependencies exist (PostgreSQL)', async () => {
+      // Mock PostgreSQL adapter to match hook expectation
       const originalAdapter = payload.db.name
-      Object.defineProperty(payload.db, 'name', { value: 'postgres', configurable: true })
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-postgres', configurable: true })
 
       try {
         // Create parent page
@@ -1091,18 +1086,13 @@ describe('Parent deletion prevention hook', () => {
           },
         })
 
-        // Delete the parent page - should succeed (hook bypassed)
-         const result = await payload.delete({
-           collection: 'pages',
-           id: parentPage.id,
-         })
-
-         // Verify deletion succeeded (result should not be null)
-         expect(result).toBeTruthy()
-         if (result && result.docs) {
-           expect(result.docs).toHaveLength(1)
-           expect(result.docs[0].id).toBe(parentPage.id)
-         }
+        // Attempt to delete the parent page - should throw error (hook active)
+        await expect(
+          payload.delete({
+            collection: 'pages',
+            id: parentPage.id,
+          })
+        ).rejects.toThrow('Cannot delete this document because it is referenced as a parent by')
       } finally {
         // Restore original adapter
         Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
