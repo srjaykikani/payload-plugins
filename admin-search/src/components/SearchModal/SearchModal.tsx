@@ -34,7 +34,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
       routes: { admin, api },
     },
   } = useConfig()
-  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {})
+  const [{ data, isError, isLoading }, { setParams }] = usePayloadAPI(`${api}/search`, {
+    initialParams: {
+      depth: 0,
+      limit: 10,
+      pagination: false,
+      sort: '-priority',
+    },
+  })
   const resultsRef = useRef<HTMLUListElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const requestNonceRef = useRef(0)
@@ -235,9 +242,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ handleClose }) => {
           {!isLoading && !isError && results.length === 0 && debouncedQuery && (
             <div className="search-modal__no-results-message">
               <p>No results found for "{debouncedQuery}"</p>
-              <p className="search-modal__no-results-hint">
-                Try different keywords or check your spelling
-              </p>
+              <p className="search-modal__no-results-hint">Try different keywords or check your spelling</p>
             </div>
           )}
           {!isLoading && !isError && results.length > 0 && (

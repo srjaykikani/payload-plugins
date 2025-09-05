@@ -11,6 +11,7 @@ A plugin for [Payload CMS](https://payloadcms.com) that adds a search modal to q
 - Search index powered by [@payloadcms/plugin-search](https://www.npmjs.com/package/@payloadcms/plugin-search)
 - Real time search results
 - Keyboard navigation support
+- Configurable search component styles (button or bar)
 - Clean, minimal UI
 
 ## Setup
@@ -32,6 +33,37 @@ export default {
 ```
 
 You can control which collections you can search by adjusting the `collections` option in the search plugin config.
+
+## Configuration
+
+The plugin accepts the following configuration options:
+
+### `enabled`
+- **Type**: `boolean`
+- **Default**: `true`
+
+### `headerSearchComponentStyle`
+- **Type**: `'button' | 'bar'`
+- **Default**: `'button'`
+- **Description**: Choose the style of the search component in the admin header
+
+#### Button Style (Default)
+The default button style shows a compact search button with "Search" text and keyboard shortcut:
+
+```ts
+adminSearchPlugin({
+  headerSearchComponentStyle: 'button', // or omit for default
+})
+```
+
+#### Bar Style
+The bar style shows a full search input bar similar to modern search interfaces:
+
+```ts
+adminSearchPlugin({
+  headerSearchComponentStyle: 'bar',
+})
+```
 
 ## Contributing
 

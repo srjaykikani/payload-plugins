@@ -9,6 +9,8 @@ export const adminSearchPlugin =
       return incomingConfig
     }
 
+    const { headerSearchComponentStyle = 'button' } = pluginOptions
+
     return {
       ...incomingConfig,
       admin: {
@@ -17,7 +19,12 @@ export const adminSearchPlugin =
           ...incomingConfig.admin?.components,
           actions: [
             ...(incomingConfig.admin?.components?.actions || []),
-            '@jhb.software/payload-admin-search/client#SearchButton',
+            {
+              clientProps: {
+                style: headerSearchComponentStyle,
+              },
+              path: '@jhb.software/payload-admin-search/client#SearchWrapper',
+            },
           ],
         },
       },
