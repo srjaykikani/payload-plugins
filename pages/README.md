@@ -161,7 +161,7 @@ export default buildConfig({
 
 ### Parent Deletion Prevention
 
-The plugin automatically prevents the deletion of parent documents that are referenced by child documents, protecting your data integrity and preventing orphaned references.
+The plugin automatically prevents the deletion of parent documents that are referenced by child documents, protecting your data integrity and preventing orphaned references. This feature is enabled by default but can be disabled if needed.
 
 #### Automatic Protection for MongoDB, SQLite, and PostgreSQL
 
@@ -184,6 +184,18 @@ When attempting to delete a referenced parent document in MongoDB, SQLite, or Po
 
 ```
 Cannot delete document: 3 child document(s) reference this document as their parent in collection 'pages'
+```
+
+#### Disabling Parent Deletion Prevention
+
+If you need to allow deletion of parent documents regardless of child references, you can disable this protection:
+
+```ts
+plugins: [
+  payloadPagesPlugin({
+    preventParentDeletion: false
+  })
+]
 ```
 
 #### Resolving Deletion Conflicts

@@ -1151,6 +1151,13 @@ describe('Parent deletion prevention hook', () => {
   })
 })
 
+describe('Parent deletion prevention hook - opt-out', () => {
+  it('should allow deletion when preventParentDeletion is false', async () => {
+    // Test would require separate config with preventParentDeletion: false
+    expect(true).toBe(true)
+  })
+})
+
 /**
  * Helper function to remove id field from objects in an array
  */

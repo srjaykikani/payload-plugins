@@ -96,7 +96,7 @@ export const createPageCollectionConfig = ({
       ],
       beforeDelete: [
         ...(incomingCollectionConfig.hooks?.beforeDelete || []),
-        preventParentDeletion,
+        ...(pluginConfig.preventParentDeletion !== false ? [preventParentDeletion] : []),
       ],
     },
     fields: [
