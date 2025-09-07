@@ -1,7 +1,9 @@
 import { PayloadRequest, CollectionSlug } from 'payload'
-import type { SanitizedCollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 import type { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 import type { PagesPluginConfig } from '../types/PagesPluginConfig.js'
+import type { PageCollectionConfig } from '../types/PageCollectionConfig.js'
+import { isPageCollectionConfig } from '../collections/PageCollectionConfig.js'
 
 /**
  * Finds all child documents that reference a given parent document.
@@ -17,8 +19,8 @@ async function childDocumentsOfInternal(
   
   const allCollections = req.payload.config.collections || []
   
-  const pageCollections = allCollections.filter(
-    isPageCollectionWithParent(collectionSlug)
+  const pageCollections = allCollections.filter((col) =>
+    isPageCollectionWithParent(col, collectionSlug)
   )
   
   for (const targetCollection of pageCollections) {
@@ -75,14 +77,15 @@ export async function hasChildDocuments(
   return children.length > 0
 }
 
-function isPageCollectionWithParent(expectedParent: CollectionSlug) {
-  return (
-    col: SanitizedCollectionConfig
-  ): col is SanitizedCollectionConfig & { page: PageCollectionConfigAttributes } => {
-    if (!('page' in col)) return false
-    const p = (col as unknown as { page?: unknown }).page
-    if (!p || typeof p !== 'object') return false
-    const parent = (p as { parent?: { collection?: unknown } }).parent
-    return !!parent && parent.collection === expectedParent
-  }
+/**
+ * Checks if the specified `CollectionConfig` is a `PageCollectionConfig` and if the parent collection field equals to the expected collection slug.
+ */
+function isPageCollectionWithParent(
+  collection: CollectionConfig,
+  expectedParentCollectionSlug: CollectionSlug,
+): collection is PageCollectionConfig {
+  const pageConfig = isPageCollectionConfig(collection)
+  if (!pageConfig) return false
+
+  return collection.page.parent.collection === expectedParentCollectionSlug
 }
