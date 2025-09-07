@@ -3,6 +3,10 @@ import type { SanitizedCollectionConfig } from 'payload'
 import type { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 import type { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 
+/**
+ * Finds all child documents that reference a given parent document.
+ * Used by preventParentDeletion hook to prevent broken references.
+ */
 async function childDocumentsOfInternal(
   req: PayloadRequest,
   docId: string | number,
@@ -52,8 +56,15 @@ async function childDocumentsOfInternal(
   return childReferences
 }
 
+/**
+ * Finds all child documents that reference a given parent document.
+ * Used by preventParentDeletion hook to prevent broken references.
+ */
 export const childDocumentsOf = childDocumentsOfInternal
 
+/**
+ * Check if a document has any child references
+ */
 export async function hasChildDocuments(
   req: PayloadRequest,
   docId: string | number,
