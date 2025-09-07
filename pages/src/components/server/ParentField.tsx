@@ -11,6 +11,8 @@ export const ParentField: RelationshipFieldServerComponent = async ({
   payload,
   clientField,
   data,
+  permissions,
+  readOnly,
 }) => {
   const {
     parent: { name: parentField, sharedDocument: sharedParentDocument },
@@ -20,7 +22,10 @@ export const ParentField: RelationshipFieldServerComponent = async ({
   })
 
   var parentValue: string | undefined = data?.[parentField] ?? undefined
-  var readOnly = Boolean(sharedParentDocument && parentValue)
+  // Check both shared parent document and permissions
+  var isReadOnly = Boolean(sharedParentDocument && parentValue) || 
+                   readOnly || 
+                   (permissions !== true && permissions?.update !== true)
 
-  return <RelationshipField path={path as string} field={clientField} readOnly={readOnly} />
+  return <RelationshipField path={path as string} field={clientField} readOnly={isReadOnly} />
 }

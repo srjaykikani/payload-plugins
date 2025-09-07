@@ -1,4 +1,4 @@
-import { CheckboxFieldServerComponent, serverProps, Where } from 'payload'
+import { CheckboxFieldServerComponent, Where } from 'payload'
 import { IsRootPageStatus } from '../client/IsRootPageStatus.js'
 
 /**
@@ -11,6 +11,8 @@ export const IsRootPageField: CheckboxFieldServerComponent = async ({
   collectionSlug,
   payload,
   req,
+  permissions,
+  readOnly,
   // @ts-expect-error: TODO: extend the CheckboxFieldServerComponent type to allow passing the baseFilter
   baseFilter,
 }) => {
@@ -25,12 +27,16 @@ export const IsRootPageField: CheckboxFieldServerComponent = async ({
   })
 
   const hasRootPage = response.totalDocs > 0
+  
+  // Determine if field should be readonly based on permissions
+  const isReadOnly = readOnly || (permissions !== true && permissions?.update !== true)
 
   return (
     <IsRootPageStatus
       field={clientField}
       path={(path as string | undefined) ?? field?.name!}
       hasRootPage={hasRootPage}
+      readOnly={isReadOnly}
     />
   )
 }

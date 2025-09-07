@@ -1,4 +1,4 @@
-import { ClientCollectionConfig, CollectionConfig, Field } from 'payload'
+import { ClientCollectionConfig, CollectionConfig } from 'payload'
 import { breadcrumbsField } from '../fields/breadcrumbsField.js'
 import { isRootPageField } from '../fields/isRootPageField.js'
 import { parentField } from '../fields/parentField.js'
