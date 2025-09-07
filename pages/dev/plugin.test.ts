@@ -1,5 +1,5 @@
 import payload, { ValidationError } from 'payload'
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from 'vitest'
 import config from './src/payload.config'
 
 beforeAll(async () => {
