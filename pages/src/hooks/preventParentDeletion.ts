@@ -1,7 +1,7 @@
 import { CollectionBeforeDeleteHook } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
 import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { childDocumentsOf } from '../utils/childDocumentsOf.js'
+import { AdminPanelError } from '../utils/AdminPanelError.js'
 
 const ADAPTERS_REQUIRING_CUSTOM_LOGIC = [
   '@payloadcms/db-mongodb',
@@ -19,7 +19,6 @@ export const preventParentDeletion: CollectionBeforeDeleteHook = async ({
     return
   }
 
-  const pageConfig = asPageCollectionConfigOrThrow(collection)
   const pagesPluginConfig = collection.custom?.pagesPluginConfig as PagesPluginConfig
   
   const childDocuments = await childDocumentsOf(
@@ -46,6 +45,6 @@ export const preventParentDeletion: CollectionBeforeDeleteHook = async ({
 
     const errorMessage = `Cannot delete this document because it is referenced as a parent by ${collectionMessages}. Please remove or reassign the child documents before deleting this parent document.`
     
-    throw new Error(errorMessage)
+    throw new AdminPanelError(errorMessage)
   }
 }
