@@ -387,12 +387,12 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
   describe('Nested document in same collection with one locale created.', () => {
     const rootPageDataDe = {
       title: 'Root Page DE',
-      slug: 'root-page-de',
+      slug: 'root-page-de-one-locale',
       content: 'Root Page DE',
     }
     const nestedPageDataDe = {
       title: 'Nested Page DE',
-      slug: 'nested-page-de',
+      slug: 'nested-page-de-one-locale',
       content: 'Nested Page DE',
     }
     let rootPageId: string | undefined // will be set in the beforeEach hook
@@ -833,9 +833,10 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
-            slug: 'parent-page',
+            slug: 'parent-page-prevents-deletion',
             content: 'Parent content',
           },
         })
@@ -843,9 +844,10 @@ describe('Parent deletion prevention hook', () => {
         // Create child page referencing the parent
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page',
-            slug: 'child-page',
+            slug: 'child-page-prevents-deletion',
             content: 'Child content',
             parent: parentPage.id,
           },
@@ -873,9 +875,10 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
-            slug: 'parent-page',
+            slug: 'parent-page-allows-deletion',
             content: 'Parent content',
           },
         })
@@ -883,9 +886,10 @@ describe('Parent deletion prevention hook', () => {
         // Create another page without parent reference
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Independent Page',
-            slug: 'independent-page',
+            slug: 'independent-page-allows-deletion',
             content: 'Independent content',
           },
         })
@@ -917,6 +921,7 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
             slug: 'parent-page',
@@ -927,6 +932,7 @@ describe('Parent deletion prevention hook', () => {
         // Create multiple child pages
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page 1',
             slug: 'child-page-1',
@@ -937,6 +943,7 @@ describe('Parent deletion prevention hook', () => {
 
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page 2',
             slug: 'child-page-2',
@@ -971,9 +978,10 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
-            slug: 'parent-page',
+            slug: 'parent-page-multi-collection',
             content: 'Parent content',
           },
         })
@@ -981,9 +989,10 @@ describe('Parent deletion prevention hook', () => {
         // Create child in pages collection
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page',
-            slug: 'child-page',
+            slug: 'child-page-multi-collection',
             content: 'Child content',
             parent: parentPage.id,
           },
@@ -993,6 +1002,7 @@ describe('Parent deletion prevention hook', () => {
         try {
           await payload.create({
             collection: 'country-travel-tips',
+            locale: 'de',
             data: {
               title: 'Travel Tip',
               slug: 'travel-tip',
@@ -1028,9 +1038,10 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
-            slug: 'parent-page',
+            slug: 'parent-page-sqlite',
             content: 'Parent content',
           },
         })
@@ -1038,9 +1049,10 @@ describe('Parent deletion prevention hook', () => {
         // Create child page referencing the parent
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page',
-            slug: 'child-page',
+            slug: 'child-page-sqlite',
             content: 'Child content',
             parent: parentPage.id,
           },
@@ -1068,9 +1080,10 @@ describe('Parent deletion prevention hook', () => {
         // Create parent page
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Parent Page',
-            slug: 'parent-page',
+            slug: 'parent-page-postgres',
             content: 'Parent content',
           },
         })
@@ -1078,9 +1091,10 @@ describe('Parent deletion prevention hook', () => {
         // Create child page referencing the parent
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Child Page',
-            slug: 'child-page',
+            slug: 'child-page-postgres',
             content: 'Child content',
             parent: parentPage.id,
           },
@@ -1113,6 +1127,7 @@ describe('Parent deletion prevention hook', () => {
         
         const parentPage = await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Tenant Parent Page',
             slug: 'tenant-parent-page',
@@ -1123,6 +1138,7 @@ describe('Parent deletion prevention hook', () => {
         // Create child in different "tenant" context (simulated)
         await payload.create({
           collection: 'pages',
+          locale: 'de',
           data: {
             title: 'Different Tenant Child',
             slug: 'different-tenant-child',
