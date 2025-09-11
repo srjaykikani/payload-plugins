@@ -36,7 +36,7 @@ export function internalSlugField({
       readOnly: !!staticValue,
       components: {
         Field: {
-          path: '@jhb.software/payload-pages-plugin/client#SlugField',
+          path: '@jhb.software/payload-pages-plugin/server#SlugFieldWrapper',
           clientProps: {
             readOnly: !!staticValue,
             defaultValue: staticValue,
