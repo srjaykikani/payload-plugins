@@ -9,7 +9,7 @@ import { isPageCollectionConfig } from '../collections/PageCollectionConfig.js'
  * Finds all child documents that reference a given parent document.
  * Used by preventParentDeletion hook to prevent broken references.
  */
-async function childDocumentsOfInternal(
+export async function childDocumentsOf(
   req: PayloadRequest,
   docId: string | number,
   collectionSlug: CollectionSlug,
@@ -57,12 +57,6 @@ async function childDocumentsOfInternal(
   
   return childReferences
 }
-
-/**
- * Finds all child documents that reference a given parent document.
- * Used by preventParentDeletion hook to prevent broken references.
- */
-export const childDocumentsOf = childDocumentsOfInternal
 
 /**
  * Check if a document has any child references
