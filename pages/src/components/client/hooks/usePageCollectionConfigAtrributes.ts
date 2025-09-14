@@ -1,4 +1,4 @@
-import { asPageCollectionConfigOrThrow } from '../../../utils/clientUtils.js'
+import { asPageCollectionConfigOrThrow } from '../../../collections/PageCollectionConfig.js'
 import { PageCollectionConfigAttributes } from '../../../types/PageCollectionConfigAttributes.js'
 import { useCollectionConfig } from './useCollectionConfig.js'
 
