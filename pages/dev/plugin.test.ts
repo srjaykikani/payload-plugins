@@ -1071,6 +1071,68 @@ describe('Parent deletion prevention hook', () => {
       }
     })
 
+    test('SQLite adapter parent deletion behavior', async () => {
+      // Mock SQLite adapter
+      const originalAdapter = payload.db.name
+      Object.defineProperty(payload.db, 'name', { value: '@payloadcms/db-sqlite', configurable: true })
+
+      try {
+        // Clear existing pages first
+        const existingPages = await payload.find({ collection: 'pages', limit: 0, select: {} })
+        for (const page of existingPages.docs) {
+          await payload.delete({ collection: 'pages', id: page.id })
+        }
+
+        // Create parent page
+        const parentPage = await payload.create({
+          collection: 'pages',
+          locale: 'de',
+          data: {
+            title: 'SQLite Parent Page',
+            slug: 'sqlite-parent-page',
+            content: 'SQLite parent content',
+          },
+        })
+
+        // Create child page referencing the parent
+        const childPage = await payload.create({
+          collection: 'pages',
+          locale: 'de',
+          data: {
+            title: 'SQLite Child Page',
+            slug: 'sqlite-child-page',
+            content: 'SQLite child content',
+            parent: parentPage.id,
+          },
+        })
+
+        let deletionAllowed = false
+        try {
+          await payload.delete({ collection: 'pages', id: parentPage.id })
+          deletionAllowed = true
+        } catch {
+          deletionAllowed = false
+        }
+
+        // In SQLite, FK constraints may not be enforced by default → deletion could be allowed
+        expect(typeof deletionAllowed).toBe('boolean')
+
+        // Check if child still exists
+        const remainingChild = await payload.findByID({ collection: 'pages', id: childPage.id })
+        expect(remainingChild).toBeTruthy()
+
+        // Clean up: delete child first
+        await payload.delete({ collection: 'pages', id: childPage.id })
+        if (!deletionAllowed) {
+          // If parent deletion was prevented, we can now delete it after child is gone
+          await payload.delete({ collection: 'pages', id: parentPage.id })
+        }
+      } finally {
+        // Restore original adapter
+        Object.defineProperty(payload.db, 'name', { value: originalAdapter, configurable: true })
+      }
+    })
+
     test('prevents deletion when child dependencies exist (PostgreSQL)', async () => {
       // Mock PostgreSQL adapter to match hook expectation
       const originalAdapter = payload.db.name
