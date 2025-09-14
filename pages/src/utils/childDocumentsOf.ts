@@ -13,23 +13,21 @@ export async function childDocumentsOf(
   req: PayloadRequest,
   docId: string | number,
   collectionSlug: CollectionSlug,
-  baseFilter?: PagesPluginConfig['baseFilter']
+  baseFilter?: PagesPluginConfig['baseFilter'],
 ): Promise<{ id: string | number; collection: CollectionSlug }[]> {
   const childReferences: { id: string | number; collection: CollectionSlug }[] = []
-  
+
   const allCollections = req.payload.config.collections || []
-  
+
   const pageCollections = allCollections.filter((col) =>
-    isPageCollectionWithParent(col, collectionSlug)
+    isPageCollectionWithParent(col, collectionSlug),
   )
-  
+
   for (const targetCollection of pageCollections) {
     const parentFieldName = targetCollection.page.parent.name || 'parent'
-    
-    const baseFilterWhere = typeof baseFilter === 'function' 
-      ? baseFilter({ req }) 
-      : undefined
-    
+
+    const baseFilterWhere = typeof baseFilter === 'function' ? baseFilter({ req }) : undefined
+
     try {
       const childDocuments = await req.payload.find({
         collection: targetCollection.slug,
@@ -43,7 +41,7 @@ export async function childDocumentsOf(
         select: {},
         limit: 0,
       })
-      
+
       for (const doc of childDocuments.docs) {
         childReferences.push({
           id: doc.id,
@@ -54,7 +52,7 @@ export async function childDocumentsOf(
       console.warn(`Error checking collection ${targetCollection.slug} for child documents:`, error)
     }
   }
-  
+
   return childReferences
 }
 
@@ -65,7 +63,7 @@ export async function hasChildDocuments(
   req: PayloadRequest,
   docId: string | number,
   collectionSlug: CollectionSlug,
-  baseFilter?: PagesPluginConfig['baseFilter']
+  baseFilter?: PagesPluginConfig['baseFilter'],
 ): Promise<boolean> {
   const children = await childDocumentsOf(req, docId, collectionSlug, baseFilter)
   return children.length > 0

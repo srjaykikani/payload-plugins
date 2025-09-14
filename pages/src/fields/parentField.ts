@@ -48,7 +48,7 @@ export function parentField(
         // 2. is another new document, then this will return the shared parent value
         const baseFilterWhere: Where | undefined =
           typeof baseFilter === 'function' ? baseFilter({ req }) : undefined
-        
+
         const response = await req.payload.find({
           limit: 1,
           draft: true,

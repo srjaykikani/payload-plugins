@@ -27,7 +27,7 @@ export const IsRootPageField: CheckboxFieldServerComponent = async ({
   })
 
   const hasRootPage = response.totalDocs > 0
-  
+
   // Determine if field should be readonly based on permissions
   const isReadOnly = readOnly || (permissions !== true && permissions?.update !== true)
 

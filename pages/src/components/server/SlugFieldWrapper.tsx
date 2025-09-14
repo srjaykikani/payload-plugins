@@ -11,11 +11,5 @@ export const SlugFieldWrapper: TextFieldServerComponent = async ({
   readOnly,
 }) => {
   const isReadOnly = readOnly || (permissions !== true && permissions?.update !== true)
-  return (
-    <SlugField
-      field={clientField}
-      path={path as string}
-      readOnly={isReadOnly}
-    />
-  )
+  return <SlugField field={clientField} path={path as string} readOnly={isReadOnly} />
 }
