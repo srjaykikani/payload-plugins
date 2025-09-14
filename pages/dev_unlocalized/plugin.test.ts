@@ -25,12 +25,7 @@ afterAll(async () => {
 
 describe('Path and breadcrumb virtual fields are returned correctly for find operation.', () => {
   describe('The root page document', () => {
-    beforeEach(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
-    })
+    beforeEach(async () => await deletePagesCollection())
 
     test('has the correct virtual fields', async () => {
       const rootPageData = {
@@ -84,10 +79,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     let nestedPageId: string | number | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
+      await deletePagesCollection()
 
       // ################# Seed the database for the tests of this group #################
 
@@ -181,10 +173,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     let nestedPageId: string | number | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
+      await deletePagesCollection()
 
       // ################# Seed the database for the tests of this group #################
 
@@ -483,4 +472,20 @@ describe('Slug field behaves as expected for create and update operations', () =
  */
 const removeIdsFromArray = <T extends { id?: any }>(array: T[]): Omit<T, 'id'>[] => {
   return array.map(({ id, ...rest }) => rest)
+}
+
+/**
+ * Helper function to delete all pages from the database.
+ */
+const deletePagesCollection = async () => {
+  // Call payload.delete twice to ensure complete cleanup
+  // (First delete may fail for root page due to deletion prevention hook)
+  await payload.delete({
+    collection: 'pages',
+    where: {},
+  })
+  await payload.delete({
+    collection: 'pages',
+    where: {},
+  })
 }
