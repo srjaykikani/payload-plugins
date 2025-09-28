@@ -19,11 +19,7 @@ export function pathFromBreadcrumbs({
   ].join('/')
 
   if (pathPrefix) {
-    // Normalize prefix: remove trailing slashes, ensure leading slash
-    const normalizedPrefix = pathPrefix.replace(/\/+$/, '')
-    const prefix = normalizedPrefix.startsWith('/') ? normalizedPrefix : `/${normalizedPrefix}`
-    
-    return computedPath === '' ? prefix : `${prefix}${computedPath}`
+    return computedPath === '' ? pathPrefix : `${pathPrefix}${computedPath}`
   }
 
   return computedPath
