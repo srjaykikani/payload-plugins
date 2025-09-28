@@ -54,13 +54,7 @@ export const createPageCollectionConfig = ({
       staticValue: incomingCollectionConfig.page?.slug?.staticValue,
     },
     path: incomingCollectionConfig.page?.path?.pathPrefix ? {
-      pathPrefix: (() => {
-        const prefix = incomingCollectionConfig.page.path.pathPrefix
-        if (!prefix) return undefined
-        // Normalize: remove trailing slashes, ensure leading slash if present
-        const trimmed = prefix.replace(/\/+$/, '')
-        return trimmed ? (trimmed.startsWith('/') ? trimmed : `/${trimmed}`) : undefined
-      })()
+      pathPrefix: incomingCollectionConfig.page.path.pathPrefix
     } : undefined,
   }
 
