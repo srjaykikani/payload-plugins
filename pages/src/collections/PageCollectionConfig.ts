@@ -5,7 +5,7 @@ import { parentField } from '../fields/parentField.js'
 import { pathField } from '../fields/pathField.js'
 import { pageSlugField } from '../fields/slugField.js'
 import { beforeDuplicateTitle } from '../hooks/beforeDuplicate.js'
-import { ensureSelectedFieldsBeforeOperation } from '../hooks/ensureSelectedFieldsBeforeOperation.js'
+import { selectDependentFieldsBeforeOperation } from '../hooks/selectDependentFieldsBeforeOperation.js'
 import { preventParentDeletion } from '../hooks/preventParentDeletion.js'
 import {
   setVirtualFieldsAfterChange,
@@ -17,7 +17,8 @@ import {
 } from '../types/PageCollectionConfig.js'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
 import { getPageUrl } from '../utils/getPageUrl.js'
-import { PagesPluginConfig } from 'src/types/PagesPluginConfig.js'
+import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
+import { deleteUnselectedFieldsAfterRead } from '../hooks/deleteUnselectedFieldsAfterRead.js'
 
 /**
  * Creates a collection config for a page-like collection by adding:
@@ -84,11 +85,15 @@ export const createPageCollectionConfig = ({
       ...incomingCollectionConfig.hooks,
       beforeOperation: [
         ...(incomingCollectionConfig.hooks?.beforeOperation || []),
-        ensureSelectedFieldsBeforeOperation,
+        selectDependentFieldsBeforeOperation,
       ],
       beforeRead: [
         ...(incomingCollectionConfig.hooks?.beforeRead || []),
         setVirtualFieldsBeforeRead,
+      ],
+      afterRead: [
+        ...(incomingCollectionConfig.hooks?.afterRead || []),
+        deleteUnselectedFieldsAfterRead,
       ],
       afterChange: [
         ...(incomingCollectionConfig.hooks?.afterChange || []),
