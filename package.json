@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:all": "pnpm build:cloudinary && pnpm build:pages && pnpm build:seo && pnpm build:geocoding",
-    "publish:all": "pnpm publish:cloudinary && pnpm publish:pages && pnpm publish:seo && pnpm publish:geocoding",
+    "build:all": "pnpm build:cloudinary && pnpm build:pages && pnpm build:seo && pnpm build:geocoding && pnpm build:admin-search",
+    "publish:all": "pnpm publish:cloudinary && pnpm publish:pages && pnpm publish:seo && pnpm publish:geocoding && pnpm publish:admin-search",
+    "update:plugins": "bash scripts/update-plugins.sh",
     "build:cloudinary": "cd ./cloudinary && pnpm build",
     "build:pages": "cd ./pages && pnpm build",
     "build:seo": "cd ./seo && pnpm build",
+    "build:geocoding": "cd ./geocoding && pnpm build",
+    "build:admin-search": "cd ./admin-search && pnpm build",
     "publish:cloudinary": "cd ./cloudinary && pnpm publish",
     "publish:pages": "cd ./pages && pnpm publish",
     "publish:seo": "cd ./seo && pnpm publish",
-    "build:geocoding": "cd ./geocoding && pnpm build",
-    "publish:geocoding": "cd ./geocoding && pnpm publish"
+    "publish:geocoding": "cd ./geocoding && pnpm publish",
+    "publish:admin-search": "cd ./admin-search && pnpm publish"
   }
 }
