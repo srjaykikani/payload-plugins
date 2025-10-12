@@ -7,7 +7,7 @@ export const generatePageURL = ({
   preview,
 }: {
   path: string
-  preview?: boolean
+  preview: boolean
 }): string => {
   const domain = process.env.NEXT_PUBLIC_FRONTEND_URL
 

@@ -6,7 +6,7 @@ import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 import { ExternalLinkIcon } from '@payloadcms/ui/icons/ExternalLink'
 
 type PreviewButtonFieldProps = {
-  generatePageURL?: (args: { path: string; preview?: boolean }) => string
+  generatePageURL?: (args: { path: string; preview: boolean }) => string
 }
 
 /**

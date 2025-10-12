@@ -14,7 +14,7 @@ import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 // Define your URL generation function
 const generatePageURL = ({ path, preview }: {
   path: string
-  preview?: boolean
+  preview: boolean
 }): string => {
   const domain = process.env.NEXT_PUBLIC_FRONTEND_URL
   return `${domain}${preview ? '/preview' : ''}${path}`
@@ -114,7 +114,7 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 // Define URL generation function once
 const generatePageURL = ({ path, preview }: {
   path: string
-  preview?: boolean
+  preview: boolean
 }): string => {
   return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
 }
@@ -126,7 +126,7 @@ export default buildConfig({
       generatePageURL,
     }),
     seoPlugin({
-      generateURL: ({ doc }) => generatePageURL({ path: doc.path }),
+      generateURL: ({ doc }) => generatePageURL({ path: doc.path, preview: false }),
       // If your collections are localized, also add the alternatePathsField
       fields: ({ defaultFields }) => [...defaultFields, alternatePathsField()],
     }),
@@ -175,7 +175,7 @@ import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
 // Define URL generation function
 const generatePageURL = ({ path, preview }: {
   path: string
-  preview?: boolean
+  preview: boolean
 }): string => {
   return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
 }
@@ -232,7 +232,7 @@ If you need to allow deletion of parent documents regardless of child references
 ```ts
 const generatePageURL = ({ path, preview }: {
   path: string
-  preview?: boolean
+  preview: boolean
 }): string => {
   return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
 }
