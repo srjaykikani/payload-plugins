@@ -6,10 +6,26 @@ The Payload Pages plugin simplifies website building by adding essential fields 
 
 ## Setup
 
-First, add the plugin to your payload config as follows:
+First, add the plugin to your payload config with the required `generatePageURL` function:
 
 ```ts
-plugins: [payloadPagesPlugin({})]
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+
+// Define your URL generation function
+const generatePageURL = ({ path, preview }: {
+  path: string
+  preview?: boolean
+}): string => {
+  const domain = process.env.NEXT_PUBLIC_FRONTEND_URL
+  return `${domain}${preview ? '/preview' : ''}${path}`
+}
+
+// Add to plugins array
+plugins: [
+  payloadPagesPlugin({
+    generatePageURL,
+  })
+]
 ```
 
 Next, create a page collections using the `PageCollectionConfig` type. This type extends Payload's `CollectionConfig` type with a `page` field that contains configurations for the page collection. The `page` field must be specified as follows:
@@ -87,17 +103,31 @@ const Redirects: RedirectsCollectionConfig = {
 }
 ```
 
-In order for the official payload SEO plugin to use the generated URL, you need to pass the `getPageUrl` function provided by this plugin to the `generateURL` field in the `seo` plugin config inside your payload config. 
-If your collections are localized, you also need to pass the `alternatePathsField` field to the `fields` array.
+### SEO Plugin Integration
+
+To integrate with the official Payload SEO plugin, use the same `generatePageURL` function you defined for the pages plugin:
 
 ```ts
-import { alternatePathsField, getPageUrl } from '@jhb.software/payload-pages-plugin'
+import { alternatePathsField, payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+import { seoPlugin } from '@payloadcms/plugin-seo'
+
+// Define URL generation function once
+const generatePageURL = ({ path, preview }: {
+  path: string
+  preview?: boolean
+}): string => {
+  return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+}
 
 export default buildConfig({
   // ...
   plugins: [
+    payloadPagesPlugin({
+      generatePageURL,
+    }),
     seoPlugin({
-      generateURL: ({ doc }) => getPageUrl({ path: doc.path })!,
+      generateURL: ({ doc }) => generatePageURL({ path: doc.path }),
+      // If your collections are localized, also add the alternatePathsField
       fields: ({ defaultFields }) => [...defaultFields, alternatePathsField()],
     }),
   ],
@@ -142,10 +172,19 @@ Example:
 import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
 
+// Define URL generation function
+const generatePageURL = ({ path, preview }: {
+  path: string
+  preview?: boolean
+}): string => {
+  return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+}
+
 export default buildConfig({
   // ...
   plugins: [
     payloadPagesPlugin({
+      generatePageURL,
       baseFilter: ({ req }) => {
         const tenant = getTenantFromCookie(req.headers, req.payload.db.defaultIDType)
 
@@ -191,8 +230,16 @@ Cannot delete document: 3 child document(s) reference this document as their par
 If you need to allow deletion of parent documents regardless of child references, you can disable this protection:
 
 ```ts
+const generatePageURL = ({ path, preview }: {
+  path: string
+  preview?: boolean
+}): string => {
+  return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+}
+
 plugins: [
   payloadPagesPlugin({
+    generatePageURL,
     preventParentDeletion: false
   })
 ]
@@ -223,12 +270,6 @@ await payload.delete({
   id: originalParentId,
 })
 ```
-
-### Environment variables
-
-The following environment variables are required:
-
-- `NEXT_PUBLIC_FRONTEND_URL`
 
 ## About this plugin
 
