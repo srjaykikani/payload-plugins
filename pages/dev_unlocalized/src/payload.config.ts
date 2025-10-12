@@ -1,4 +1,4 @@
-import { getPageUrl, payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -10,6 +10,7 @@ import { CountryTravelTips } from './collections/country-travel-tips'
 import { Pages } from './collections/pages'
 import { Redirects } from './collections/redirects'
 import { BlogpostCategories } from './collections/blogpost-categories'
+import { generatePageURL } from './utils/generatePageURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,7 +25,7 @@ export default buildConfig({
     livePreview: {
       // For testing purposes, we only want to live preview the pages collection
       collections: ['pages'],
-      url: ({ data }) => getPageUrl({ path: data.path, preview: true })!,
+      url: ({ data }) => generatePageURL({ path: data.path, preview: true }),
     },
   },
   collections: [
@@ -54,7 +55,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   localization: false,
-  plugins: [payloadPagesPlugin({})],
+  plugins: [
+    payloadPagesPlugin({
+      generatePageURL,
+    }),
+  ],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',
