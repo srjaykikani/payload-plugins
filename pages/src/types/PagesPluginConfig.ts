@@ -34,4 +34,20 @@ export type PagesPluginConfig = {
    * @default true
    */
   preventParentDeletion?: boolean
+
+  /**
+   * Function to generate the full URL to a frontend page.
+   *
+   * @param args - The arguments for URL generation
+   * @param args.path - The path to the page (always starts with '/')
+   * @param args.preview - Whether this is a preview URL (optional, defaults to false)
+   * @returns The full URL to the frontend page
+   *
+   * @example
+   * ```ts
+   * generatePageURL: ({ path, preview }) =>
+   *   `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+   * ```
+   */
+  generatePageURL: (args: { path: string; preview?: boolean }) => string
 }
