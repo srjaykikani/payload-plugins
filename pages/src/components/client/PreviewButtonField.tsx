@@ -2,14 +2,17 @@
 
 import { Button, useDocumentInfo, useField, useFormModified, useTranslation } from '@payloadcms/ui'
 import React from 'react'
-import { getPageUrl } from '../../utils/getPageUrl.js'
 import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 import { ExternalLinkIcon } from '@payloadcms/ui/icons/ExternalLink'
+
+type PreviewButtonFieldProps = {
+  generatePageURL?: (args: { path: string; preview?: boolean }) => string
+}
 
 /**
  * Custom field to display a preview button which links to the frontend page.
  */
-export const PreviewButtonField: React.FC = () => {
+export const PreviewButtonField: React.FC<PreviewButtonFieldProps> = ({ generatePageURL }) => {
   const { id, initialData } = useDocumentInfo()
   const { value: path } = useField<string>({ path: 'path' })
   const { t: pluginTranslation } = usePluginTranslation()
@@ -31,7 +34,8 @@ export const PreviewButtonField: React.FC = () => {
 
   // The preview button should only be displayed, when the document has a draft/published version
   // with a path before any action to this form. Only then the frontend will have a page for this document.
-  const previewUrl = initialPath && id ? getPageUrl({ path, preview: true }) : undefined
+  const previewUrl =
+    initialPath && id && generatePageURL ? generatePageURL({ path, preview: true }) : undefined
 
   return (
     previewUrl && (
