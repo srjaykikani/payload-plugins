@@ -23,14 +23,14 @@
     "prepublish": "tsc"
   },
   "dependencies": {
-    "cloudinary": "^2.5.1"
+    "cloudinary": "^2.7.0"
   },
   "peerDependencies": {
-    "payload": "^3.25.0"
+    "payload": "^3.59.1"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
-    "typescript": "5.7.3"
+    "typescript": "5.9.3"
   },
   "files": [
     "dist"
