@@ -7,7 +7,17 @@ import { getSelectType } from '../utils/getSelectType.js'
  * This is necessary because during the read operation, the original select is extended with all fields
  * that are required for the setVirtualFields hook to work.
  */
-export const deleteUnselectedFieldsAfterRead: CollectionAfterReadHook = ({ doc, context }) => {
+export const deleteUnselectedFieldsAfterRead: CollectionAfterReadHook = ({
+  doc,
+  context,
+  collection,
+}) => {
+  const operation = `${doc.id}-${collection.slug}`
+  // early return if this hook runs for nested operations (e.g. for population operations or field level hooks)
+  if (operation !== context.rootOperation) {
+    return doc
+  }
+
   const originalSelect = context.originalSelect as SelectType | undefined
   const select = context.select as SelectType | undefined
 

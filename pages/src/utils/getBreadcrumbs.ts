@@ -55,8 +55,6 @@ export async function getBreadcrumbs({
       ? data[parentField]
       : data[parentField].id
 
-  // TODO: if the parent is an object and has the breadcrumbs already set, it may not be necessary to fetch the parent document again
-
   if (!parentId) {
     throw new Error('Parent ID not found for document ' + data.id)
   }
