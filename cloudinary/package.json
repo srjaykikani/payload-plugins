@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-cloudinary-plugin",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Payload CMS plugin that adds Cloudinary image upload and management capabilities to media collections.",
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
