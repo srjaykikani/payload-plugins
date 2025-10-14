@@ -1,5 +1,5 @@
 import { CollectionAfterReadHook, SelectType } from 'payload'
-import { getSelectType } from '../utils/getSelectType.js'
+import { getSelectMode } from 'payload/shared'
 
 /**
  * A CollectionAfterReadHook that deletes fields from the document that are not in the original select.
@@ -26,16 +26,16 @@ export const deleteUnselectedFieldsAfterRead: CollectionAfterReadHook = ({
     return doc
   }
 
-  const selectType = getSelectType(originalSelect)
+  const selectMode = getSelectMode(originalSelect)
 
-  if (selectType === 'include') {
+  if (selectMode === 'include') {
     // remove all fields that are not in the original select (except id)
     Object.keys(doc).forEach((field) => {
       if (!originalSelect[field] && field !== 'id') {
         delete doc[field]
       }
     })
-  } else if (selectType === 'exclude') {
+  } else if (selectMode === 'exclude') {
     // remove all fields that were added to the select (present in originalSelect but not in select)
     const addedFields = Object.keys(originalSelect || {}).filter(
       (field) => !select?.[field] && field !== 'id',

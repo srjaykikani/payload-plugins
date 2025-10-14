@@ -1286,6 +1286,69 @@ describe('Select during read operation', () => {
     })
   })
 
+  test('findByID with empty select only returns id', async () => {
+    // Create root page
+    const rootPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Root Page',
+        slug: '',
+        content: 'Root content',
+        isRootPage: true,
+      },
+    })
+
+    // Create child page
+    const childPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Child Page',
+        slug: 'child-page',
+        content: 'Child content',
+        parent: rootPage.id,
+      },
+    })
+
+    const fetchedWithAllFields = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 0,
+    })
+
+    expect(fetchedWithAllFields).toBeDefined()
+
+    // ################ Test empty select depth 0 ################
+    const fetchedWithEmptySelect = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 0,
+      select: {},
+    })
+
+    expect(fetchedWithEmptySelect).toBeDefined()
+    expect(Object.keys(fetchedWithEmptySelect)).toEqual(['id']) // has correct fields
+    expect(fetchedWithEmptySelect.id).toEqual(fetchedWithAllFields.id) // id is correct
+
+    // ################ Test empty select depth 1 ################
+    const fetchedWithEmptySelectDepth1 = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 1,
+      select: {},
+    })
+
+    expect(fetchedWithEmptySelectDepth1).toBeDefined()
+    expect(Object.keys(fetchedWithEmptySelectDepth1)).toEqual(['id']) // has correct fields
+    expect(fetchedWithEmptySelectDepth1.id).toEqual(fetchedWithAllFields.id) // id is correct
+  })
+
   test('Respect selection (field: true) of the virtual fields', async () => {
     // Create root page
     const rootPage = await payload.create({

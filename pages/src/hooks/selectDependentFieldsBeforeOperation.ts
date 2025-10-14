@@ -1,7 +1,7 @@
 import { CollectionBeforeOperationHook } from 'payload'
 import { asPageCollectionConfigOrThrow } from '../utils/pageCollectionConfigHelpers.js'
 import { dependentFields } from './setVirtualFields.js'
-import { getSelectType } from '../utils/getSelectType.js'
+import { getSelectMode } from 'payload/shared'
 
 /**
  * A CollectionBeforeOperationHook that alters the select in case a virtual field is selected
@@ -27,10 +27,10 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
   if (operation == 'read' && args.select) {
     const originalSelect = args.select
     const pageConfig = asPageCollectionConfigOrThrow(args.collection.config)
-    const selectType = getSelectType(args.select)
+    const selectMode = getSelectMode(args.select)
     const dependendSelectedFields = dependentFields(pageConfig)
 
-    if (selectType === 'include') {
+    if (selectMode === 'include') {
       const selectedFields = Object.keys(args.select)
 
       const virtualFields = ['path', 'breadcrumbs', 'meta']
@@ -65,7 +65,7 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
         // Indicate that the virtual fields should be generated in the setVirtualFields hook
         context.generateVirtualFields = true
       }
-    } else if (selectType === 'exclude') {
+    } else if (selectMode === 'exclude') {
       const selectedFields = Object.keys(args.select)
       const virtualFields = ['path', 'breadcrumbs', 'meta']
       const allVirtualFieldsDeselected = virtualFields.every((field) =>
