@@ -1,5 +1,5 @@
 import { CollectionBeforeOperationHook } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
+import { asPageCollectionConfigOrThrow } from '../utils/pageCollectionConfigHelpers.js'
 import { dependentFields } from './setVirtualFields.js'
 import { getSelectType } from '../utils/getSelectType.js'
 

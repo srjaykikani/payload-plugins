@@ -1,5 +1,5 @@
 import { CollectionAfterChangeHook, CollectionBeforeReadHook } from 'payload'
-import { asPageCollectionConfigOrThrow } from '../collections/PageCollectionConfig.js'
+import { asPageCollectionConfigOrThrow } from '../utils/pageCollectionConfigHelpers.js'
 import { Locale } from '../types/Locale.js'
 import { PageCollectionConfig } from '../types/PageCollectionConfig.js'
 import { setPageDocumentVirtualFields } from '../utils/setPageVirtualFields.js'
