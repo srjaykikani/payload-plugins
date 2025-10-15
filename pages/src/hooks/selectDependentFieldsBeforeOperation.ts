@@ -13,13 +13,9 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
   operation,
   context,
 }) => {
-  // early return if this hook runs for nested operations (e.g. for population operations or field level hooks)
-  // else store information about the rootOperation in order for the deleteUnselectedFieldsAfterRead hook to know if it is called for the root operation or for nested operations
-  if (typeof args.currentDepth === 'number' && args.currentDepth > 0) {
-    return args
-  } else {
-    context.rootOperation = `${args.id}-${args.collection.config.slug}`
-  }
+  // // TODO: args.id will be undefined for findMany operations but data.id will be defined in the afterOperation hook
+  // // this means for findMany operations, removing the originally unselected fields will not work
+  context.rootOperation = `${args.id}-${args.collection.config.slug}`
 
   // Make the select object available to the setVirtualFields hook by adding it to the context
   context.select = args.select
@@ -43,18 +39,21 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
           ...dependendSelectedFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}),
         }
 
-        // TODO: when the user has not selected the parent field, but the parent field is added above, only populate the breadcrumbs field of it.
-        // args.populate = {
-        //   ...args.populate,
+        const parentFieldName = pageConfig.page.parent.name
+        const parentCollectionSlug = pageConfig.page.parent.collection
 
-        //   // only populate the breadcrumbs field of the parent field, otherwise, for every read operation, all fields of the parent would be unecessaryly returned
-        //   [pageConfig.page.parent.collection]: {
-        //     breadcrumbs: true,
-        //     ...args.populate?.[pageConfig.page.parent.collection],
-        //   },
-        // }
+        // when the user has not selected the parent field, but the parent field is added above, only populate the breadcrumbs field of it.
+        if (!originalSelect[parentFieldName]) {
+          args.populate = {
+            ...args.populate,
 
-        // console.log('### args.populate', args.populate)
+            // only populate the breadcrumbs field of the parent field, otherwise, for every read operation, all fields of the parent would be unecessaryly returned
+            [parentCollectionSlug]: {
+              breadcrumbs: true,
+              ...args.populate?.[parentCollectionSlug],
+            },
+          }
+        }
 
         // Store the original select so that deleteUnselectedFieldsAfterRead can properly handle field exclusion
         context.originalSelect = originalSelect

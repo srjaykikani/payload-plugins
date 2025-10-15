@@ -46,5 +46,11 @@ export const deleteUnselectedFieldsAfterRead: CollectionAfterReadHook = ({
     })
   }
 
+  // reset the context to prevent the context from being used in other operations
+  context.originalSelect = undefined
+  context.select = undefined
+  context.generateVirtualFields = undefined
+  context.rootOperation = undefined
+
   return doc
 }
