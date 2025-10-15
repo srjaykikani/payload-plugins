@@ -1,4 +1,4 @@
-import { getPageUrl, payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -13,6 +13,7 @@ import { BlogpostCategories } from './collections/blogpost-categories'
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import Tenants from './collections/tenants'
 import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
+import { generatePageURL } from './utils/generatePageURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,7 +28,7 @@ export default buildConfig({
     livePreview: {
       // For testing purposes, we only want to live preview the pages collection
       collections: ['pages'],
-      url: ({ data }) => getPageUrl({ path: data.path, preview: true })!,
+      url: ({ data }) => generatePageURL({ path: data.path, preview: true }),
     },
   },
   collections: [
@@ -60,6 +61,7 @@ export default buildConfig({
   localization: false,
   plugins: [
     payloadPagesPlugin({
+      generatePageURL,
       baseFilter: ({ req }) => {
         const tenant = getTenantFromCookie(req.headers, req.payload.db.defaultIDType)
 

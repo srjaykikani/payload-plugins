@@ -15,7 +15,6 @@ import {
   PageCollectionConfig,
 } from '../types/PageCollectionConfig.js'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
-import { getPageUrl } from '../utils/getPageUrl.js'
 import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { deleteUnselectedFieldsAfterRead } from '../hooks/deleteUnselectedFieldsAfterRead.js'
 
@@ -61,14 +60,17 @@ export const createPageCollectionConfig = ({
     admin: {
       ...incomingCollectionConfig.admin,
       preview: (data) =>
-        getPageUrl({
+        pluginConfig.generatePageURL({
           path: data.path as string,
           preview: true,
-        }) as string,
+        }),
       components: {
         edit: {
           PreviewButton: {
             path: '@jhb.software/payload-pages-plugin/client#PreviewButtonField',
+            clientProps: {
+              generatePageURL: pluginConfig.generatePageURL,
+            },
           },
         },
       },
