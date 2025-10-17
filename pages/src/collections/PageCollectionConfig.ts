@@ -53,17 +53,39 @@ export const createPageCollectionConfig = ({
       unique: incomingCollectionConfig.page?.slug?.unique ?? true,
       staticValue: incomingCollectionConfig.page?.slug?.staticValue,
     },
+    preview: incomingCollectionConfig.page?.preview ?? true,
+    livePreview: incomingCollectionConfig.page?.livePreview ?? true,
   }
 
   return {
     ...incomingCollectionConfig,
     admin: {
       ...incomingCollectionConfig.admin,
-      preview: (data) =>
-        pluginConfig.generatePageURL({
-          path: 'path' in data && typeof data.path === 'string' ? data.path : null,
-          preview: true,
-        }),
+      livePreview: {
+        ...incomingCollectionConfig.admin?.livePreview,
+        url:
+          incomingCollectionConfig.admin?.livePreview?.url ??
+          (pageConfig.livePreview
+            ? ({ data, req }) =>
+                pluginConfig.generatePageURL({
+                  path: 'path' in data && typeof data.path === 'string' ? data.path : null,
+                  preview: true,
+                  data: data,
+                  req: req,
+                })
+            : undefined),
+      },
+      preview:
+        incomingCollectionConfig.admin?.preview ??
+        (pageConfig.preview
+          ? (data, options) =>
+              pluginConfig.generatePageURL({
+                path: 'path' in data && typeof data.path === 'string' ? data.path : null,
+                preview: true,
+                data: data,
+                req: options.req,
+              })
+          : undefined),
     },
     custom: {
       ...incomingCollectionConfig.custom,

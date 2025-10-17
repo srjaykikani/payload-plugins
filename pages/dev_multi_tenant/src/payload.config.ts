@@ -1,7 +1,7 @@
 import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 import { Authors } from './collections/authors'
 import { Blogposts } from './collections/blogposts'
@@ -20,16 +20,33 @@ const dirname = path.dirname(filename)
 /**
  * Returns the full frontend URL to the given path. Returns null if the page has no path (yet).
  */
-const generatePageURL = ({
+const generatePageURL = async ({
   path,
   preview,
+  data,
+  req,
 }: {
   path: string | null
   preview: boolean
-}): string | null => {
-  return path && process.env.NEXT_PUBLIC_FRONTEND_URL
-    ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
-    : null
+  data: Record<string, unknown>
+  req: PayloadRequest
+}): Promise<string | null> => {
+  if (data.tenant && typeof data.tenant === 'string') {
+    const tenant = await req.payload.findByID({
+      collection: 'tenants',
+      id: data.tenant,
+      select: {
+        websiteUrl: true,
+      },
+      req,
+    })
+
+    if (tenant && 'websiteUrl' in tenant && tenant.websiteUrl) {
+      return `${tenant.websiteUrl}${preview ? '/preview' : ''}${path}`
+    }
+  }
+
+  return null
 }
 
 export default buildConfig({
@@ -39,11 +56,6 @@ export default buildConfig({
       password: 'test',
     },
     user: 'users',
-    livePreview: {
-      // For testing purposes, we only want to live preview the pages collection
-      collections: ['pages'],
-      url: ({ data }) => generatePageURL({ path: data.path, preview: true }),
-    },
   },
   collections: [
     Pages,

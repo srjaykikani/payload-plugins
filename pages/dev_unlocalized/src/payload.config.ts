@@ -36,11 +36,6 @@ export default buildConfig({
       password: 'test',
     },
     user: 'users',
-    livePreview: {
-      // For testing purposes, we only want to live preview the pages collection
-      collections: ['pages'],
-      url: ({ data }) => generatePageURL({ path: data.path, preview: true }),
-    },
   },
   collections: [
     Pages,
