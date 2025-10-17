@@ -17,38 +17,6 @@ import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-/**
- * Returns the full frontend URL to the given path. Returns null if the page has no path (yet).
- */
-const generatePageURL = async ({
-  path,
-  preview,
-  data,
-  req,
-}: {
-  path: string | null
-  preview: boolean
-  data: Record<string, unknown>
-  req: PayloadRequest
-}): Promise<string | null> => {
-  if (data.tenant && typeof data.tenant === 'string') {
-    const tenant = await req.payload.findByID({
-      collection: 'tenants',
-      id: data.tenant,
-      select: {
-        websiteUrl: true,
-      },
-      req,
-    })
-
-    if (tenant && 'websiteUrl' in tenant && tenant.websiteUrl) {
-      return `${tenant.websiteUrl}${preview ? '/preview' : ''}${path}`
-    }
-  }
-
-  return null
-}
-
 export default buildConfig({
   admin: {
     autoLogin: {
@@ -87,7 +55,24 @@ export default buildConfig({
   localization: false,
   plugins: [
     payloadPagesPlugin({
-      generatePageURL,
+      generatePageURL: async ({ path, preview, data, req }) => {
+        if (data.tenant && typeof data.tenant === 'string') {
+          const tenant = await req.payload.findByID({
+            collection: 'tenants',
+            id: data.tenant,
+            select: {
+              websiteUrl: true,
+            },
+            req,
+          })
+
+          if (tenant && 'websiteUrl' in tenant && tenant.websiteUrl) {
+            return `${tenant.websiteUrl}${preview ? '/preview' : ''}${path}`
+          }
+        }
+
+        return null
+      },
       baseFilter: ({ req }) => {
         const tenant = getTenantFromCookie(req.headers, req.payload.db.defaultIDType)
 

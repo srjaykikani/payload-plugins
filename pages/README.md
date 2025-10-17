@@ -14,8 +14,8 @@ import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 // Add to plugins array
 plugins: [
   payloadPagesPlugin({
-      // Example of a common page URL generation function:
-      generatePageURL: ({ path, preview }: { path: string | null; preview: boolean }) =>
+      // Example generatePageURL function:
+      generatePageURL: ({ path, preview }) =>
         path && process.env.NEXT_PUBLIC_FRONTEND_URL
           ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
           : null,
@@ -100,13 +100,14 @@ const Redirects: RedirectsCollectionConfig = {
 
 ### SEO Plugin Integration
 
-To integrate with the official Payload SEO plugin, use the same `generatePageURL` function you defined for the pages plugin and pass it to the `generateURL` option of the SEO plugin. If your collections are localized, also add the `alternatePathsField` which is exported by the plugin to the fields option of the SEO plugin.
+To integrate with the official Payload SEO plugin, store the `generatePageURL` function you defined for the pages plugin in a variable outside of the Payload config and pass it to the `generateURL` option of the SEO plugin. 
+If your collections are localized, also add the `alternatePathsField` which is exported by the plugin to the fields option of the SEO plugin.
 
 ```ts
 import { alternatePathsField, payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 
-// Define URL generation function once, e.g.:
+// Example generatePageURL function:
 const generatePageURL = ({ path, preview }: {
   path: string | null
   preview: boolean
@@ -163,25 +164,37 @@ export const Pages: PageCollectionConfig = {
 Some features (e.g. the parent and isRootPage fields) internally fetch documents from the database. To ensure only documents from the current tenant are fetched, you need to pass the `baseFilter` function to the plugin config. It receives the current request object and should return a `Where` object which will be added to the query.
 For the validation of the redirects, you need to pass the `redirectValidationFilter` function to the plugin config. It receives the current request object and the document object and should return a `Where` object which will be added to the query.
 
+To generate the URL based on the tenant the page belongs to, pass an async function to the `generatePageURL` option of the plugin config. It receives the current request object and document data so you could for example fetch the tenant from the database and use its website URL.
+
 Example:
 
 ```ts
 import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
 import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
 
-// Define URL generation function
-const generatePageURL = ({ path, preview }: {
-  path: string
-  preview: boolean
-}): string => {
-  return `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
-}
 
 export default buildConfig({
   // ...
   plugins: [
     payloadPagesPlugin({
-      generatePageURL,
+      generatePageURL: async ({ path, preview, data, req }) => {
+        if (data.tenant && typeof data.tenant === 'string') {
+          const tenant = await req.payload.findByID({
+            collection: 'tenants',
+            id: data.tenant,
+            select: {
+              websiteUrl: true,
+            },
+            req,
+          })
+
+          if (tenant && 'websiteUrl' in tenant && tenant.websiteUrl) {
+            return `${tenant.websiteUrl}${preview ? '/preview' : ''}${path}`
+          }
+        }
+
+        return null
+      },
       baseFilter: ({ req }) => {
         const tenant = getTenantFromCookie(req.headers, req.payload.db.defaultIDType)
 

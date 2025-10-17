@@ -14,21 +14,6 @@ import { BlogpostCategories } from './collections/blogpost-categories'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-/**
- * Returns the full frontend URL to the given path. Returns null if the page has no path (yet).
- */
-const generatePageURL = ({
-  path,
-  preview,
-}: {
-  path: string | null
-  preview: boolean
-}): string | null => {
-  return path && process.env.NEXT_PUBLIC_FRONTEND_URL
-    ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
-    : null
-}
-
 export default buildConfig({
   admin: {
     autoLogin: {
@@ -66,7 +51,10 @@ export default buildConfig({
   localization: false,
   plugins: [
     payloadPagesPlugin({
-      generatePageURL,
+      generatePageURL: ({ path, preview }) =>
+        path && process.env.NEXT_PUBLIC_FRONTEND_URL
+          ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+          : null,
     }),
   ],
   async onInit(payload) {
