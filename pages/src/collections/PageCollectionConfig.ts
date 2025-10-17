@@ -1,4 +1,3 @@
-import { ClientCollectionConfig, CollectionConfig } from 'payload'
 import { breadcrumbsField } from '../fields/breadcrumbsField.js'
 import { isRootPageField } from '../fields/isRootPageField.js'
 import { parentField } from '../fields/parentField.js'
@@ -15,8 +14,8 @@ import {
   IncomingPageCollectionConfig,
   PageCollectionConfig,
 } from '../types/PageCollectionConfig.js'
+
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
-import { getPageUrl } from '../utils/getPageUrl.js'
 import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { deleteUnselectedFieldsAfterRead } from '../hooks/deleteUnselectedFieldsAfterRead.js'
 
@@ -55,24 +54,39 @@ export const createPageCollectionConfig = ({
       unique: incomingCollectionConfig.page?.slug?.unique ?? true,
       staticValue: incomingCollectionConfig.page?.slug?.staticValue,
     },
+    preview: incomingCollectionConfig.page?.preview ?? true,
+    livePreview: incomingCollectionConfig.page?.livePreview ?? true,
   }
 
   return {
     ...incomingCollectionConfig,
     admin: {
       ...incomingCollectionConfig.admin,
-      preview: (data) =>
-        getPageUrl({
-          path: data.path as string,
-          preview: true,
-        }) as string,
-      components: {
-        edit: {
-          PreviewButton: {
-            path: '@jhb.software/payload-pages-plugin/client#PreviewButtonField',
-          },
-        },
+      livePreview: {
+        ...incomingCollectionConfig.admin?.livePreview,
+        url:
+          incomingCollectionConfig.admin?.livePreview?.url ??
+          (pageConfig.livePreview
+            ? ({ data, req }) =>
+                pluginConfig.generatePageURL({
+                  path: 'path' in data && typeof data.path === 'string' ? data.path : null,
+                  preview: true,
+                  data: data,
+                  req: req,
+                })
+            : undefined),
       },
+      preview:
+        incomingCollectionConfig.admin?.preview ??
+        (pageConfig.preview
+          ? (data, options) =>
+              pluginConfig.generatePageURL({
+                path: 'path' in data && typeof data.path === 'string' ? data.path : null,
+                preview: true,
+                data: data,
+                req: options.req,
+              })
+          : undefined),
     },
     custom: {
       ...incomingCollectionConfig.custom,
@@ -138,45 +152,4 @@ export const createPageCollectionConfig = ({
       ),
     ],
   }
-}
-
-/** Checks if the config is a PageCollectionConfig. */
-export const isPageCollectionConfig = (
-  config: CollectionConfig | ClientCollectionConfig,
-): config is PageCollectionConfig => {
-  if (!config) {
-    console.error('config is not defined')
-    return false
-  }
-
-  return 'page' in config && typeof config.page === 'object'
-}
-
-/**
- * Returns the PageCollectionConfig or null if the config is not a PageCollectionConfig.
- *
- * This provides type-safe access to the page attributes.
- */
-export const asPageCollectionConfig = (
-  config: CollectionConfig | ClientCollectionConfig,
-): PageCollectionConfig | null => {
-  if (isPageCollectionConfig(config)) {
-    return config
-  }
-  return null
-}
-
-/**
- * Returns the PageCollectionConfig or throws an error if the config is not a PageCollectionConfig.
- *
- * This provides type-safe access to the page attributes.
- */
-export const asPageCollectionConfigOrThrow = (
-  config: CollectionConfig | ClientCollectionConfig,
-): PageCollectionConfig => {
-  if (isPageCollectionConfig(config)) {
-    return config
-  }
-
-  throw new Error('Collection is not a page collection')
 }

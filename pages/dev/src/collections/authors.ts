@@ -14,6 +14,9 @@ export const Authors: PageCollectionConfig = {
     breadcrumbs: {
       labelField: 'name',
     },
+    // Example: a collection where preview and live preview are disabled:
+    livePreview: false,
+    preview: false,
   },
   fields: [
     {

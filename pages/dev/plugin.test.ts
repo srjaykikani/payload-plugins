@@ -1,4 +1,4 @@
-import payload, { ValidationError } from 'payload'
+import payload, { CollectionSlug, ValidationError } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from 'vitest'
 import config from './src/payload.config'
 
@@ -7,11 +7,9 @@ beforeAll(async () => {
     config: config,
   })
 
+  // clear all collections except users
   for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
-    await payload.delete({
-      collection: collection.slug,
-      where: {},
-    })
+    await deleteCollection(collection.slug)
   }
 })
 
@@ -25,12 +23,7 @@ afterAll(async () => {
 
 describe('Path and breadcrumb virtual fields are returned correctly for find operation.', () => {
   describe('The root page document', () => {
-    beforeEach(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
-    })
+    beforeEach(async () => await deleteCollection('pages'))
 
     test('has the correct virtual fields when only one locale is present', async () => {
       const locale = 'de'
@@ -63,15 +56,17 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
       expect(removeIdsFromArray(rootPage.breadcrumbs)).toEqual(
         removeIdsFromArray([
           {
+            id: undefined,
             path,
             label: rootPageData.title,
             slug: rootPageData.slug,
           },
         ]),
       )
-      expect(removeIdsFromArray(rootPage.meta.alternatePaths)).toEqual(
+      expect(removeIdsFromArray(rootPage.meta?.alternatePaths)).toEqual(
         removeIdsFromArray([
           {
+            id: undefined,
             hreflang: locale,
             path,
           },
@@ -184,10 +179,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     let nestedPageId: string | number | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
+      await deleteCollection('pages')
 
       // ################# Seed the database for the tests of this group #################
 
@@ -401,10 +393,7 @@ describe('Path and breadcrumb virtual fields are returned correctly for find ope
     let nestedPageId: string | undefined // will be set in the beforeEach hook
 
     beforeAll(async () => {
-      await payload.delete({
-        collection: 'pages',
-        where: {},
-      })
+      await deleteCollection('pages')
 
       // ################# Seed the database for the tests of this group #################
 
@@ -826,12 +815,9 @@ describe('Slug field behaves as expected for create and update operations', () =
 
 describe('Parent deletion prevention hook', () => {
   beforeEach(async () => {
-    // Clean up all collections before each test
+    // Clean up all collections except users before each test
     for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
-      await payload.delete({
-        collection: collection.slug,
-        where: {},
-      })
+      await deleteCollection(collection.slug)
     }
   })
 
@@ -1109,11 +1095,7 @@ describe('Parent deletion prevention hook', () => {
       })
 
       try {
-        // Clear existing pages first
-        const existingPages = await payload.find({ collection: 'pages', limit: 0, select: {} })
-        for (const page of existingPages.docs) {
-          await payload.delete({ collection: 'pages', id: page.id })
-        }
+        await deleteCollection('pages')
 
         // Create parent page
         const parentPage = await payload.create({
@@ -1267,6 +1249,14 @@ describe('Parent deletion prevention hook', () => {
 describe('Select during read operation', () => {
   beforeEach(async () => {
     await payload.delete({
+      collection: 'country-travel-tips',
+      where: {},
+    })
+    await payload.delete({
+      collection: 'countries',
+      where: {},
+    })
+    await payload.delete({
       collection: 'pages',
       where: {},
     })
@@ -1276,6 +1266,69 @@ describe('Select during read operation', () => {
         isRootPage: { equals: true },
       },
     })
+  })
+
+  test('findByID with empty select only returns id', async () => {
+    // Create root page
+    const rootPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Root Page',
+        slug: '',
+        content: 'Root content',
+        isRootPage: true,
+      },
+    })
+
+    // Create child page
+    const childPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Child Page',
+        slug: 'child-page',
+        content: 'Child content',
+        parent: rootPage.id,
+      },
+    })
+
+    const fetchedWithAllFields = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 0,
+    })
+
+    expect(fetchedWithAllFields).toBeDefined()
+
+    // ################ Test empty select depth 0 ################
+    const fetchedWithEmptySelect = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 0,
+      select: {},
+    })
+
+    expect(fetchedWithEmptySelect).toBeDefined()
+    expect(Object.keys(fetchedWithEmptySelect)).toEqual(['id']) // has correct fields
+    expect(fetchedWithEmptySelect.id).toEqual(fetchedWithAllFields.id) // id is correct
+
+    // ################ Test empty select depth 1 ################
+    const fetchedWithEmptySelectDepth1 = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 1,
+      select: {},
+    })
+
+    expect(fetchedWithEmptySelectDepth1).toBeDefined()
+    expect(Object.keys(fetchedWithEmptySelectDepth1)).toEqual(['id']) // has correct fields
+    expect(fetchedWithEmptySelectDepth1.id).toEqual(fetchedWithAllFields.id) // id is correct
   })
 
   test('Respect selection (field: true) of the virtual fields', async () => {
@@ -1669,6 +1722,132 @@ describe('Select during read operation', () => {
       removeIdsFromArray(fetchedWithAllFields.meta.alternatePaths),
     ) // alternatePaths still generated
   })
+
+  test('parent relationship field is correctly populated when using select and depth 1', async () => {
+    // Create root page
+    const rootPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Root Page',
+        slug: '',
+        content: 'Root content',
+        isRootPage: true,
+      },
+    })
+
+    // Create child page
+    const childPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      // @ts-expect-error
+      data: {
+        title: 'Child Page',
+        slug: 'child-page',
+        content: 'Child content',
+        parent: rootPage.id,
+      },
+    })
+
+    const fetchedWithAllFields = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      depth: 1,
+    })
+
+    expect(fetchedWithAllFields).toBeDefined()
+
+    const fetchWithPathAndParent = await payload.findByID({
+      collection: 'pages',
+      id: childPage.id,
+      locale: 'de',
+      // important, set depth to one to populate the parent field
+      depth: 1,
+      select: {
+        path: true,
+        parent: true,
+      },
+    })
+
+    expect(fetchWithPathAndParent).toBeDefined()
+
+    // check if the parent field is still fully populated
+    // this test is important because it ensures that the hooks that adjust the selection do not
+    // affect nested find calls (populating the parent in this case)
+    expect(Object.keys(fetchWithPathAndParent.parent!).sort()).toStrictEqual(
+      Object.keys(fetchedWithAllFields.parent!).sort(),
+    )
+  })
+
+  test('parent relationship field from different collection with different parent field slug is correctly populated when using select and depth 1', async () => {
+    // Create countries page in pages collection
+    const countriesPage = await payload.create({
+      collection: 'pages',
+      locale: 'de',
+      data: {
+        title: 'Countries',
+        slug: 'countries',
+        content: 'Countries content',
+      },
+    })
+
+    // Create country page
+    const country = await payload.create({
+      collection: 'countries',
+      locale: 'de',
+      data: {
+        title: 'Germany',
+        slug: 'germany',
+        content: 'Country content',
+        parent: countriesPage.id,
+      },
+    })
+
+    // Create country travel tips page
+    const travelTips = await payload.create({
+      collection: 'country-travel-tips',
+      locale: 'de',
+      data: {
+        title: 'Travel Tips for Germany',
+        content: 'Travel tips content',
+        country: country.id,
+      },
+    })
+
+    const fetchedWithAllFields = await payload.findByID({
+      collection: 'country-travel-tips',
+      id: travelTips.id,
+      locale: 'de',
+      depth: 1,
+    })
+
+    expect(fetchedWithAllFields).toBeDefined()
+
+    const fetchWithPathAndParent = await payload.findByID({
+      collection: 'country-travel-tips',
+      id: travelTips.id,
+      locale: 'de',
+      // important, set depth to one to populate the parent (country) field
+      depth: 1,
+      select: {
+        path: true,
+        country: true,
+      },
+    })
+
+    expect(fetchWithPathAndParent).toBeDefined()
+
+    expect(fetchWithPathAndParent.path).toEqual(fetchedWithAllFields.path)
+
+    // check if the parent field is still fully populated
+    // this test is important because it ensures that the hooks that adjust the selection do not
+    // affect nested find calls (populating the parent in this case)
+    expect(Object.keys(fetchWithPathAndParent.country!).sort()).toStrictEqual(
+      Object.keys(fetchedWithAllFields.country!).sort(),
+    )
+  })
 })
 
 /**
@@ -1678,4 +1857,15 @@ const removeIdsFromArray = <T extends { id?: any; [key: string]: any }>(
   array: T[],
 ): Omit<T, 'id'>[] => {
   return array.map(({ id, ...rest }) => rest)
+}
+
+/**
+ * Helper function to delete all documents from a collection.
+ */
+const deleteCollection = async (collection: CollectionSlug) => {
+  // use db.deleteMany instead of payload.delete to avoid running hooks
+  await payload.db.deleteMany({
+    collection: collection,
+    where: {},
+  })
 }
