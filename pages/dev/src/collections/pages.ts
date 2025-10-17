@@ -5,11 +5,6 @@ export const Pages: PageCollectionConfig = {
   admin: {
     useAsTitle: 'title',
   },
-  access: {
-    update: () => false,
-    create: () => false,
-    delete: () => false,
-  },
   page: {
     parent: {
       collection: 'pages',

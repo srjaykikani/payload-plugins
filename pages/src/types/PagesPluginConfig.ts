@@ -41,13 +41,13 @@ export type PagesPluginConfig = {
    * @param args - The arguments for URL generation
    * @param args.path - The path to the page (always starts with '/')
    * @param args.preview - Whether this is a preview URL
-   * @returns The full URL to the frontend page
+   * @returns The full URL to the frontend page or null/undefined to not render the preview button.
    *
    * @example
    * ```ts
    * generatePageURL: ({ path, preview }) =>
-   *   `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+   *   path ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}` : null
    * ```
    */
-  generatePageURL: (args: { path: string; preview: boolean }) => string
+  generatePageURL: (args: { path: string | null; preview: boolean }) => string | null
 }

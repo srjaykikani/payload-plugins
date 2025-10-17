@@ -61,19 +61,9 @@ export const createPageCollectionConfig = ({
       ...incomingCollectionConfig.admin,
       preview: (data) =>
         pluginConfig.generatePageURL({
-          path: data.path as string,
+          path: 'path' in data && typeof data.path === 'string' ? data.path : null,
           preview: true,
         }),
-      components: {
-        edit: {
-          PreviewButton: {
-            path: '@jhb.software/payload-pages-plugin/client#PreviewButtonField',
-            clientProps: {
-              generatePageURL: pluginConfig.generatePageURL,
-            },
-          },
-        },
-      },
     },
     custom: {
       ...incomingCollectionConfig.custom,

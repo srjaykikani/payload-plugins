@@ -13,10 +13,24 @@ import { BlogpostCategories } from './collections/blogpost-categories'
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import Tenants from './collections/tenants'
 import { getTenantFromCookie } from '@payloadcms/plugin-multi-tenant/utilities'
-import { generatePageURL } from './utils/generatePageURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+/**
+ * Returns the full frontend URL to the given path. Returns null if the page has no path (yet).
+ */
+const generatePageURL = ({
+  path,
+  preview,
+}: {
+  path: string | null
+  preview: boolean
+}): string | null => {
+  return path && process.env.NEXT_PUBLIC_FRONTEND_URL
+    ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+    : null
+}
 
 export default buildConfig({
   admin: {
