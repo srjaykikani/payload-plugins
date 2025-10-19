@@ -1,5 +1,7 @@
-import { GeocodingFieldComponent as GeocodingFieldComponent_f511c7a8656c9889db9f167d5c72bd78 } from '@jhb.software/payload-geocoding-plugin/client'
+import { AltTextField as AltTextField_442f943cf467527e43405e7c711d3eed } from '@jhb.software/payload-ai-alt-text-plugin/client'
+import { BulkUpdateAltTextsButton as BulkUpdateAltTextsButton_442f943cf467527e43405e7c711d3eed } from '@jhb.software/payload-ai-alt-text-plugin/client'
 
 export const importMap = {
-  "@jhb.software/payload-geocoding-plugin/client#GeocodingFieldComponent": GeocodingFieldComponent_f511c7a8656c9889db9f167d5c72bd78
+  "@jhb.software/payload-ai-alt-text-plugin/client#AltTextField": AltTextField_442f943cf467527e43405e7c711d3eed,
+  "@jhb.software/payload-ai-alt-text-plugin/client#BulkUpdateAltTextsButton": BulkUpdateAltTextsButton_442f943cf467527e43405e7c711d3eed
 }

@@ -8,6 +8,7 @@ import { getPayload } from 'payload'
 import { z } from 'zod'
 
 import { getGenerationCost } from '../utilities/getGenerationCost'
+import { getImageDataUrl } from '../utilities/getImageDataUrl'
 import { getImageThumbnail } from '../utilities/getImageThumbnail'
 import { getUserFromHeaders } from '../utilities/getUserFromHeaders'
 import type { MediaDocument } from '../types/MediaDocument'
@@ -53,6 +54,12 @@ export async function generateAltText({
 
     const thumbnailUrl = getImageThumbnail(imageDoc as MediaDocument)
 
+    // For local development (http://), convert image to base64
+    // OpenAI cannot access localhost URLs, so we need to send the image data directly
+    const imageUrl = thumbnailUrl.startsWith('http://')
+      ? await getImageDataUrl(thumbnailUrl)
+      : thumbnailUrl
+
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     })
@@ -88,7 +95,7 @@ export async function generateAltText({
           content: [
             {
               type: 'image_url',
-              image_url: { url: thumbnailUrl },
+              image_url: { url: imageUrl },
             },
             ...('filename' in imageDoc && imageDoc.filename
               ? [
