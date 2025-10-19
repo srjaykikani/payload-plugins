@@ -20,8 +20,8 @@ export function getImageThumbnail(media: MediaDocument): string {
     url = `${process.env.NEXT_PUBLIC_CMS_URL}${url}`
   }
 
-  // Validate HTTPS
-  if (!url.startsWith('https://')) {
+  // Validate URL protocol (allow http:// for local development)
+  if (!url.startsWith('https://') && !url.startsWith('http://')) {
     throw new Error(`Invalid URL for media: ${url}`)
   }
 
