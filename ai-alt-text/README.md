@@ -25,8 +25,13 @@ export default buildConfig({
 ### 2. Environment Variables
 
 ```bash
+# Required
 OPENAI_API_KEY=your-openai-api-key
-NEXT_PUBLIC_CMS_URL=https://your-cms-url.com
+
+# Optional (with defaults)
+NEXT_PUBLIC_CMS_URL=https://your-cms-url.com  # For image URL generation
+NEXT_PUBLIC_OPENAI_MODEL=gpt-4o-mini          # Options: gpt-4o-mini, gpt-4o-2024-08-06 (default: gpt-4o-mini)
+OPENAI_CONCURRENCY=16                          # Max concurrent requests for bulk generation (default: 16)
 ```
 
 ### 3. Add field to media collection
@@ -60,19 +65,30 @@ const Media = injectBulkGenerateButton({
 
 ## Configuration
 
+### Plugin Options
+
 ```typescript
 payloadAiAltTextPlugin({
-  enabled: true,
-  defaultModel: 'gpt-4o-mini',
-  maxConcurrency: 16,
+  enabled: true,  // Enable/disable the plugin
 })
+```
 
+### Field Options
+
+```typescript
 aiAltTextField({
   label: 'Image Description',
   required: true,
   localized: true,
 })
 ```
+
+### Runtime Configuration
+
+Configure behavior via environment variables:
+
+- `NEXT_PUBLIC_OPENAI_MODEL` - Choose between `gpt-4o-mini` (faster, cheaper) or `gpt-4o-2024-08-06` (more accurate)
+- `OPENAI_CONCURRENCY` - Adjust concurrent requests for bulk operations (higher = faster but more API load)
 
 ## License
 

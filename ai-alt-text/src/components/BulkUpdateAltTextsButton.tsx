@@ -24,10 +24,14 @@ function BulkUpdateAltTextsButton() {
 
     startTransition(async () => {
       try {
+        const model =
+          (process.env.NEXT_PUBLIC_OPENAI_MODEL as 'gpt-4o-mini' | 'gpt-4o-2024-08-06') ||
+          'gpt-4o-mini'
+
         const { updatedDocs, totalDocs, erroredDocs } = await bulkUpdateAltTexts({
           collection: collectionSlug,
           ids: selectedIds,
-          model: 'gpt-4o-mini',
+          model,
         })
 
         if (erroredDocs.length > 0) {

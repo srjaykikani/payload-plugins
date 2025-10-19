@@ -22,11 +22,15 @@ function GenerateAltTextButton() {
 
     startTransition(async () => {
       try {
+        const model =
+          (process.env.NEXT_PUBLIC_OPENAI_MODEL as 'gpt-4o-mini' | 'gpt-4o-2024-08-06') ||
+          'gpt-4o-mini'
+
         const data = await generateAltText({
           collection: collectionSlug,
           id: id as string,
           context,
-          model: 'gpt-4o-mini',
+          model,
           locale: locale.code,
         })
 

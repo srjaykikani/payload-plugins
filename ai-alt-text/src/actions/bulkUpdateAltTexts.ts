@@ -40,6 +40,8 @@ export async function bulkUpdateAltTexts({
     let updatedDocs = 0
     const erroredDocs: string[] = []
 
+    const concurrency = parseInt(process.env.OPENAI_CONCURRENCY || '16', 10)
+
     await pMap(
       ids,
       async (id) => {
@@ -54,7 +56,7 @@ export async function bulkUpdateAltTexts({
           erroredDocs.push(id)
         }
       },
-      { concurrency: 16 },
+      { concurrency },
     )
 
     if (erroredDocs.length > 0) {
@@ -129,9 +131,9 @@ async function generateAndUpdateAltText({
       {
         role: 'system',
         content: `
-          Expert at creating localized alt text in English and German.
+          Expert at creating localized alt text for multiple languages.
 
-          Provide for both languages:
+          For each requested language, provide:
           - Concise alt text (1-2 sentences)
           - Keywords describing content
 
