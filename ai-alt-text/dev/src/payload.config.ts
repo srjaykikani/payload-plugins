@@ -1,9 +1,9 @@
-import { payloadGeocodingPlugin } from '@jhb.software/payload-geocoding-plugin'
+import { payloadAiAltTextPlugin } from '@jhb.software/payload-ai-alt-text-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import { Pages } from './collection/pages'
+import { Media } from './collections/Media'
 import { testEmailAdapter } from './emailAdapter'
 
 const filename = fileURLToPath(import.meta.url)
@@ -17,13 +17,18 @@ export default buildConfig({
     },
     user: 'users',
   },
+  localization: {
+    locales: ['en', 'de'],
+    defaultLocale: 'en',
+    fallback: true,
+  },
   collections: [
     {
       slug: 'users',
       auth: true,
       fields: [],
     },
-    Pages,
+    Media,
   ],
   db: mongooseAdapter({
     url: process.env.DATABASE_URI!,
@@ -33,7 +38,13 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  plugins: [payloadGeocodingPlugin({})],
+  plugins: [
+    payloadAiAltTextPlugin({
+      enabled: true,
+      defaultModel: 'gpt-4o-mini',
+      maxConcurrency: 5,
+    }),
+  ],
   async onInit(payload) {
     const existingUsers = await payload.find({
       collection: 'users',
