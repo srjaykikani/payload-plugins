@@ -1,0 +1,57 @@
+'use client'
+
+import { Button, toast, useSelection } from '@payloadcms/ui'
+import { useRouter } from 'next/navigation'
+import { useTransition } from 'react'
+
+import { bulkUpdateAltTexts } from '../actions/bulkUpdateAltTexts'
+
+function BulkUpdateAltTextsButton() {
+  const [isPending, startTransition] = useTransition()
+  const { selected, setSelection } = useSelection()
+  const router = useRouter()
+
+  const selectedIds = Array.from(selected.entries())
+    .filter(([, isSelected]) => isSelected)
+    .map(([id]) => id) as string[]
+
+  const handleBulkGenerate = async () => {
+    startTransition(async () => {
+      try {
+        const { updatedDocs, totalDocs, erroredDocs } = await bulkUpdateAltTexts({
+          collection: 'media',
+          ids: selectedIds,
+          model: 'gpt-4o-mini',
+        })
+
+        if (erroredDocs.length > 0) {
+          toast.error(`Failed for ${erroredDocs.length} images`)
+        }
+
+        if (updatedDocs === totalDocs) {
+          toast.success(`${updatedDocs} of ${totalDocs} updated`)
+        } else {
+          toast.warning(`${updatedDocs} of ${totalDocs} updated`)
+        }
+
+        // Deselect all
+        selectedIds.forEach((id) => setSelection(id))
+
+        router.refresh()
+      } catch (error) {
+        console.error('Error:', error)
+        toast.error('Error generating alt text')
+      }
+    })
+  }
+
+  return selectedIds.length > 0 ? (
+    <div style={{ display: 'flex', justifyContent: 'right' }} className="m-0">
+      <Button onClick={handleBulkGenerate} disabled={isPending} className="m-0">
+        {isPending ? 'Generating...' : `AI-Generate for ${selectedIds.length}`}
+      </Button>
+    </div>
+  ) : null
+}
+
+export default BulkUpdateAltTextsButton
