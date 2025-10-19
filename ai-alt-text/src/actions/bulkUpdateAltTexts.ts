@@ -11,6 +11,8 @@ import { z } from 'zod'
 import { getGenerationCost } from '../utilities/getGenerationCost'
 import { getImageThumbnail } from '../utilities/getImageThumbnail'
 import { getUserFromHeaders } from '../utilities/getUserFromHeaders'
+import type { MediaDocument } from '../types/MediaDocument'
+import type { AltTextPluginConfig } from '../types/AltTextPluginConfig'
 
 /**
  * Generates and updates alt text for multiple images in all locales.
@@ -40,7 +42,14 @@ export async function bulkUpdateAltTexts({
     let updatedDocs = 0
     const erroredDocs: string[] = []
 
-    const concurrency = parseInt(process.env.OPENAI_CONCURRENCY || '16', 10)
+    // Get plugin config from payload config (like pages plugin does)
+    const pluginConfig = payload.config.custom?.aiAltTextPluginConfig as
+      | Required<AltTextPluginConfig>
+      | undefined
+
+    // Use config, then env var, then fallback to default
+    const concurrency =
+      parseInt(process.env.OPENAI_CONCURRENCY || '', 10) || pluginConfig?.maxConcurrency || 16
 
     await pMap(
       ids,
@@ -97,7 +106,7 @@ async function generateAndUpdateAltText({
     throw new Error('Image not found')
   }
 
-  const thumbnailUrl = getImageThumbnail(imageDoc as any)
+  const thumbnailUrl = getImageThumbnail(imageDoc as MediaDocument)
 
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,

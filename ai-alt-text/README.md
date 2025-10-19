@@ -69,9 +69,19 @@ const Media = injectBulkGenerateButton({
 
 ```typescript
 payloadAiAltTextPlugin({
-  enabled: true,  // Enable/disable the plugin
+  enabled: true,                           // Enable/disable the plugin (default: true)
+  defaultModel: 'gpt-4o-mini',            // Default OpenAI model (default: 'gpt-4o-mini')
+  maxConcurrency: 16,                      // Max concurrent requests for bulk operations (default: 16)
+  models: ['gpt-4o-mini', 'gpt-4o-2024-08-06'], // Allowed models (default: both)
 })
 ```
+
+**Configuration Priority:**
+1. Environment variables (highest priority)
+   - `NEXT_PUBLIC_OPENAI_MODEL` - Overrides `defaultModel`
+   - `OPENAI_CONCURRENCY` - Overrides `maxConcurrency`
+2. Plugin config options
+3. Built-in defaults (lowest priority)
 
 ### Field Options
 

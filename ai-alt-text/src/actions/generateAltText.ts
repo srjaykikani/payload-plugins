@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { getGenerationCost } from '../utilities/getGenerationCost'
 import { getImageThumbnail } from '../utilities/getImageThumbnail'
 import { getUserFromHeaders } from '../utilities/getUserFromHeaders'
+import type { MediaDocument } from '../types/MediaDocument'
 
 /**
  * Generates alt text for a single image using OpenAI Vision API.
@@ -50,7 +51,7 @@ export async function generateAltText({
       throw new Error('Image not found')
     }
 
-    const thumbnailUrl = getImageThumbnail(imageDoc as any)
+    const thumbnailUrl = getImageThumbnail(imageDoc as MediaDocument)
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,

@@ -13,6 +13,14 @@ export const payloadAiAltTextPlugin =
       return config
     }
 
+    // Store plugin config with defaults in config.custom for access in hooks/actions
+    const pluginConfigWithDefaults: Required<AltTextPluginConfig> = {
+      enabled: pluginOptions.enabled ?? true,
+      models: pluginOptions.models ?? ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
+      maxConcurrency: pluginOptions.maxConcurrency ?? 16,
+      defaultModel: pluginOptions.defaultModel ?? 'gpt-4o-mini',
+    }
+
     config.onInit = async (payload) => {
       if (incomingConfig.onInit) {
         await incomingConfig.onInit(payload)
@@ -30,5 +38,12 @@ export const payloadAiAltTextPlugin =
       }
     }
 
-    return config
+    return {
+      ...config,
+      custom: {
+        ...config.custom,
+        // Make plugin config available in hooks/actions (like pages plugin does)
+        aiAltTextPluginConfig: pluginConfigWithDefaults,
+      },
+    }
   }

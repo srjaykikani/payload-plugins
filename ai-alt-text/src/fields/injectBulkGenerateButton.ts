@@ -1,8 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-export function injectBulkGenerateButton(
-  collectionConfig: CollectionConfig,
-): CollectionConfig {
+export function injectBulkGenerateButton(collectionConfig: CollectionConfig): CollectionConfig {
   return {
     ...collectionConfig,
     admin: {

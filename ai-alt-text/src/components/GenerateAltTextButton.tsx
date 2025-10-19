@@ -22,6 +22,8 @@ function GenerateAltTextButton() {
 
     startTransition(async () => {
       try {
+        // Use env var if set, otherwise use plugin config default (gpt-4o-mini)
+        // Plugin config is accessed server-side in the action
         const model =
           (process.env.NEXT_PUBLIC_OPENAI_MODEL as 'gpt-4o-mini' | 'gpt-4o-2024-08-06') ||
           'gpt-4o-mini'

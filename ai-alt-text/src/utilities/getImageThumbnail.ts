@@ -1,14 +1,7 @@
-type MediaDoc = {
-  url?: string
-  sizes?: {
-    sm?: {
-      url?: string
-    }
-  }
-}
+import type { MediaDocument } from '../types/MediaDocument'
 
 /** Extracts the thumbnail URL from a media document. */
-export function getImageThumbnail(media: MediaDoc): string {
+export function getImageThumbnail(media: MediaDocument): string {
   let url = media.url
 
   // Prefer small size to reduce costs
