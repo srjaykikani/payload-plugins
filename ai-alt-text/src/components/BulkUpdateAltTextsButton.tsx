@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, toast, useSelection } from '@payloadcms/ui'
+import { Button, toast, useDocumentInfo, useSelection } from '@payloadcms/ui'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
@@ -9,6 +9,7 @@ import { bulkUpdateAltTexts } from '../actions/bulkUpdateAltTexts'
 function BulkUpdateAltTextsButton() {
   const [isPending, startTransition] = useTransition()
   const { selected, setSelection } = useSelection()
+  const { collectionSlug } = useDocumentInfo()
   const router = useRouter()
 
   const selectedIds = Array.from(selected.entries())
@@ -16,10 +17,15 @@ function BulkUpdateAltTextsButton() {
     .map(([id]) => id) as string[]
 
   const handleBulkGenerate = async () => {
+    if (!collectionSlug) {
+      toast.error('Cannot determine collection')
+      return
+    }
+
     startTransition(async () => {
       try {
         const { updatedDocs, totalDocs, erroredDocs } = await bulkUpdateAltTexts({
-          collection: 'media',
+          collection: collectionSlug,
           ids: selectedIds,
           model: 'gpt-4o-mini',
         })
