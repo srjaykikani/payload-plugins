@@ -22,10 +22,32 @@ export const Media: CollectionConfig = injectBulkGenerateButton({
     mimeTypes: ['image/*'],
   },
   fields: [
+    {
+      name: 'context',
+      label: 'Context',
+      type: 'text',
+      required: false,
+      localized: true,
+      admin: {
+        description:
+          'Details not visible in the image (such as the location or event). Used to enhance AI-generated alt text with additional context.',
+      },
+    },
     // CRITICAL: Use plugin's field factory
     aiAltTextField({
       localized: true, // Test localization support
     }),
+    {
+      name: 'keywords',
+      label: 'Keywords',
+      type: 'text',
+      hasMany: true,
+      required: false,
+      localized: true,
+      admin: {
+        description: 'Keywords describing the image content',
+      },
+    },
     // Additional field for testing
     {
       name: 'title',

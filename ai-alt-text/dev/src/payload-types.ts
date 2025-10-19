@@ -143,7 +143,15 @@ export interface User {
  */
 export interface Media {
   id: string;
+  /**
+   * Details not visible in the image (such as the location or event). Used to enhance AI-generated alt text with additional context.
+   */
+  context?: string | null;
   alt: string;
+  /**
+   * Keywords describing the image content
+   */
+  keywords?: string[] | null;
   title?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -259,7 +267,9 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  context?: T;
   alt?: T;
+  keywords?: T;
   title?: T;
   updatedAt?: T;
   createdAt?: T;

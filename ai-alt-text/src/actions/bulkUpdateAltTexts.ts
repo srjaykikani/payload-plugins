@@ -209,16 +209,16 @@ async function generateAndUpdateAltText({
       typeof localeResult.altText === 'string' &&
       Array.isArray(localeResult.keywords)
     ) {
-      // @ts-ignore - locale and data types vary by project configuration
       await payload.update({
         collection,
         id,
-        locale,
+        // Type assertion needed as locale types vary by project
+        ...(locale ? { locale: locale as Parameters<typeof payload.update>[0]['locale'] } : {}),
         data: {
           alt: localeResult.altText,
           keywords: localeResult.keywords,
         },
-      })
+      } as Parameters<typeof payload.update>[0])
     }
   }
 }
