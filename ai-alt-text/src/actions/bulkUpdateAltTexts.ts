@@ -32,7 +32,7 @@ export async function bulkUpdateAltTexts({
   erroredDocs: string[]
 }> {
   try {
-    // @ts-expect-error - User's project will have @payload-config
+    // @ts-ignore - User's project will have @payload-config
     const payload = await getPayload({ config: await import('@payload-config') })
     const user = await getUserFromHeaders({ payload })
 
@@ -139,7 +139,7 @@ async function generateAndUpdateAltText({
   })
   const schema = z.object(localeSchemaObj)
 
-  // @ts-expect-error - parse method exists in openai 4.77+
+  // @ts-ignore - parse method exists in openai 4.77+
   const response = await openai.chat.completions.parse({
     model,
     messages: [
