@@ -42,6 +42,7 @@ export default buildConfig({
     payloadAiAltTextPlugin({
       enabled: true,
       openAIApiKey: process.env.OPENAI_API_KEY || '',
+      collections: ['media'], // Specify which collections should have AI alt text
       defaultModel: 'gpt-4o-mini',
       maxConcurrency: 5,
     }),

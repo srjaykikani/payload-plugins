@@ -51,14 +51,14 @@ describe('AI Alt Text Plugin', () => {
       expect(altField).toBeDefined()
       expect(altField.type).toBe('textarea')
       expect(altField.localized).toBe(true)
-      expect(altField.required).toBe(true)
+      expect(altField.required).toBe(false) // Alt text is not required when creating a document
     })
 
     it('should have custom AltTextField component configured', () => {
       const mediaCollection = payload.collections.media
       const altField = mediaCollection.config.fields.find((f: any) => f.name === 'alt')
       expect(altField.admin.components.Field).toBeDefined()
-      expect(altField.admin.components.Field).toContain('AltTextField')
+      expect(altField.admin.components.Field.exportName).toBe('AltTextField')
     })
 
     it('should have bulk generate button injected', () => {

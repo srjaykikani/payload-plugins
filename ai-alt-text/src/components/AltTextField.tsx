@@ -1,13 +1,19 @@
 'use client'
 
 import { FieldLabel, TextareaInput, useDocumentInfo, useField } from '@payloadcms/ui'
-import type { TextFieldClientComponent } from 'payload'
+import type { TextareaFieldClientComponent } from 'payload'
 
 import { GenerateAltTextButton } from './GenerateAltTextButton'
 
-export function AltTextField(clientProps: TextFieldClientComponent) {
-  // @ts-expect-error - Payload types
-  const { field, path } = clientProps
+export type AltTextFieldProps = {
+  openAIApiKey: string
+  defaultModel: string
+  models: string[]
+}
+
+export const AltTextField: TextareaFieldClientComponent = (props) => {
+  const { field, path } = props as any
+  const customProps = (props as any).clientProps as AltTextFieldProps
 
   const { value, setValue } = useField<string>({ path })
   const { id } = useDocumentInfo()

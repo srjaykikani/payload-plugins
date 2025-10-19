@@ -6,6 +6,9 @@ export type AltTextPluginConfig = {
   /** OpenAI API key for authentication. Required when enabled is true. */
   openAIApiKey?: string
 
+  /** Collection slugs to enable AI alt text generation for. */
+  collections?: string[]
+
   /** Available models for alt text generation. */
   models?: Array<'gpt-4o-mini' | 'gpt-4o-2024-08-06'>
 

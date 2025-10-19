@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
-import { aiAltTextField, injectBulkGenerateButton } from '@jhb.software/payload-ai-alt-text-plugin'
 
-export const Media: CollectionConfig = injectBulkGenerateButton({
+export const Media: CollectionConfig = {
   slug: 'media',
   upload: {
     // Configure image sizes for testing thumbnail generation
@@ -22,32 +21,7 @@ export const Media: CollectionConfig = injectBulkGenerateButton({
     mimeTypes: ['image/*'],
   },
   fields: [
-    {
-      name: 'context',
-      label: 'Context',
-      type: 'text',
-      required: false,
-      localized: true,
-      admin: {
-        description:
-          'Details not visible in the image (such as the location or event). Used to enhance AI-generated alt text with additional context.',
-      },
-    },
-    // CRITICAL: Use plugin's field factory
-    aiAltTextField({
-      localized: true, // Test localization support
-    }),
-    {
-      name: 'keywords',
-      label: 'Keywords',
-      type: 'text',
-      hasMany: true,
-      required: false,
-      localized: true,
-      admin: {
-        description: 'Keywords describing the image content',
-      },
-    },
+    // The plugin will automatically inject context, alt, and keywords fields
     // Additional field for testing
     {
       name: 'title',
@@ -55,4 +29,4 @@ export const Media: CollectionConfig = injectBulkGenerateButton({
       localized: true,
     },
   ],
-})
+}
