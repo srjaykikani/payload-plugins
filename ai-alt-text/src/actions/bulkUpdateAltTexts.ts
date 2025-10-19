@@ -101,17 +101,26 @@ async function generateAndUpdateAltText({
     apiKey: process.env.OPENAI_API_KEY,
   })
 
-  // Assuming en and de locales - adjust as needed
-  const schema = z.object({
-    en: z.object({
+  // Get locales from Payload config
+  const locales = payload.config.localization
+    ? (payload.config.localization.localeCodes as string[])
+    : []
+
+  // If no localization configured, skip bulk update (needs localized fields)
+  if (locales.length === 0) {
+    console.warn('No localization configured - bulk generation requires localized fields')
+    return
+  }
+
+  // Build dynamic schema based on configured locales
+  const localeSchemaObj: Record<string, z.ZodTypeAny> = {}
+  locales.forEach((locale) => {
+    localeSchemaObj[locale] = z.object({
       altText: z.string(),
       keywords: z.array(z.string()),
-    }),
-    de: z.object({
-      altText: z.string(),
-      keywords: z.array(z.string()),
-    }),
+    })
   })
+  const schema = z.object(localeSchemaObj)
 
   // @ts-expect-error - parse method exists in openai 4.77+
   const response = await openai.chat.completions.parse({
@@ -158,15 +167,18 @@ async function generateAndUpdateAltText({
   }
 
   // Update for each locale
-  for (const locale of ['en', 'de'] as const) {
-    await payload.update({
-      collection,
-      id,
-      locale,
-      data: {
-        alt: result[locale].altText,
-        keywords: result[locale].keywords,
-      },
-    })
+  for (const locale of locales) {
+    const localeResult = result?.[locale]
+    if (localeResult && 'altText' in localeResult && 'keywords' in localeResult) {
+      await payload.update({
+        collection,
+        id,
+        locale,
+        data: {
+          alt: localeResult.altText,
+          keywords: localeResult.keywords,
+        },
+      })
+    }
   }
 }
