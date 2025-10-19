@@ -32,6 +32,7 @@ export async function generateAltText({
   keywords: string[]
 }> {
   try {
+    // @ts-expect-error - User's project will have @payload-config
     const payload = await getPayload({ config: await import('@payload-config') })
     const user = await getUserFromHeaders({ payload })
 
@@ -60,6 +61,7 @@ export async function generateAltText({
       keywords: z.array(z.string()).describe('Keywords describing the image content'),
     })
 
+    // @ts-expect-error - parse method exists in openai 4.77+
     const response = await openai.chat.completions.parse({
       model,
       messages: [

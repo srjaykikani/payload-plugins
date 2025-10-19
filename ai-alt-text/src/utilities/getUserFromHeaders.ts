@@ -9,6 +9,7 @@ export async function getUserFromHeaders({ payload }: { payload?: BasePayload })
   const headersList = await headers()
 
   if (!payload) {
+    // @ts-expect-error - User's project will have @payload-config
     payload = await getPayload({ config: await import('@payload-config') })
   }
 
