@@ -1,3 +1,3 @@
-export { default as AltTextField } from '../components/AltTextField'
-export { default as GenerateAltTextButton } from '../components/GenerateAltTextButton'
-export { default as BulkUpdateAltTextsButton } from '../components/BulkUpdateAltTextsButton'
+export { AltTextField } from '../components/AltTextField'
+export { GenerateAltTextButton } from '../components/GenerateAltTextButton'
+export { BulkUpdateAltTextsButton } from '../components/BulkUpdateAltTextsButton'

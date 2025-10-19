@@ -5,7 +5,7 @@ import { useTransition } from 'react'
 
 import { generateAltText } from '../actions/generateAltText'
 
-function GenerateAltTextButton() {
+export function GenerateAltTextButton() {
   const { id, collectionSlug } = useDocumentInfo()
   const locale = useLocale()
   const [isPending, startTransition] = useTransition()
@@ -73,4 +73,3 @@ function GenerateAltTextButton() {
   )
 }
 
-export default GenerateAltTextButton

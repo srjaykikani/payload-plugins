@@ -6,7 +6,7 @@ import { useTransition } from 'react'
 
 import { bulkUpdateAltTexts } from '../actions/bulkUpdateAltTexts'
 
-function BulkUpdateAltTextsButton() {
+export function BulkUpdateAltTextsButton() {
   const [isPending, startTransition] = useTransition()
   const { selected, setSelection } = useSelection()
   const { collectionSlug } = useDocumentInfo()
@@ -66,4 +66,3 @@ function BulkUpdateAltTextsButton() {
   ) : null
 }
 
-export default BulkUpdateAltTextsButton
