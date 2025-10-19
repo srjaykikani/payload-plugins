@@ -2,7 +2,10 @@
 
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
-import type { ChatCompletionContentPartText } from 'openai/resources/chat/completions'
+import {
+  ChatCompletionContentPartText,
+  ChatCompletionContentPartImage
+} from 'openai/resources/chat/completions.mjs'
 import pMap from 'p-map'
 import type { BasePayload, CollectionSlug } from 'payload'
 import { getPayload } from 'payload'
@@ -139,7 +142,6 @@ async function generateAndUpdateAltText({
   })
   const schema = z.object(localeSchemaObj)
 
-  // @ts-ignore - parse method exists in openai 4.77+
   const response = await openai.chat.completions.parse({
     model,
     messages: [
@@ -161,12 +163,12 @@ async function generateAndUpdateAltText({
           {
             type: 'image_url',
             image_url: { url: imageUrl },
-          },
+          } satisfies ChatCompletionContentPartImage,
           ...('filename' in imageDoc && imageDoc.filename
             ? [{ type: 'text', text: imageDoc.filename } satisfies ChatCompletionContentPartText]
             : []),
           ...('context' in imageDoc && imageDoc.context
-            ? [{ type: 'text', text: imageDoc.context } satisfies ChatCompletionContentPartText]
+            ? [{ type: 'text', text: String(imageDoc.context) } satisfies ChatCompletionContentPartText]
             : []),
         ],
       },
@@ -186,7 +188,15 @@ async function generateAndUpdateAltText({
   // Update for each locale
   for (const locale of locales) {
     const localeResult = result?.[locale]
-    if (localeResult && 'altText' in localeResult && 'keywords' in localeResult) {
+    if (
+      localeResult &&
+      typeof localeResult === 'object' &&
+      'altText' in localeResult &&
+      'keywords' in localeResult &&
+      typeof localeResult.altText === 'string' &&
+      Array.isArray(localeResult.keywords)
+    ) {
+      // @ts-ignore - locale and data types vary by project configuration
       await payload.update({
         collection,
         id,

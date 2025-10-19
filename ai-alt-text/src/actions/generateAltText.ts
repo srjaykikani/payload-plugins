@@ -2,7 +2,10 @@
 
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
-import type { ChatCompletionContentPartText } from 'openai/resources/chat/completions'
+import {
+  ChatCompletionContentPartText,
+  ChatCompletionContentPartImage
+} from 'openai/resources/chat/completions.mjs'
 import type { CollectionSlug } from 'payload'
 import { getPayload } from 'payload'
 import { z } from 'zod'
@@ -69,7 +72,6 @@ export async function generateAltText({
       keywords: z.array(z.string()).describe('Keywords describing the image content'),
     })
 
-    // @ts-ignore - parse method exists in openai 4.77+
     const response = await openai.chat.completions.parse({
       model,
       messages: [
@@ -96,7 +98,7 @@ export async function generateAltText({
             {
               type: 'image_url',
               image_url: { url: imageUrl },
-            },
+            } satisfies ChatCompletionContentPartImage,
             ...('filename' in imageDoc && imageDoc.filename
               ? [
                   {
