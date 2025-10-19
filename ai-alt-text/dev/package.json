@@ -1,6 +1,6 @@
 {
-  "name": "payload-plugin-test-app",
-  "description": "A test app for the plugin",
+  "name": "ai-alt-text-plugin-test-app",
+  "description": "Test app for AI Alt Text plugin",
   "version": "0.0.1",
   "license": "MIT",
   "type": "module",
@@ -14,15 +14,18 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:schema": "payload-graphql generate:schema",
-    "generate:importmap": "payload generate:importmap"
+    "generate:importmap": "payload generate:importmap",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@jhb.software/payload-ai-alt-text-plugin": "workspace:*",
     "@payloadcms/db-mongodb": "^3.27.0",
     "@payloadcms/next": "^3.27.0",
     "@payloadcms/ui": "^3.27.0",
     "next": "15.2.1",
+    "openai": "^4.77.0",
     "payload": "^3.27.0",
-    "@jhb.software/payload-geocoding-plugin": "workspace:*",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
@@ -30,6 +33,8 @@
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "typescript": "5.8.2"
+    "typescript": "5.8.2",
+    "vite": "^7.1.2",
+    "vitest": "^3.2.4"
   }
 }
