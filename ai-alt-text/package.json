@@ -5,6 +5,12 @@
   "keywords": ["payload", "plugin", "ai", "alt-text", "accessibility", "openai"],
   "author": "JHB Software",
   "license": "MIT",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "bugs": "https://github.com/jhb-software/payload-plugins/issues",
   "repository": "https://github.com/jhb-software/payload-plugins",
   "type": "module",
