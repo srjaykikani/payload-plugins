@@ -41,6 +41,7 @@ export default buildConfig({
   plugins: [
     payloadAiAltTextPlugin({
       enabled: true,
+      openAIApiKey: process.env.OPENAI_API_KEY || '',
       defaultModel: 'gpt-4o-mini',
       maxConcurrency: 5,
     }),

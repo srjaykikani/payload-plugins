@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
-import { getPayload } from 'payload'
+import payload from 'payload'
 import config from './src/payload.config'
 import { mockOpenAI, mockSuccessResponse, mockMultiLocaleResponse } from './tests/mocks/openai'
 import OpenAI from 'openai'
@@ -7,10 +7,10 @@ import OpenAI from 'openai'
 // Mock OpenAI before tests
 mockOpenAI()
 
-let payload: any
-
 beforeAll(async () => {
-  payload = await getPayload({ config: await config })
+  await payload.init({
+    config: config,
+  })
 })
 
 afterAll(async () => {
@@ -25,6 +25,7 @@ describe('AI Alt Text Plugin', () => {
       expect(payload.config.custom).toBeDefined()
       expect(payload.config.custom.aiAltTextPluginConfig).toBeDefined()
       expect(payload.config.custom.aiAltTextPluginConfig.enabled).toBe(true)
+      expect(payload.config.custom.aiAltTextPluginConfig.openAIApiKey).toBeDefined()
       expect(payload.config.custom.aiAltTextPluginConfig.defaultModel).toBe('gpt-4o-mini')
       expect(payload.config.custom.aiAltTextPluginConfig.maxConcurrency).toBe(5)
     })
@@ -124,8 +125,10 @@ describe('AI Alt Text Plugin', () => {
   })
 
   describe('Environment Variables', () => {
-    it('should load OPENAI_API_KEY from environment', () => {
-      expect(process.env.OPENAI_API_KEY).toBeDefined()
+    it('should pass OPENAI_API_KEY through plugin config', () => {
+      // API key is now passed through plugin config, not accessed directly from env
+      expect(payload.config.custom.aiAltTextPluginConfig.openAIApiKey).toBeDefined()
+      expect(payload.config.custom.aiAltTextPluginConfig.openAIApiKey).toBeTruthy()
     })
 
     it('should load NEXT_PUBLIC_CMS_URL from environment', () => {

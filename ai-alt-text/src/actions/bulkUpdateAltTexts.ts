@@ -48,12 +48,16 @@ export async function bulkUpdateAltTexts({
 
     // Get plugin config from payload config (like pages plugin does)
     const pluginConfig = payload.config.custom?.aiAltTextPluginConfig as
-      | Required<AltTextPluginConfig>
+      | (AltTextPluginConfig & { openAIApiKey: string })
       | undefined
 
-    // Use config, then env var, then fallback to default
-    const concurrency =
-      parseInt(process.env.OPENAI_CONCURRENCY || '', 10) || pluginConfig?.maxConcurrency || 16
+    // Check for plugin config
+    if (!pluginConfig?.openAIApiKey) {
+      throw new Error('OpenAI API key not configured')
+    }
+
+    // Use concurrency from config
+    const concurrency = pluginConfig.maxConcurrency || 16
 
     await pMap(
       ids,
@@ -117,8 +121,17 @@ async function generateAndUpdateAltText({
     ? await getImageDataUrl(thumbnailUrl)
     : thumbnailUrl
 
+  // Get plugin config from payload config
+  const pluginConfig = payload.config.custom?.aiAltTextPluginConfig as
+    | (AltTextPluginConfig & { openAIApiKey: string })
+    | undefined
+
+  if (!pluginConfig?.openAIApiKey) {
+    throw new Error('OpenAI API key not configured')
+  }
+
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: pluginConfig.openAIApiKey,
   })
 
   // Get locales from Payload config

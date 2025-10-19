@@ -63,8 +63,14 @@ export async function generateAltText({
       ? await getImageDataUrl(thumbnailUrl)
       : thumbnailUrl
 
+    // Get plugin config from payload config
+    const pluginConfig = payload.config.custom?.aiAltTextPluginConfig
+    if (!pluginConfig?.openAIApiKey) {
+      throw new Error('OpenAI API key not configured')
+    }
+
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: pluginConfig.openAIApiKey,
     })
 
     const schema = z.object({

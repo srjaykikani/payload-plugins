@@ -13,9 +13,15 @@ export const payloadAiAltTextPlugin =
       return config
     }
 
+    // Validate required config
+    if (!pluginOptions.openAIApiKey) {
+      throw new Error('OpenAI API key is required for the AI alt text plugin')
+    }
+
     // Store plugin config with defaults in config.custom for access in hooks/actions
-    const pluginConfigWithDefaults: Required<AltTextPluginConfig> = {
+    const pluginConfigWithDefaults = {
       enabled: pluginOptions.enabled ?? true,
+      openAIApiKey: pluginOptions.openAIApiKey!,
       models: pluginOptions.models ?? ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
       maxConcurrency: pluginOptions.maxConcurrency ?? 16,
       defaultModel: pluginOptions.defaultModel ?? 'gpt-4o-mini',
@@ -24,17 +30,6 @@ export const payloadAiAltTextPlugin =
     config.onInit = async (payload) => {
       if (incomingConfig.onInit) {
         await incomingConfig.onInit(payload)
-      }
-
-      const neededEnvVars = ['OPENAI_API_KEY']
-
-      const missingEnvVars = neededEnvVars.filter((envVar) => !process.env[envVar])
-      if (missingEnvVars.length > 0) {
-        throw new Error(
-          `The following environment variables are required for the AI alt text plugin but not defined: ${missingEnvVars.join(
-            ', ',
-          )}`,
-        )
       }
     }
 
