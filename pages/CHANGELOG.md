@@ -1,18 +1,18 @@
 # Changelog
 
-## 0.6.0 (Unreleased)
+## 0.6.0 (Beta)
 
 - feat!: add new collection config creation approach using `PageCollectionConfig` and `RedirectsCollectionConfig` types instead of `createPageCollectionConfig` and `createRedirectsCollectionConfig` functions.
 - feat!: the plugin config now requires a `generatePageURL` function to be defined. See the [README](./README.md#setup) for more information.
-- The plugin now uses the build-in Preview Button instead of a custom one.
+- The plugin now uses the build-in Preview Button instead of a custom one. Preview and live preview are automatically enabled. To opt out, set the `preview` and `livePreview` options to `false` in the page collection config.
 - feat: add support for multi-tenant setups via the official [Multi-tenant plugin](https://payloadcms.com/docs/plugins/multi-tenant). See the [README](./README.md#multi-tenant-support) for more information.
 
 
 ### Migration Guide
 
-**Old approach:**
+**Creating a page/redirects collection [Before]:**
 ```ts
-import { createPageCollectionConfig, createRedirectsCollectionConfig } from '@jhb.software/payload-pages-plugin'
+import { createPageCollectionConfig } from '@jhb.software/payload-pages-plugin'
 
 const Pages: CollectionConfig = createPageCollectionConfig({
   slug: 'pages',
@@ -20,10 +20,12 @@ const Pages: CollectionConfig = createPageCollectionConfig({
   fields: [/* fields */],
 })
 
-const Redirects = createRedirectsCollectionConfig({})
+const Redirects = createRedirectsCollectionConfig(
+  { /* config */ }
+)
 ```
 
-**New approach:**
+**Creating a page/redirects collection [After]:**
 ```ts
 import { PageCollectionConfig, RedirectsCollectionConfig } from '@jhb.software/payload-pages-plugin'
 
@@ -37,8 +39,36 @@ const Redirects: RedirectsCollectionConfig = {
   slug: 'redirects',
   redirects: {},
   fields: [],
+  { /* config */ }
 }
 ```
+
+**Initializing the plugin [Before]:**
+
+```ts
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+
+payloadPagesPlugin({
+  /* config */
+})
+```
+
+**Initializing the plugin [After]:**
+
+```ts
+import { payloadPagesPlugin } from '@jhb.software/payload-pages-plugin'
+
+payloadPagesPlugin({
+  // Example generatePageURL function:
+  generatePageURL: ({ path, preview }) =>
+    path && process.env.NEXT_PUBLIC_FRONTEND_URL
+      ? `${process.env.NEXT_PUBLIC_FRONTEND_URL}${preview ? '/preview' : ''}${path}`
+      : null,
+  /* config */
+})
+```
+
+Ensure to run `payload generate:importmap` after the migration to generate the new import map.
 
 ## 0.5.1
 
