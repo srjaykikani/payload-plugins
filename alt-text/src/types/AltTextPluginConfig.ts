@@ -29,6 +29,13 @@ export type IncomingAltTextPluginConfig = {
 
   /** Override the default fields inserted by the plugin via a function that receives the default fields and returns the new fields */
   fieldsOverride?: (args: { defaultFields: Field[] }) => Field[]
+
+  /**
+   * The locale to generate alt texts in when localization is disabled.
+   * Required when localization is disabled, ignored when localization is enabled.
+   * @example 'en', 'de'
+   */
+  locale?: string
 }
 
 /** Configuration of the alt text plugin after defaults have been applied. */
@@ -56,4 +63,7 @@ export type AltTextPluginConfig = {
 
   /** The locales to generate alt texts for. */
   locales: string[]
+
+  /** The locale to generate alt texts in when localization is disabled. */
+  locale?: string
 }
