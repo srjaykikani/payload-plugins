@@ -12,18 +12,17 @@ export function altTextField({
     type: 'textarea',
     required: true,
     localized: localized,
-    validate: (value, ctx) => {
-      // if the document has an id, the alt text is required
-      if (ctx.id) {
+    validate: (value, { id, req: { t } }) => {
+      // if the document has an id, which means a media file was uploaded, the alt text is required
+      if (id) {
         if (!value || value.trim().length === 0) {
-          // Note: Validation messages don't support StaticLabel format
-          // Keeping in English for v1 - can be enhanced in the future
-          return 'The alternate text is required.'
+          // @ts-expect-error - the translation key type does not include the custom key
+          return t('@jhb.software/payload-alt-text-plugin:theAlternateTextIsRequired')
         }
       }
 
-      // The alt text is not required when the document is created because the alt text generation
-      // can only be used once the document is created and the image uploaded
+      // The alt text is not required when the media file was not uploaded yet
+      // (since the alt text generation needs an URL to fetch the file)
       return true
     },
     admin: {

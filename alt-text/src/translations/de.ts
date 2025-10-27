@@ -31,13 +31,16 @@ export const de: GenericTranslationsObject = {
     // Help text
     altTextDescription:
       'Alternativtext für das Bild. Dieser wird für Screenreader und SEO verwendet. Er sollte die folgenden Anforderungen erfüllen:',
-    altTextRequirement1: 'Beschreiben Sie kurz, was auf dem Bild zu sehen ist, in 1–2 Sätzen.',
+    altTextRequirement1: 'Beschreibt in 1-2 Sätzen, was auf dem Bild zu sehen ist.',
     altTextRequirement2:
-      'Stellen Sie sicher, dass er möglichst die gleichen Informationen oder den gleichen Zweck wie das Bild vermittelt.',
+      'Sollte möglichst die gleichen Informationen oder den gleichen Zweck wie das Bild vermitteln.',
     altTextRequirement3:
-      'Vermeiden Sie Phrasen wie "Bild von" oder "Foto von" — Screenreader kündigen bereits an, dass es sich um ein Bild handelt.',
+      'Phrasen wie "Bild von" oder "Foto von" sind überflüssig, da Screenreader bereits anzeigen, dass es sich um ein Bild handelt.',
 
     // Tooltips
     pleaseSaveDocumentFirst: 'Bitte speichern Sie zuerst das Dokument',
+
+    // Validation messages
+    theAlternateTextIsRequired: 'Der Alternativtext ist erforderlich.',
   },
 }

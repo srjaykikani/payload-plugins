@@ -10,10 +10,9 @@ export function keywordsField({ localized }: { localized?: TextField['localized'
     required: false,
     localized: localized,
     admin: {
-      description: ({ t }) =>
-        (t as any)('@jhb.software/payload-alt-text-plugin:keywordsDescription'),
+      description: 'Keywords which describe the image. Used when searching for the image.', // does not need to be translated because it is only used for the JSDoc
       readOnly: true,
-      hidden: true, // this field is only meant to be used for improving the search
+      hidden: true, // this field is only meant to be used for improving the search, therefore hide it from the UI
     },
   }
 }

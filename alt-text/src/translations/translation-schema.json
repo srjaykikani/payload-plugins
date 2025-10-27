@@ -23,7 +23,8 @@
         "altTextRequirement1": { "type": "string" },
         "altTextRequirement2": { "type": "string" },
         "altTextRequirement3": { "type": "string" },
-        "pleaseSaveDocumentFirst": { "type": "string" }
+        "pleaseSaveDocumentFirst": { "type": "string" },
+        "theAlternateTextIsRequired": { "type": "string" }
       },
       "required": [
         "alternateText",
@@ -44,7 +45,8 @@
         "altTextRequirement1",
         "altTextRequirement2",
         "altTextRequirement3",
-        "pleaseSaveDocumentFirst"
+        "pleaseSaveDocumentFirst",
+        "theAlternateTextIsRequired"
       ]
     }
   },

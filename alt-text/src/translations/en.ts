@@ -27,13 +27,16 @@ export const en: GenericTranslationsObject = {
     // Help text
     altTextDescription:
       'Alternate text for the image. This will be used for screen readers and SEO. It should meet the following requirements:',
-    altTextRequirement1: 'Briefly describe what is visible in the image in 1–2 sentences.',
+    altTextRequirement1: 'Describes in 1-2 sentences, what is visible in the image.',
     altTextRequirement2:
-      'Ensure it conveys the same information or purpose as the image, whenever possible.',
+      'Should convey the same information or purpose as the image, whenever possible.',
     altTextRequirement3:
-      'Avoid phrases like "image of" or "picture of" — screen readers already announce that it\'s an image.',
+      'Phrases like "image of" or "picture of" are unnecessary, since screen readers already announce that it\'s an image.',
 
     // Tooltips
     pleaseSaveDocumentFirst: 'Please save the document first',
+
+    // Validation messages
+    theAlternateTextIsRequired: 'An alternate text is required.',
   },
 }
