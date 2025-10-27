@@ -1,5 +1,7 @@
 import { payloadAltTextPlugin } from '@jhb.software/payload-alt-text-plugin'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { de } from '@payloadcms/translations/languages/de'
+import { en } from '@payloadcms/translations/languages/en'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -20,6 +22,9 @@ export default buildConfig({
     locales: ['en', 'de'],
     defaultLocale: 'en',
     fallback: true,
+  },
+  i18n: {
+    supportedLanguages: { en, de },
   },
   collections: [
     {
