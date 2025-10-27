@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { getGenerationCost } from '../utilities/getGenerationCost.js'
 import type { AltTextPluginConfig } from '../types/AltTextPluginConfig.js'
 import { zodResponseFormat } from '../utilities/zodResponseFormat.js'
-import { getTargetLocale } from '../utils/localeFromRequest.js'
 
 /**
  * Generates alt text for a single image using OpenAI Vision API.
@@ -22,9 +21,10 @@ export const generateAltTextEndpoint: PayloadHandler = async (req: PayloadReques
     const requestSchema = z.object({
       collection: z.string(),
       id: z.string(),
+      locale: z.string().nullable(),
     })
 
-    const { collection, id } = requestSchema.parse(data)
+    const { collection, id, locale } = requestSchema.parse(data)
 
     const imageDoc = await req.payload.findByID({
       collection,
@@ -40,12 +40,25 @@ export const generateAltTextEndpoint: PayloadHandler = async (req: PayloadReques
       | AltTextPluginConfig
       | undefined
 
-    if (!pluginConfig?.getImageThumbnail) {
+    if (!pluginConfig) {
+      return Response.json({ error: 'Plugin config not found' }, { status: 500 })
+    }
+
+    if (!pluginConfig.getImageThumbnail) {
       return Response.json({ error: 'getImageThumbnail function not configured' }, { status: 500 })
     }
 
-    // Get target locale based on mode
-    const locale = getTargetLocale(req.payload.config, pluginConfig, req)
+    // determine target locale
+    const targetLocale = locale ?? pluginConfig.locale
+    if (!targetLocale) {
+      return Response.json(
+        {
+          error:
+            'Could not determine target locale for alt text generation. Please check your plugin configuration.',
+        },
+        { status: 500 },
+      )
+    }
 
     const imageThumbnailUrl = pluginConfig.getImageThumbnail(imageDoc)
 
@@ -83,7 +96,7 @@ export const generateAltTextEndpoint: PayloadHandler = async (req: PayloadReques
 
             If a context is provided, use it to enhance the alt text.
 
-            Format your response as a JSON object. You must respond in the ${locale} language.
+            Format your response as a JSON object. You must respond in the ${targetLocale} language.
           `,
         },
         {

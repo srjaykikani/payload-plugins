@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { getGenerationCost } from '../utilities/getGenerationCost.js'
 import type { AltTextPluginConfig } from '../types/AltTextPluginConfig.js'
 import { zodResponseFormat } from '../utilities/zodResponseFormat.js'
-import { getTargetLocale, localesFromRequest } from '../utils/localeFromRequest.js'
+import { localesFromConfig } from '../utilities/localesFromConfig.js'
 
 /**
  * Generates and updates alt text for multiple images in all locales.
@@ -34,16 +34,29 @@ export const bulkGenerateAltTextsEndpoint: PayloadHandler = async (req: PayloadR
       | AltTextPluginConfig
       | undefined
 
-    if (!pluginConfig?.openAIApiKey) {
+    if (!pluginConfig) {
+      return Response.json({ error: 'Plugin config not found' }, { status: 500 })
+    }
+
+    if (!pluginConfig.openAIApiKey) {
       return Response.json({ error: 'OpenAI API key not configured' }, { status: 500 })
     }
 
     // Use concurrency from config
     const concurrency = pluginConfig.maxBulkGenerateConcurrency || 16
 
-    // Get target locale(s) based on mode
-    const locales = localesFromRequest(req)
-    const targetLocales = locales ? locales : [getTargetLocale(req.payload.config, pluginConfig)]
+    // determine target locales based on config
+    const locales = localesFromConfig(req.payload.config)
+    const targetLocales = locales ?? [pluginConfig.locale!]
+    if (!targetLocales) {
+      return Response.json(
+        {
+          error:
+            'Could not determine target locales for alt text generation. Please check your plugin configuration.',
+        },
+        { status: 500 },
+      )
+    }
 
     await pMap(
       ids,

@@ -36,7 +36,7 @@ export default buildConfig({
       collections: ['media'], // Specify which upload collections should have alt text fields
       openAIApiKey: process.env.OPENAI_API_KEY!,
       model: 'gpt-4.1-mini',
-      locale: 'en', // Required when localization is disabled
+      locale: 'de', // Required when localization is disabled
       getImageThumbnail: (doc: Record<string, unknown>) => {
         // in a real application, you would use a function to get a thumbnail URL (e.g. from the sizes)
         return doc.url as string

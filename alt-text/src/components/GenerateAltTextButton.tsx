@@ -27,7 +27,7 @@ export function GenerateAltTextButton() {
           body: JSON.stringify({
             collection: collectionSlug,
             id: id as string,
-            locale: locale.code,
+            locale: locale?.code ?? null, // sent null when localization is disabled
           }),
         })
 
