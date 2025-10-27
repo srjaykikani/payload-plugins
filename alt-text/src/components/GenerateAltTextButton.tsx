@@ -5,8 +5,10 @@ import { useTransition } from 'react'
 
 import { Lightning } from './icons/Lightning.js'
 import { Spinner } from './icons/Spinner.js'
+import { usePluginTranslation } from '../utils/usePluginTranslation.js'
 
 export function GenerateAltTextButton() {
+  const { t } = usePluginTranslation()
   const { id, collectionSlug } = useDocumentInfo()
   const locale = useLocale()
   const [isPending, startTransition] = useTransition()
@@ -16,7 +18,7 @@ export function GenerateAltTextButton() {
 
   const handleGenerateAltText = async () => {
     if (!collectionSlug || !id) {
-      toast.error('Cannot generate alt text. Missing required fields.')
+      toast.error(t('cannotGenerateMissingFields'))
       throw new Error('Missing required fields')
     }
 
@@ -32,7 +34,7 @@ export function GenerateAltTextButton() {
         })
 
         if (!response.ok) {
-          let errorMessage = 'Failed to generate alt text. Please try again.'
+          let errorMessage = t('failedToGenerate')
           try {
             const errorData = (await response.json()) as { error: string }
             errorMessage = errorData.error
@@ -52,13 +54,13 @@ export function GenerateAltTextButton() {
         if (data.altText && data.keywords) {
           setAltText(data.altText)
           setKeywords(data.keywords)
-          toast.success('Alt text generated successfully. Please review and save the document.')
+          toast.success(t('altTextGeneratedSuccess'))
         } else {
-          toast.error('No alt text generated. Please try again.')
+          toast.error(t('noAltTextGenerated'))
         }
       } catch (error) {
         console.error('Error generating alt text:', error)
-        toast.error('Error generating alt text. Please try again.')
+        toast.error(t('errorGeneratingAltText'))
       }
     })
   }
@@ -66,19 +68,11 @@ export function GenerateAltTextButton() {
   return (
     <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
       <div style={{ flex: '1', color: 'var(--theme-elevation-400)' }}>
-        <p>
-          Alternate text for the image. This will be used for screen readers and SEO. It should meet
-          the following requirements:
-        </p>
+        <p>{t('altTextDescription')}</p>
         <ol style={{ paddingLeft: '20px', margin: '10px 0' }}>
-          <li>Briefly describe what is visible in the image in 1–2 sentences.</li>
-          <li>
-            Ensure it conveys the same information or purpose as the image, whenever possible.
-          </li>
-          <li>
-            Avoid phrases like &quot;image of&quot; or &quot;picture of&quot; — screen readers
-            already announce that it&quot;s an image.
-          </li>
+          <li>{t('altTextRequirement1')}</li>
+          <li>{t('altTextRequirement2')}</li>
+          <li>{t('altTextRequirement3')}</li>
         </ol>
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -86,9 +80,9 @@ export function GenerateAltTextButton() {
           onClick={handleGenerateAltText}
           disabled={isPending || !id}
           icon={isPending ? <Spinner /> : <Lightning />}
-          tooltip={!id ? 'Please save the document first' : undefined}
+          tooltip={!id ? t('pleaseSaveDocumentFirst') : undefined}
         >
-          Generate alt text
+          {t('generateAltText')}
         </Button>
       </div>
     </div>

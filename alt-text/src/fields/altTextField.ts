@@ -1,4 +1,5 @@
 import type { TextareaField } from 'payload'
+import { translatedLabel } from '../utils/translatedLabel.js'
 
 export function altTextField({
   localized,
@@ -7,7 +8,7 @@ export function altTextField({
 }): TextareaField {
   return {
     name: 'alt',
-    label: 'Alternate text',
+    label: translatedLabel('alternateText'),
     type: 'textarea',
     required: true,
     localized: localized,
@@ -15,6 +16,8 @@ export function altTextField({
       // if the document has an id, the alt text is required
       if (ctx.id) {
         if (!value || value.trim().length === 0) {
+          // Note: Validation messages don't support StaticLabel format
+          // Keeping in English for v1 - can be enhanced in the future
           return 'The alternate text is required.'
         }
       }
