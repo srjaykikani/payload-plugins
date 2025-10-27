@@ -1,6 +1,6 @@
 # Image Alt Text Generation Plugin for Payload CMS
 
-A minimal plugin to generate image alt texts using OpenAI's Vision API.
+A minimal plugin to generate image alt texts using OpenAI's Vision API. This plugin automatically adds an alt text field with a button to generate the alt text to upload collections, and includes a bulk generation feature in the list view for processing multiple images at once.
 
 ## Installation
 
@@ -18,7 +18,7 @@ import { payloadAltTextPlugin } from '@jhb.software/payload-alt-text-plugin'
 export default buildConfig({
   plugins: [
     payloadAltTextPlugin({
-      collections: ['media'], // Specify which upload collections should have alt text fields
+      collections: ['media'], // Specify which upload collections to enable the plugin for
       openAIApiKey: process.env.OPENAI_API_KEY!,
       model: 'gpt-4.1-mini',
       getImageThumbnail: (doc: Record<string, unknown>) => {
@@ -30,6 +30,8 @@ export default buildConfig({
 })
 ```
 
+Note: When localization is disabled in your Payload config (default), you need to specify the locale to generate the alt texts in via the `locale` plugin option.
+
 ## Features
 
 When the plugin is enabled for an upload collection, it will
@@ -39,7 +41,7 @@ When the plugin is enabled for an upload collection, it will
    - This field will include a description of what the alt text should be
 2. Add a keywords fields to the collection
    - This field will be automatically filled when generating the alt text 
-   - It can be used for improving the search of images in the admin panel
+   - It will be used for improving the search of images in the admin panel
 2. Add a bulk generate button to the collection list view
    - This button will allow you to generate alt text for multiple images at once
 
