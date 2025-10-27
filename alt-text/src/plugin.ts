@@ -77,6 +77,14 @@ export const payloadAltTextPlugin =
           ...collectionConfig,
           admin: {
             ...collectionConfig.admin,
+            listSearchableFields: [
+              // enhance the search by adding the keywords and alt fields (if not already included)
+              ...(collectionConfig.admin?.listSearchableFields ?? []),
+              ...(collectionConfig.admin?.listSearchableFields?.includes('keywords')
+                ? []
+                : ['keywords']),
+              ...(collectionConfig.admin?.listSearchableFields?.includes('alt') ? [] : ['alt']),
+            ],
             components: {
               ...(collectionConfig.admin?.components ?? {}),
               beforeListTable: [
