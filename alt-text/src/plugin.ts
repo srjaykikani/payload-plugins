@@ -25,12 +25,6 @@ export const payloadAltTextPlugin =
         )
       : []
 
-    if (locales.length === 0) {
-      throw new Error(
-        'The alt text plugin currently only supports localized setups. If you need to use this plugin in a non-localized setup, please open an issue at https://github.com/jhb-software/payload-plugins.',
-      )
-    }
-
     const pluginConfig: AltTextPluginConfig = {
       enabled: incomingPluginConfig.enabled ?? true,
       openAIApiKey: incomingPluginConfig.openAIApiKey,
@@ -38,8 +32,17 @@ export const payloadAltTextPlugin =
       maxBulkGenerateConcurrency: incomingPluginConfig.maxBulkGenerateConcurrency ?? 16,
       model: incomingPluginConfig.model ?? 'gpt-4.1-nano',
       locales: locales,
+      locale: incomingPluginConfig.locale,
       getImageThumbnail: incomingPluginConfig.getImageThumbnail,
       fieldsOverride: incomingPluginConfig.fieldsOverride,
+    }
+
+    // Validate locale requirement for non-localized mode
+    if (locales.length === 0 && !incomingPluginConfig.locale) {
+      throw new Error(
+        'The alt-text plugin requires a "locale" option when Payload localization is disabled. ' +
+          'Please add { locale: "en" } (or your preferred locale) to your plugin configuration.',
+      )
     }
 
     const defaultFields = [

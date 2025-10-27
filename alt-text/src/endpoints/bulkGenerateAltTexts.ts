@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { getGenerationCost } from '../utilities/getGenerationCost.js'
 import type { AltTextPluginConfig } from '../types/AltTextPluginConfig.js'
 import { zodResponseFormat } from '../utilities/zodResponseFormat.js'
+import { getTargetLocale, localesFromRequest } from '../utils/localeFromRequest.js'
 
 /**
  * Generates and updates alt text for multiple images in all locales.
@@ -40,6 +41,10 @@ export const bulkGenerateAltTextsEndpoint: PayloadHandler = async (req: PayloadR
     // Use concurrency from config
     const concurrency = pluginConfig.maxBulkGenerateConcurrency || 16
 
+    // Get target locale(s) based on mode
+    const locales = localesFromRequest(req)
+    const targetLocales = locales ? locales : [getTargetLocale(req.payload.config, pluginConfig)]
+
     await pMap(
       ids,
       async (id) => {
@@ -49,7 +54,7 @@ export const bulkGenerateAltTextsEndpoint: PayloadHandler = async (req: PayloadR
             id,
             collection,
             pluginConfig,
-            locales: pluginConfig.locales,
+            locales: targetLocales,
           })
           updatedDocs++
           console.log(
