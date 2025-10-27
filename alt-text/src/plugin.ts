@@ -89,6 +89,7 @@ export const payloadAltTextPlugin =
             ],
             components: {
               ...(collectionConfig.admin?.components ?? {}),
+              // TODO: use the beforeBulkAction custom component slot once available: https://github.com/payloadcms/payload/pull/11719
               beforeListTable: [
                 ...(collectionConfig.admin?.components?.beforeListTable ?? []),
                 '@jhb.software/payload-alt-text-plugin/client#BulkGenerateAltTextsButton',
