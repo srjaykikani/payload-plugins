@@ -8,6 +8,8 @@ import { altTextField } from './fields/altTextField.js'
 import { keywordsField } from './fields/keywordsField.js'
 import { generateAltTextEndpoint } from './endpoints/generateAltText.js'
 import { bulkGenerateAltTextsEndpoint } from './endpoints/bulkGenerateAltTexts.js'
+import { translations } from './translations/index.js'
+import { deepMergeSimple } from './utils/deepMergeSimple.js'
 
 export const payloadAltTextPlugin =
   (incomingPluginConfig: IncomingAltTextPluginConfig) =>
@@ -102,6 +104,10 @@ export const payloadAltTextPlugin =
 
     return {
       ...config,
+      i18n: {
+        ...config.i18n,
+        translations: deepMergeSimple(translations, incomingConfig.i18n?.translations ?? {}),
+      },
       custom: {
         ...config.custom,
         // Make plugin config available in hooks/actions

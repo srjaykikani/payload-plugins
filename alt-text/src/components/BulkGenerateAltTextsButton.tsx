@@ -6,8 +6,10 @@ import { useTransition } from 'react'
 
 import { Lightning } from './icons/Lightning.js'
 import { Spinner } from './icons/Spinner.js'
+import { usePluginTranslation } from '../utils/usePluginTranslation.js'
 
 export function BulkGenerateAltTextsButton() {
+  const { t } = usePluginTranslation()
   const [isPending, startTransition] = useTransition()
   const { selected, setSelection } = useSelection()
 
@@ -29,7 +31,7 @@ export function BulkGenerateAltTextsButton() {
         })
 
         if (!response.ok) {
-          toast.error('Failed to generate alt text. Please try again.')
+          toast.error(t('failedToGenerate'))
           return
         }
 
@@ -40,14 +42,24 @@ export function BulkGenerateAltTextsButton() {
         }
 
         if (data.erroredDocs.length > 0) {
-          toast.error(`Failed to generate alt text for ${data.erroredDocs.length} images.`)
+          toast.error(
+            t('failedToGenerateForXImages').replace('{X}', data.erroredDocs.length.toString()),
+          )
         }
 
         // in case not all images were updated, show a warning instead of a success message:
         if (data.updatedDocs === data.totalDocs) {
-          toast.success(`${data.updatedDocs} of ${data.totalDocs} images updated.`)
+          toast.success(
+            t('xOfYImagesUpdated')
+              .replace('{X}', data.updatedDocs.toString())
+              .replace('{Y}', data.totalDocs.toString()),
+          )
         } else {
-          toast.warning(`${data.updatedDocs} of ${data.totalDocs} images updated.`)
+          toast.warning(
+            t('xOfYImagesUpdated')
+              .replace('{X}', data.updatedDocs.toString())
+              .replace('{Y}', data.totalDocs.toString()),
+          )
         }
 
         // deselect all previously selected images
@@ -58,7 +70,7 @@ export function BulkGenerateAltTextsButton() {
         router.refresh()
       } catch (error) {
         console.error('Error generating alt text:', error)
-        toast.error('Error generating alt text. Please try again.')
+        toast.error(t('errorGeneratingAltText'))
       }
     })
   }
@@ -72,7 +84,8 @@ export function BulkGenerateAltTextsButton() {
           icon={isPending ? <Spinner /> : <Lightning />}
           className="m-0"
         >
-          Generate alt text for {selectedIds.length} {selectedIds.length === 1 ? 'image' : 'images'}
+          {t('generateAltTextFor')} {selectedIds.length}{' '}
+          {selectedIds.length === 1 ? t('image') : t('images')}
         </Button>
       </div>
     )
