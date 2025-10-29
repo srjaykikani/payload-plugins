@@ -8,7 +8,7 @@ import { Lightning } from './icons/Lightning.js'
 import { Spinner } from './icons/Spinner.js'
 import { usePluginTranslation } from '../utils/usePluginTranslation.js'
 
-export function BulkGenerateAltTextsButton() {
+export function BulkGenerateAltTextsButton({ collectionSlug }: { collectionSlug: string }) {
   const { t } = usePluginTranslation()
   const [isPending, startTransition] = useTransition()
   const { selected, setSelection } = useSelection()
@@ -21,11 +21,15 @@ export function BulkGenerateAltTextsButton() {
 
   const handleGenerateAltTexts = async () => {
     startTransition(async () => {
+      if (!collectionSlug) {
+        throw new Error('Collection slug is required')
+      }
+
       try {
         const response = await fetch('/api/alt-text-plugin/bulk-generate-alt-texts', {
           method: 'POST',
           body: JSON.stringify({
-            collection: 'media',
+            collection: collectionSlug,
             ids: selectedIds,
           }),
         })

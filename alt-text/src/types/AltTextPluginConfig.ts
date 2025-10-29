@@ -1,4 +1,4 @@
-import { Field } from 'payload'
+import { CollectionSlug, Field } from 'payload'
 
 /** Configuration options for the alt text plugin. */
 export type IncomingAltTextPluginConfig = {
@@ -9,7 +9,7 @@ export type IncomingAltTextPluginConfig = {
   openAIApiKey: string
 
   /** Collection slugs to enable the plugin for. */
-  collections: string[]
+  collections: CollectionSlug[]
 
   /** Maximum number of concurrent API requests for bulk operations. */
   maxBulkGenerateConcurrency?: number
@@ -47,7 +47,7 @@ export type AltTextPluginConfig = {
   openAIApiKey: string
 
   /** Collection slugs to enable the plugin for. */
-  collections: string[]
+  collections: CollectionSlug[]
 
   /** Maximum number of concurrent API requests for bulk generate operations. */
   maxBulkGenerateConcurrency: number

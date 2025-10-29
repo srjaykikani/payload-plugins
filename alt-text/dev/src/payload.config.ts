@@ -6,6 +6,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import { Media } from './collections/Media'
+import { Images } from './collections/Images'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,6 +34,7 @@ export default buildConfig({
       fields: [],
     },
     Media,
+    Images,
   ],
   db: mongooseAdapter({
     url: process.env.MONGODB_URL!,
@@ -43,7 +45,7 @@ export default buildConfig({
   },
   plugins: [
     payloadAltTextPlugin({
-      collections: ['media'], // Specify which upload collections should have alt text fields
+      collections: ['media', 'images'], // Specify which upload collections should have alt text fields
       openAIApiKey: process.env.OPENAI_API_KEY!,
       model: 'gpt-4.1-mini',
       getImageThumbnail: (doc: Record<string, unknown>) => {
