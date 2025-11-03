@@ -31,24 +31,6 @@ To use this plugin, you'll need a Google Maps API key. To get one, follow these 
 
 Note: Since this API key is exposed to the frontend (Payload Admin panel), it is strongly recommended to restrict its usage by setting up domain restrictions and only enabling the `Maps JavaScript API`, `Places API`, and `Geocoding API` in the Google Cloud Console under API Keys & Credentials
 
-### Migration from Previous Versions
-
-If you're upgrading from a version that used environment variables directly:
-
-```ts
-// Before (old version):
-plugins: [payloadGeocodingPlugin({})]
-// Required NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in .env
-
-// After (new version):
-plugins: [
-  payloadGeocodingPlugin({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-  })
-]
-// API key passed directly to plugin
-```
-
 ## Usage
 
 To add geocoding functionality to a point field, you can simply wrap the point field with the `geocodingField` function:
