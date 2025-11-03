@@ -1,7 +1,7 @@
 import type { ClientComponentProps, FieldPaths, ServerComponentProps } from 'payload'
 import React from 'react'
 
-import { GeocodingFieldClient } from './GeocodingFieldClient'
+import { GeocodingFieldClient } from './GeocodingFieldClient.js'
 
 /**
  * Geocoding field component that reads the Google Maps API key from the Payload config and passes it to the `GeocodingFieldClient` component.

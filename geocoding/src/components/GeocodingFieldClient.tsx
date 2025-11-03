@@ -1,9 +1,13 @@
 'use client'
 import { FieldError, FieldLabel, useField } from '@payloadcms/ui'
-import GooglePlacesAutocomplete, {
+import GooglePlacesAutocompleteImport, {
   geocodeByPlaceId,
   getLatLng,
 } from 'react-google-places-autocomplete'
+
+// Workaround for TypeScript moduleResolution: "nodenext" with React 19
+const GooglePlacesAutocomplete =
+  GooglePlacesAutocompleteImport as unknown as React.ComponentType<any>
 
 interface GeocodingFieldComponentProps {
   field: any

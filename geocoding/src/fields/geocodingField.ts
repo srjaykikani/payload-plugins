@@ -1,5 +1,5 @@
 import { Field } from 'payload'
-import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig'
+import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig.js'
 
 /**
  * Creates a row field containing:

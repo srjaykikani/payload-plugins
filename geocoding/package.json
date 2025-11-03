@@ -20,11 +20,12 @@
   "types": "./src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
-    "build:all": "pnpm build && pnpm -C dev build",
-    "build:app": "pnpm -C dev build",
-    "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png}\" dist/",
-    "dev": "pnpm -C dev dev",
+    "build": "pnpm copyfiles && pnpm build:types && pnpm build:swc",
+    "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
+    "build:types": "tsc --outDir dist --rootDir ./src",
+    "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png,json}\" dist/",
+    "clean": "rimraf --glob {dist,*.tsbuildinfo}",
+    "dev": "tsc -w",
     "format": "prettier --write src",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -42,10 +43,13 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "copyfiles": "2.4.1",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.14.0",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "copyfiles": "2.4.1",
     "prettier": "^3.6.2",
+    "rimraf": "6.1.0",
     "typescript": "5.9.3"
   },
   "publishConfig": {

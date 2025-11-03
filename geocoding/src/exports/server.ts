@@ -1,1 +1,1 @@
-export { GeocodingField } from '../components/GeocodingField'
+export { GeocodingField } from '../components/GeocodingField.js'

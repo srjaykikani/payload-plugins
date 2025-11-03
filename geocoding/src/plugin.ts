@@ -1,6 +1,6 @@
 import type { Config } from 'payload'
 
-import type { GeocodingPluginConfig } from './types/GeoCodingPluginConfig'
+import type { GeocodingPluginConfig } from './types/GeoCodingPluginConfig.js'
 
 /**
  * Payload plugin which extends the point field with geocoding functionality.
