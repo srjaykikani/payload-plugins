@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-geocoding-plugin",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Geocoding field plugin for Payload CMS",
   "author": "JHB Software",
   "license": "MIT",
@@ -42,6 +42,7 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
+    "copyfiles": "2.4.1",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "prettier": "^3.6.2",

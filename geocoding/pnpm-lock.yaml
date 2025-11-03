@@ -33,6 +33,9 @@ importers:
       '@types/react-dom':
         specifier: 19.2.2
         version: 19.2.2(@types/react@19.2.2)
+      copyfiles:
+        specifier: 2.4.1
+        version: 2.4.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
