@@ -1849,6 +1849,14 @@ const deleteCollection = async (collection: CollectionSlug) => {
     collection: collection,
     where: {},
   })
+
+  // this will fail for collections which have no versions enabled, therefore wrapped in a try catch
+  try {
+    await payload.db.deleteVersions({
+      collection: collection,
+      where: {},
+    })
+  } catch {}
 }
 
 const deleteAllCollections = async (
