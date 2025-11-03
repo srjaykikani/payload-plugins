@@ -8,21 +8,20 @@ import {
   useField,
   useLocale,
 } from '@payloadcms/ui'
-import type { TextFieldClientComponent } from 'payload'
+import type { TextFieldClientProps } from 'payload'
 import { useEffect, useState } from 'react'
 import { formatSlug, liveFormatSlug } from '../../hooks/validateSlug.js'
 import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 
-export type SlugFieldClientProps = {
-  pageSlug?: boolean
+export type SlugFieldProps = {
+  pageSlug: boolean | undefined
   fallbackField: string
-  readOnly?: boolean
-  defaultValue?: string | Record<string, string> | undefined
+  readOnly: boolean | undefined
+  defaultValue: string | Record<string, string> | undefined
 }
 
-export const SlugField: TextFieldClientComponent = (clientProps) => {
-  const { field, path, readOnly } = clientProps
-  const { pageSlug, fallbackField, defaultValue } = clientProps as unknown as SlugFieldClientProps
+export const SlugFieldClient = (clientProps: TextFieldClientProps & SlugFieldProps) => {
+  const { field, path, readOnly, pageSlug, fallbackField, defaultValue } = clientProps
 
   const { value: title } = useField<string>({ path: fallbackField })
   const { initialData, hasPublishedDoc, id } = useDocumentInfo()
@@ -167,7 +166,7 @@ export const SlugField: TextFieldClientComponent = (clientProps) => {
   )
 }
 
-export default SlugField
+export default SlugFieldClient
 
 const InfoIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

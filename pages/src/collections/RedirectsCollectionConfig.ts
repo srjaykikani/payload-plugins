@@ -1,10 +1,10 @@
 import { CollectionConfig } from 'payload'
 import { validateRedirect } from '../hooks/validateRedirect.js'
-import { PagesPluginConfig } from 'src/types/PagesPluginConfig.js'
+import type { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import {
   IncomingRedirectsCollectionConfig,
   RedirectsCollectionConfig,
-} from 'src/types/RedirectsCollectionConfig.js'
+} from '../types/RedirectsCollectionConfig.js'
 
 // TODO: Consider the potential benefits of storing the destination page in a relationship field.
 //       Note: The destination path should still be explicitly defined to ensure the redirect path remains consistent,
