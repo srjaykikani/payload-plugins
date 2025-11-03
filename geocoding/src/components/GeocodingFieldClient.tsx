@@ -15,7 +15,7 @@ interface GeocodingFieldComponentProps {
  * A custom client component that shows the Google Places Autocomplete component and
  * fills the point and geodata fields with the received data from the Google Places API.
  */
-export const GeocodingFieldComponent = ({
+export const GeocodingFieldClient = ({
   field,
   path,
   googleMapsApiKey,

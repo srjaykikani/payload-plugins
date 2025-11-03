@@ -5,10 +5,6 @@ import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig'
  * Creates a row field containing:
  * 1. The provided point field for storing the coordinates from the Google Places API
  * 2. A JSON field that stores the raw Google Places API geocoding data
- *
- * The field uses a server component wrapper that reads the Google Maps API key from
- * payload.config.custom and passes it to the client component. This follows the Payload v3
- * pattern similar to richtext-lexical and richtext-slate.
  */
 export const geocodingField = (config: GeoCodingFieldConfig): Field => {
   return {
@@ -31,7 +27,7 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
 
           // non-overridable props:
           components: {
-            Field: '@jhb.software/payload-geocoding-plugin/server#GeocodingFieldServer',
+            Field: '@jhb.software/payload-geocoding-plugin/server#GeocodingField',
           },
         },
       },

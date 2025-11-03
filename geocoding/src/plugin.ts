@@ -4,9 +4,6 @@ import type { GeocodingPluginConfig } from './types/GeoCodingPluginConfig'
 
 /**
  * Payload plugin which extends the point field with geocoding functionality.
- *
- * The plugin stores the Google Maps API key in config.custom, allowing the
- * server component wrapper to access it when rendering geocoding fields.
  */
 export const payloadGeocodingPlugin =
   (pluginOptions: GeocodingPluginConfig) =>

@@ -1,1 +1,1 @@
-export { GeocodingFieldServer } from '../components/GeocodingFieldServer'
+export { GeocodingField } from '../components/GeocodingField'
