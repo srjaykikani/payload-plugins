@@ -2,11 +2,8 @@ import { PayloadRequest } from 'payload'
 import { Breadcrumb } from '../types/Breadcrumb.js'
 import { Locale } from '../types/Locale.js'
 import { PageCollectionConfigAttributes } from '../types/PageCollectionConfigAttributes.js'
-import { PagesPluginConfig } from '../types/PagesPluginConfig.js'
 import { SeoMetadata } from '../types/SeoMetadata.js'
 import { getBreadcrumbs } from './getBreadcrumbs.js'
-import { validateBreadcrumbs } from './validateBreadcrumbs.js'
-import { validatePath } from './validatePath.js'
 
 /** Sets the virtual fields (breadcrumbs, path, alternatePaths) of the given root page document. */
 export async function setPageDocumentVirtualFields({
