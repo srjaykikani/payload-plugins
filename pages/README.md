@@ -223,7 +223,9 @@ To delete a parent document that has child references, you have two options:
 ### Payload Select API
 
 When using the [Payload Select API](https://payloadcms.com/docs/queries/select), the plugin automatically extends the selection to include all virtual fields if any of them are selected. This ensures that virtual fields can be generated correctly. 
-For example, when querying for a page and selecting only the `path` field, the plugin will also select the `slug` field as it is necessary to generate the virtual `path` field.
+For example, when querying for a page and selecting only the `path` field, the plugin will also select the `slug`, `parent` and `title` fields as theses fields are required to generate the virtual `path` field.
+
+Therefore it is highly recommended to specify the [defaultPopulate](https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property) property on all of your page collections.
 
 ## About this plugin
 
