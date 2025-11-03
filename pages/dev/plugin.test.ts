@@ -1,4 +1,4 @@
-import payload, { CollectionSlug, ValidationError } from 'payload'
+import payload, { CollectionSlug, SanitizedConfig, ValidationError } from 'payload'
 import { afterAll, beforeAll, beforeEach, describe, expect, it, test } from 'vitest'
 import config from './src/payload.config'
 
@@ -8,12 +8,12 @@ beforeAll(async () => {
   })
 
   // clear all collections except users
-  for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
-    await deleteCollection(collection.slug)
-  }
+  await deleteAllCollections(config, ['users'])
 })
 
 afterAll(async () => {
+  await deleteAllCollections(config)
+
   if (payload.db && typeof payload.db.destroy === 'function') {
     await payload.db.destroy()
   } else {
@@ -814,12 +814,7 @@ describe('Slug field behaves as expected for create and update operations', () =
 })
 
 describe('Parent deletion prevention hook', () => {
-  beforeEach(async () => {
-    // Clean up all collections except users before each test
-    for (const collection of (await config).collections.filter((c) => c.slug !== 'users')) {
-      await deleteCollection(collection.slug)
-    }
-  })
+  beforeEach(async () => await deleteAllCollections(config, ['users']))
 
   describe('MongoDB environment', () => {
     test('prevents deletion when child dependencies exist', async () => {
@@ -1248,24 +1243,10 @@ describe('Parent deletion prevention hook', () => {
 
 describe('Select during read operation', () => {
   beforeEach(async () => {
-    await payload.delete({
-      collection: 'country-travel-tips',
-      where: {},
-    })
-    await payload.delete({
-      collection: 'countries',
-      where: {},
-    })
-    await payload.delete({
-      collection: 'pages',
-      where: {},
-    })
-    await payload.delete({
-      collection: 'pages',
-      where: {
-        isRootPage: { equals: true },
-      },
-    })
+    // clear the collections we use in this test
+    await deleteCollection('country-travel-tips')
+    await deleteCollection('countries')
+    await deleteCollection('pages')
   })
 
   test('findByID with empty select only returns id', async () => {
@@ -1868,4 +1849,15 @@ const deleteCollection = async (collection: CollectionSlug) => {
     collection: collection,
     where: {},
   })
+}
+
+const deleteAllCollections = async (
+  config: Promise<SanitizedConfig>,
+  except: CollectionSlug[] = [],
+) => {
+  // Clean up all collections except users
+  for (const collection of (await config).collections?.filter((c) => !except.includes(c.slug)) ??
+    []) {
+    await deleteCollection(collection.slug)
+  }
 }
