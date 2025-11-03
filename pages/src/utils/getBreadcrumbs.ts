@@ -109,24 +109,6 @@ function docToBreadcrumb(
   locale: Locale | 'all' | undefined,
   breadcrumbLabelField?: string | undefined,
 ): Breadcrumb {
-  if (!doc.slug) {
-    console.warn(
-      'Slug not found for document ' + doc.id + '. Cannot convert document to breadcrumb.',
-    )
-  }
-  if (!doc.path) {
-    console.warn(
-      'Path not found for document ' + doc.id + '. Cannot convert document to breadcrumb.',
-    )
-  }
-  if (breadcrumbLabelField && !doc[breadcrumbLabelField]) {
-    console.warn(
-      'Breadcrumb label field not found for document ' +
-        doc.id +
-        '. Cannot convert document to breadcrumb.',
-    )
-  }
-
   return {
     slug: doc.isRootPage ? ROOT_PAGE_SLUG : pickFieldValue(doc.slug, locale)!,
     path: pickFieldValue(doc.path, locale)!,
@@ -148,6 +130,5 @@ function pickFieldValue(field: any, locale: Locale | undefined): string | undefi
     return field[locale]
   }
 
-  console.warn('Could not pick field value for field', field, 'and locale', locale)
   return undefined
 }
