@@ -13,9 +13,7 @@ export const Pages: PageCollectionConfig = {
     isRootCollection: true,
   },
   versions: {
-    drafts: {
-      autosave: true,
-    },
+    drafts: true,
   },
   fields: [
     {

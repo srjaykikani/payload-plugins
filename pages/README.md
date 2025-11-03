@@ -210,43 +210,7 @@ export default buildConfig({
 
 ### Parent Deletion Prevention
 
-The plugin automatically prevents the deletion of parent documents that are referenced by child documents, protecting your data integrity and preventing orphaned references. This feature is enabled by default but can be disabled if needed.
-
-#### Automatic Protection for MongoDB, SQLite, and PostgreSQL
-
-When using MongoDB, SQLite, or PostgreSQL as your database adapter, the plugin includes a `beforeDelete` hook that:
-
-- **Prevents deletion** of any document that serves as a parent to other documents
-- **Checks all configured page collections** for references to the document being deleted
-- **Supports multi-tenant environments** by respecting your `baseFilter` configuration
-- **Provides clear error messages** indicating which child documents are preventing the deletion
-
-This custom logic is necessary because these database adapters don't enforce foreign key constraints at the database level for Payload relationship fields.
-
-#### Other Database Adapters
-
-For other database adapters that may enforce referential integrity natively, the plugin's custom deletion prevention logic is automatically bypassed.
-
-#### Error Messages
-
-When attempting to delete a referenced parent document in MongoDB, SQLite, or PostgreSQL, you'll see a descriptive error message:
-
-```
-Cannot delete document: 3 child document(s) reference this document as their parent in collection 'pages'
-```
-
-#### Disabling Parent Deletion Prevention
-
-If you need to allow deletion of parent documents regardless of child references, you can disable this protection:
-
-```ts
-plugins: [
-  payloadPagesPlugin({
-    preventParentDeletion: false
-    // other options
-  })
-]
-```
+The plugin automatically prevents the deletion of parent documents that are referenced by child documents, protecting your data integrity and preventing orphaned references. This feature is enabled by default but can be disabled by setting the `preventParentDeletion` plugin config option to `false` if needed.
 
 #### Resolving Deletion Conflicts
 
@@ -255,24 +219,11 @@ To delete a parent document that has child references, you have two options:
 1. **Reassign child documents**: Update the child documents to reference a different parent
 2. **Remove child documents**: Delete the child documents first, then delete the parent
 
-Example of reassigning a child document:
 
-```ts
-// Update child document to reference a different parent
-await payload.update({
-  collection: 'pages',
-  id: childDocumentId,
-  data: {
-    parent: newParentId, // or null to make it a root document
-  },
-})
+### Payload Select API
 
-// Now the original parent can be safely deleted
-await payload.delete({
-  collection: 'pages',
-  id: originalParentId,
-})
-```
+When using the [Payload Select API](https://payloadcms.com/docs/queries/select), the plugin automatically extends the selection to include all virtual fields if any of them are selected. This ensures that virtual fields can be generated correctly. 
+For example, when querying for a page and selecting only the `path` field, the plugin will also select the `slug` field as it is necessary to generate the virtual `path` field.
 
 ## About this plugin
 

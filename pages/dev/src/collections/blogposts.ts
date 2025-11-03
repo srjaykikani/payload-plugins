@@ -7,9 +7,9 @@ export const Blogposts: PageCollectionConfig = {
   },
   page: {
     parent: {
-      collection: 'authors',
-      name: 'author',
-      sharedDocument: false,
+      collection: 'pages',
+      name: 'parent',
+      sharedDocument: true,
     },
     breadcrumbs: {
       labelField: 'shortTitle',
@@ -33,6 +33,13 @@ export const Blogposts: PageCollectionConfig = {
       type: 'textarea',
       required: true,
       localized: true,
+    },
+    {
+      name: 'author',
+      type: 'relationship',
+      required: true,
+      relationTo: 'authors',
+      hasMany: false,
     },
   ],
 }
