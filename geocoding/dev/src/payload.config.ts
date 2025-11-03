@@ -35,7 +35,7 @@ export default buildConfig({
   },
   plugins: [
     payloadGeocodingPlugin({
-      googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'test-api-key',
+      googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     }),
   ],
   async onInit(payload) {
