@@ -25,6 +25,11 @@ export const extendUploadCollectionConfig = ({
     beforeChange: [...(config.hooks?.beforeChange ?? []), beforeChangeHook(pluginConfig)],
     afterDelete: [...(config.hooks?.afterDelete ?? []), afterDeleteHook],
   },
+  forceSelect: {
+    // force select these to ensure the adminThumbnail hook always receives the necessary data:
+    cloudinaryURL: true,
+    mimeType: true,
+  },
   fields: [
     {
       // This field is needed to delete and update cloudinary files.
@@ -61,6 +66,7 @@ export const extendUploadCollectionConfig = ({
       label: 'URL',
     },
     {
+      // TODO: remove this field in favor of the default url field added by Payload.
       name: 'cloudinaryURL',
       label: 'Cloudinary URL',
       type: 'text',
@@ -82,11 +88,22 @@ export const extendUploadCollectionConfig = ({
     ...(typeof config.upload === 'object' ? config.upload : {}),
     disableLocalStorage: true,
     crop: false,
-    // @ts-ignore
-    adminThumbnail: ({ doc }: { doc: { cloudinaryURL: string; mimeType: string } }) => {
+    adminThumbnail: ({ doc }) => {
       const transformOptions = 'w_300,h_300,c_fill,f_auto,q_auto,dpr_auto'
 
-      const newUrl = (doc.cloudinaryURL as string).replace('/upload', `/upload/${transformOptions}`)
+      if (!('cloudinaryURL' in doc) || typeof doc.cloudinaryURL !== 'string') {
+        throw new Error(
+          'Could not generate the admin thumbnail because the cloudinaryURL was not passed to the hook.',
+        )
+      }
+
+      const newUrl = doc.cloudinaryURL.replace('/upload', `/upload/${transformOptions}`)
+
+      if (!('mimeType' in doc) || typeof doc.mimeType !== 'string') {
+        throw new Error(
+          'Could not generate the admin thumbnail because the mineType was not passed to the hook.',
+        )
+      }
 
       // As payload does not support videos as thumbnails, create an image thumbnail of the video:
       if (doc.mimeType.startsWith('video/')) {
