@@ -1,6 +1,6 @@
 {
   "name": "@jhb.software/payload-geocoding-plugin",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Geocoding field plugin for Payload CMS",
   "author": "JHB Software",
   "license": "MIT",
