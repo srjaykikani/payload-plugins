@@ -4,6 +4,7 @@
 # Configuration
 PLUGINS=("pages" "geocoding" "seo" "cloudinary" "admin-search" "alt-text")
 PAGES_DEV_FOLDERS=("dev" "dev_unlocalized" "dev_multi_tenant")
+ALT_TEXT_DEV_FOLDERS=("dev" "dev_unlocalized")
 
 # Color codes for output
 RED='\033[0;31m'
@@ -30,9 +31,29 @@ log_warning() {
 # Update dependencies function
 update_dependencies() {
     local dir=$1
-    cd "$dir"
+    cd "$dir" || return 1
+
     log_info "Updating dependencies in $dir"
-    pnpm up --latest
+
+    # Update all dependencies to latest
+    pnpm up --latest || return 1
+
+    # Force Next.js to 15.5.6 if present in package.json
+    if grep -q '"next"' package.json; then
+        log_info "Pinning Next.js to 15.5.6"
+        # Use sed to update package.json directly to avoid workspace root issues
+        sed -i '' 's/"next": "[^"]*"/"next": "15.5.6"/g' package.json || return 1
+        pnpm install || return 1
+    fi
+
+    # Force eslint-config-next to 15.5.6 if present
+    if grep -q '"eslint-config-next"' package.json; then
+        log_info "Pinning eslint-config-next to 15.5.6"
+        sed -i '' 's/"eslint-config-next": "[^"]*"/"eslint-config-next": "15.5.6"/g' package.json || return 1
+        pnpm install || return 1
+    fi
+
+    return 0
 }
 
 # Generate types function
@@ -100,6 +121,38 @@ verify_dev_server() {
     fi
 }
 
+# Validate plugin structure function
+validate_plugin_structure() {
+    local plugin=$1
+    local plugin_dir="$ORIGINAL_DIR/$plugin"
+
+    # Check plugin root package.json
+    if [ ! -f "$plugin_dir/package.json" ]; then
+        log_error "Missing package.json in $plugin_dir"
+        return 1
+    fi
+
+    # Determine expected dev folders
+    local expected_folders=()
+    if [ "$plugin" = "pages" ]; then
+        expected_folders=("${PAGES_DEV_FOLDERS[@]}")
+    elif [ "$plugin" = "alt-text" ]; then
+        expected_folders=("${ALT_TEXT_DEV_FOLDERS[@]}")
+    else
+        expected_folders=("dev")
+    fi
+
+    # Validate each dev folder has package.json
+    for dev_folder in "${expected_folders[@]}"; do
+        if [ ! -f "$plugin_dir/$dev_folder/package.json" ]; then
+            log_error "Missing package.json in $plugin_dir/$dev_folder"
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 # Store original directory
 ORIGINAL_DIR=$(pwd)
 
@@ -128,6 +181,15 @@ for plugin in "${PLUGINS[@]}"; do
 
     PLUGIN_STATUS="SUCCESS"
 
+    # Validate plugin structure first
+    if ! validate_plugin_structure "$plugin"; then
+        PLUGIN_STATUS="FAILED"
+        log_error "Plugin structure validation failed for $plugin"
+        RESULT_PLUGINS+=("$plugin")
+        RESULT_STATUSES+=("$PLUGIN_STATUS")
+        continue
+    fi
+
     # Update plugin root
     if ! update_dependencies "$ORIGINAL_DIR/$plugin"; then
         PLUGIN_STATUS="FAILED"
@@ -140,6 +202,8 @@ for plugin in "${PLUGINS[@]}"; do
     # Determine dev folders
     if [ "$plugin" = "pages" ]; then
         dev_folders=("${PAGES_DEV_FOLDERS[@]}")
+    elif [ "$plugin" = "alt-text" ]; then
+        dev_folders=("${ALT_TEXT_DEV_FOLDERS[@]}")
     else
         dev_folders=("dev")
     fi

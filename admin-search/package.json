@@ -27,23 +27,23 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@payloadcms/ui": "3.x",
-    "next": "15.x",
-    "payload": "3.x",
-    "react": "19.x",
-    "react-dom": "19.x"
+    "@payloadcms/ui": "3.62.0",
+    "next": "15.5.6",
+    "payload": "3.62.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@payloadcms/eslint-config": "^3.28.0",
-    "@swc/cli": "^0.4.0",
-    "@swc/core": "^1.7.0",
-    "@types/react": "19.x",
-    "@types/react-dom": "19.x",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.14.0",
+    "@types/react": "~19.2.2",
+    "@types/react-dom": "~19.2.2",
     "copyfiles": "^2.4.1",
-    "eslint": "9.x",
+    "eslint": "~9.39.0",
     "prettier": "^3.6.2",
-    "rimraf": "^5.0.10",
-    "typescript": "5.x"
+    "rimraf": "^6.1.0",
+    "typescript": "~5.9.3"
   },
   "files": [
     "dist"
