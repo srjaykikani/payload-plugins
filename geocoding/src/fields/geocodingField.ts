@@ -1,5 +1,5 @@
 import { Field } from 'payload'
-import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig'
+import { GeoCodingFieldConfig } from '../types/GeoCodingFieldConfig.js'
 
 /**
  * Creates a row field containing:
@@ -27,7 +27,7 @@ export const geocodingField = (config: GeoCodingFieldConfig): Field => {
 
           // non-overridable props:
           components: {
-            Field: '@jhb.software/payload-geocoding-plugin/client#GeocodingFieldComponent',
+            Field: '@jhb.software/payload-geocoding-plugin/server#GeocodingField',
           },
         },
       },

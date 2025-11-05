@@ -13,15 +13,7 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
   operation,
   context,
 }) => {
-  // // TODO: args.id will be undefined for findMany operations but data.id will be defined in the afterOperation hook
-  // // this means for findMany operations, removing the originally unselected fields will not work
-  context.rootOperation = `${args.id}-${args.collection.config.slug}`
-
-  // Make the select object available to the setVirtualFields hook by adding it to the context
-  context.select = args.select
-
   if (operation == 'read' && args.select) {
-    const originalSelect = args.select
     const pageConfig = asPageCollectionConfigOrThrow(args.collection.config)
     const selectMode = getSelectMode(args.select)
     const dependendSelectedFields = dependentFields(pageConfig)
@@ -38,28 +30,6 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
           ...args.select,
           ...dependendSelectedFields.reduce((acc, field) => ({ ...acc, [field]: true }), {}),
         }
-
-        const parentFieldName = pageConfig.page.parent.name
-        const parentCollectionSlug = pageConfig.page.parent.collection
-
-        // when the user has not selected the parent field, but the parent field is added above, only populate the breadcrumbs field of it.
-        if (!originalSelect[parentFieldName]) {
-          args.populate = {
-            ...args.populate,
-
-            // only populate the breadcrumbs field of the parent field, otherwise, for every read operation, all fields of the parent would be unecessaryly returned
-            [parentCollectionSlug]: {
-              breadcrumbs: true,
-              ...args.populate?.[parentCollectionSlug],
-            },
-          }
-        }
-
-        // Store the original select so that deleteUnselectedFieldsAfterRead can properly handle field exclusion
-        context.originalSelect = originalSelect
-
-        // Make the modified select available to the setVirtualFields hook
-        context.select = args.select
 
         // Indicate that the virtual fields should be generated in the setVirtualFields hook
         context.generateVirtualFields = true
@@ -82,12 +52,6 @@ export const selectDependentFieldsBeforeOperation: CollectionBeforeOperationHook
         if (Object.keys(args.select).length === 0) {
           args.select = undefined
         }
-
-        // Store the original select so that deleteUnselectedFieldsAfterRead can properly handle field exclusion
-        context.originalSelect = originalSelect
-
-        // Make the modified select available to the setVirtualFields hook
-        context.select = args.select
 
         // Indicate that the virtual fields should be generated in the setVirtualFields hook
         context.generateVirtualFields = true

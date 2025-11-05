@@ -190,12 +190,13 @@ export interface Author {
 export interface Blogpost {
   id: string;
   slug: string;
-  author: string | Author;
+  parent: string | Page;
   path: string;
   breadcrumbs: Breadcrumbs;
   title: string;
   shortTitle: string;
   content: string;
+  author: string | Author;
   updatedAt: string;
   createdAt: string;
 }
@@ -463,12 +464,13 @@ export interface AuthorsSelect<T extends boolean = true> {
  */
 export interface BlogpostsSelect<T extends boolean = true> {
   slug?: T;
-  author?: T;
+  parent?: T;
   path?: T;
   breadcrumbs?: T | BreadcrumbsSelect<T>;
   title?: T;
   shortTitle?: T;
   content?: T;
+  author?: T;
   updatedAt?: T;
   createdAt?: T;
 }

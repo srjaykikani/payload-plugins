@@ -2,7 +2,7 @@ import { Field } from 'payload'
 import { Locale } from 'src/types/Locale.js'
 import { beforeDuplicateSlug } from '../hooks/beforeDuplicate.js'
 import { formatSlug } from '../hooks/validateSlug.js'
-import { SlugFieldClientProps } from 'src/components/client/SlugField.jsx'
+import { SlugFieldProps } from 'src/components/client/SlugFieldClient.jsx'
 import { ROOT_PAGE_SLUG } from '../utils/setRootPageVirtualFields.js'
 import { translatedLabel } from '../utils/translatedLabel.js'
 
@@ -36,13 +36,13 @@ export function internalSlugField({
       readOnly: !!staticValue,
       components: {
         Field: {
-          path: '@jhb.software/payload-pages-plugin/server#SlugFieldWrapper',
+          path: '@jhb.software/payload-pages-plugin/server#SlugField',
           clientProps: {
             readOnly: !!staticValue,
             defaultValue: staticValue,
             pageSlug: pageSlug,
             fallbackField: fallbackField,
-          } satisfies SlugFieldClientProps,
+          } satisfies SlugFieldProps,
         },
       },
       // The condition option is not used to hide the field when the page is the root page because then the type of the slug field would be optional.
