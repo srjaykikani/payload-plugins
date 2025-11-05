@@ -285,10 +285,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: string | Page;
-      } | null)
-    | ({
-        relationTo: 'payload-kv';
-        value: string | PayloadKv;
       } | null);
   globalSlug?: string | null;
   user: {

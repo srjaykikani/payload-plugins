@@ -193,10 +193,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
-      } | null)
-    | ({
-        relationTo: 'payload-kv';
-        value: string | PayloadKv;
       } | null);
   globalSlug?: string | null;
   user: {

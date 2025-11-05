@@ -23,7 +23,7 @@
     "prepublish": "tsc"
   },
   "dependencies": {
-    "cloudinary": "^2.7.0"
+    "cloudinary": "^2.8.0"
   },
   "peerDependencies": {
     "payload": "^3.59.1"
