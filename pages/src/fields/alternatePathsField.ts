@@ -18,6 +18,7 @@ export function alternatePathsField(): Field {
     validate: (_: any): true => true,
     admin: {
       readOnly: true,
+      disableBulkEdit: true,
       hidden: true,
     },
     hooks: {
