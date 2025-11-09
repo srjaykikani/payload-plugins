@@ -40,6 +40,9 @@
           "breadcrumb": {
             "type": "string"
           },
+          "showBreadcrumbs": {
+            "type": "string"
+          },
           "syncSlugWithX": {
             "type": "string"
           },
@@ -58,6 +61,7 @@
           "alternatePath",
           "breadcrumbs",
           "breadcrumb",
+          "showBreadcrumbs",
           "syncSlugWithX",
           "slugWasChangedFromXToY"
         ]

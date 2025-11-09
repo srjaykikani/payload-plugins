@@ -13,8 +13,9 @@ export const de: GenericTranslationsObject = {
     alternatePath: 'Alternative Pfad',
     breadcrumbs: 'Navigationspfade',
     breadcrumb: 'Navigationspfad',
+    showBreadcrumbs: 'Navigationspfade anzeigen',
     syncSlugWithX: 'Mit {X} synchronisieren',
     slugWasChangedFromXToY:
-      'Die URL-Endung wurde von <code>{X}</code> zu <code>{Y}</code> geändert. Dies erfordert eine manuelle Erstellung einer Umleitung vom alten zum neuen Seitenpfad.',
+      'Die URL-Endung wurde von <code>{X}</code> zu <code>{Y}</code> geändert. Dies erfordert eine manuelle Erstellung einer Weiterleitung vom alten zum neuen Seitenpfad.',
   },
 }

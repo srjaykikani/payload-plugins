@@ -2,11 +2,13 @@
 
 import { ArrayField, Drawer, Button, useModal } from '@payloadcms/ui'
 import { ArrayFieldClientComponent } from 'payload'
+import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
 
 const breadcrumbsModalSlug = 'breadcrumbs-drawer'
 
 export const BreadcrumbsFieldModalButton: React.FC = () => {
   const { toggleModal } = useModal()
+  const { t } = usePluginTranslation()
 
   return (
     <Button
@@ -18,16 +20,17 @@ export const BreadcrumbsFieldModalButton: React.FC = () => {
           <path d="M1 4l4 4-4 4h2l4-4-4-4H1zm6 0l4 4-4 4h2l4-4-4-4H7z" />
         </svg>
       }
-      tooltip="Show Breadcrumbs"
+      tooltip={t('showBreadcrumbs')}
     />
   )
 }
 export const BreadcrumbsField: ArrayFieldClientComponent = (props) => {
   const { field, path } = props
+  const { t } = usePluginTranslation()
 
   return (
     <div className="field-type breadcrumbs-field-component">
-      <Drawer slug={breadcrumbsModalSlug} title="Breadcrumbs">
+      <Drawer slug={breadcrumbsModalSlug} title={t('breadcrumbs')}>
         <div style={{ padding: '20px' }}>
           <ArrayField {...props} field={field} path={path} readOnly={true} />
         </div>

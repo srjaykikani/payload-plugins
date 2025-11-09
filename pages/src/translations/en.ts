@@ -13,6 +13,7 @@ export const en: GenericTranslationsObject = {
     alternatePath: 'Alternate Path',
     breadcrumbs: 'Breadcrumbs',
     breadcrumb: 'Breadcrumb',
+    showBreadcrumbs: 'Show Breadcrumbs',
     syncSlugWithX: 'Sync with {X}',
     slugWasChangedFromXToY:
       'The slug was changed from <code>{X}</code> to <code>{Y}</code>. This requires a redirection from the old to the new page path to be manually created.',
