@@ -18,6 +18,7 @@ export function pathField(): Field {
     localized: true,
     admin: {
       readOnly: true,
+      disableBulkEdit: true,
       position: 'sidebar',
       components: {
         Field: '@jhb.software/payload-pages-plugin/client#PathField',

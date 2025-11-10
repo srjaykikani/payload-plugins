@@ -3,6 +3,7 @@
 import { ArrayField, Drawer, Button, useModal } from '@payloadcms/ui'
 import { ArrayFieldClientComponent } from 'payload'
 import { usePluginTranslation } from '../../utils/usePluginTranslations.js'
+import { BreadcrumbsIcon } from '../../icons/BreadcrumbsIcon.js'
 
 const breadcrumbsModalSlug = 'breadcrumbs-drawer'
 
@@ -15,12 +16,8 @@ export const BreadcrumbsFieldModalButton: React.FC = () => {
       onClick={() => toggleModal(breadcrumbsModalSlug)}
       buttonStyle="transparent"
       size="small"
-      icon={
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M1 4l4 4-4 4h2l4-4-4-4H1zm6 0l4 4-4 4h2l4-4-4-4H7z" />
-        </svg>
-      }
       tooltip={t('showBreadcrumbs')}
+      icon={<BreadcrumbsIcon />}
     />
   )
 }
