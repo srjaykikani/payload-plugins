@@ -15,20 +15,10 @@ export const BreadcrumbsIcon: React.FC<{
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M3 5L6 8L3 11"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 5L12 8L9 11"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <g transform="translate(1, -2)">
+        <path className="stroke" d="M2 14L6 10L2 6" strokeLinecap="square" />
+        <path className="stroke" d="M8 14L12 10L8 6" strokeLinecap="square" />
+      </g>
     </svg>
   )
 }
